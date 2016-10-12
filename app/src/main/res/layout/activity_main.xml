@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.haishanda.android.videoapp.Activity.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:id="@+id/top_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/titleBlue"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <ImageButton
+                android:id="@+id/addUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@color/titleBlue"
+                android:src="@drawable/addboat" />
+
+            <Spinner
+                android:id="@+id/spinner_index_choices"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1.00"
+                android:longClickable="false" />
+
+            <ImageButton
+                android:id="@+id/settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@color/titleBlue"
+                android:src="@drawable/settings" />
+
+        </LinearLayout>
+
+        <TableLayout
+            android:id="@+id/main_ground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.00"
+            android:background="#efefef" />
+
+        <LinearLayout
+            android:id="@+id/buttom_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_weight="0.08"
+            android:background="#ffffff"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25">
+
+                <ImageView
+                    android:id="@+id/boat_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/boat" />
+
+                <TextView
+                    android:id="@+id/boat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/boats"
+                    android:textColor="#9f9f9f" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25">
+
+                <ImageView
+                    android:id="@+id/photos_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/photos" />
+
+                <TextView
+                    android:id="@+id/photos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/photos"
+                    android:textColor="#9f9f9f" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25">
+
+                <ImageView
+                    android:id="@+id/monitor_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/monitor" />
+
+                <TextView
+                    android:id="@+id/monitor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/monitoring"
+                    android:textColor="#9f9f9f" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="skipToLoginPage">
+
+                <ImageView
+                    android:id="@+id/myApp_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/myapp" />
+
+                <TextView
+                    android:id="@+id/myApp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/myApp"
+                    android:textColor="#9f9f9f" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

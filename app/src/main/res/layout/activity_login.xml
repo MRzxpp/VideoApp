@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:background="@color/titleBlue">
+
+        <TextView
+            android:id="@+id/signup_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:text="@string/login"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/back_to_index_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25px"
+            android:src="@drawable/back" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/frame_signup"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:src="@drawable/username" />
+
+            <EditText
+                android:id="@+id/username_login_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/imageView2"
+                android:layout_toRightOf="@+id/imageView2"
+                android:background="@null"
+                android:hint="@string/inputPhonenum"
+                android:inputType="phone"
+                android:textColor="@color/textGrey2"
+                android:textColorHint="@color/textGrey2"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/frame_signup"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:src="@drawable/password" />
+
+            <EditText
+                android:id="@+id/password_login_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/imageView3"
+                android:layout_toRightOf="@+id/imageView3"
+                android:background="@null"
+                android:hint="@string/inputPassword"
+                android:inputType="textPassword"
+                android:textColor="@color/textGrey2"
+                android:textColorHint="@color/textGrey2"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/eye"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/password_signup_text"
+                android:layout_centerInParent="true"
+                android:layout_margin="4dp"
+                android:src="@drawable/eye" />
+
+            <ImageView
+                android:id="@+id/clear3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginTop="9dp"
+                android:src="@drawable/clearpwd" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/corners_blue_btn"
+            android:text="@string/login"
+            android:textColor="@color/textGrey"
+            android:textSize="20sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="174dp"
+            android:layout_weight="0.80">
+
+            <TextView
+                android:text="忘记密码？"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/forget_password_btn"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/titleBlue" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="51dp">
+
+            <TextView
+                android:text="快速注册"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="14dp"
+                android:id="@+id/fast_signup_btn"
+                android:textColor="@color/titleBlue"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

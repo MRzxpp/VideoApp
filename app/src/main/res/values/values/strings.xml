@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">视频监控App</string>
+    <string name="myApp">我的</string>
+    <string name="monitoring">监控</string>
+    <string name="photos">相册</string>
+    <string name="boats">船舶</string>
+    <string name="inputPassword">请输入密码</string>
+    <string name="input_phonenum">请输入您的手机号</string>
+    <string name="verification">6位短信验证码</string>
+    <string name="getverification">点击获取验证码</string>
+    <string name="inputPasswordAgain">请再次输入密码</string>
+    <string name="setNewPassword">设置新密码</string>
+    <string name="getPassword">找回密码</string>
+</resources>

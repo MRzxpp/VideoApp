@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="myApp">我的</string>
+    <string name="monitoring">监控</string>
+    <string name="photos">相册</string>
+    <string name="boats">船舶</string>
+</resources>
