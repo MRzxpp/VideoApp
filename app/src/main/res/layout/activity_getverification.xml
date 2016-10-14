@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="77dp"
+        android:layout_height="48dp"
         android:background="@color/titleBlue">
 
         <TextView
@@ -15,137 +15,134 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_gravity="center"
             android:text="@string/getPassword"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#ffffff"
-            android:textSize="30sp" />
+            android:textSize="18dp" />
 
         <ImageView
             android:id="@+id/back_to_login_btn2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="25px"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="12dp"
             android:src="@drawable/back" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
+        android:background="@color/backgroundColor"
         android:orientation="vertical"
         android:weightSum="1">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/frame_signup"
-            android:padding="2dp">
+            android:layout_height="48dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/both_stroke">
 
             <ImageView
-                android:id="@+id/imageView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="6dp"
+                android:id="@+id/imageView2"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="15dp"
                 android:src="@drawable/username" />
 
             <EditText
                 android:id="@+id/mobileNo_get_veri_text"
+                style="@style/font_grey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="8dp"
-                android:layout_toEndOf="@+id/imageView9"
-                android:layout_toRightOf="@+id/imageView9"
+                android:layout_marginLeft="14dp"
+                android:layout_toEndOf="@+id/imageView2"
+                android:layout_toRightOf="@+id/imageView2"
                 android:background="@null"
                 android:hint="@string/inputPhonenum"
-                android:inputType="phone"
-                android:textColor="@color/textGrey2"
-                android:textColorHint="@color/textGrey2"
-                android:textSize="20sp" />
+                android:inputType="phone" />
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="10dp">
 
             <Button
                 android:id="@+id/get_code_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="16dp"
-                android:background="@drawable/corners_blue_btn"
+                android:background="@drawable/corners_grey_btn"
                 android:text="@string/getVerification"
-                android:textColor="@color/textGrey"
-                android:textSize="20sp" />
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/get_code_btn"
-                android:layout_alignTop="@+id/get_code_btn"
-                android:layout_toLeftOf="@+id/get_code_btn"
-                android:layout_toStartOf="@+id/get_code_btn"
-                android:background="@drawable/frame_signup">
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@id/get_code_btn"
+                android:background="@drawable/both_stroke">
 
                 <ImageView
-                    android:id="@+id/imageView14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="6dp"
+                    android:id="@+id/message_img"
+                    android:layout_width="18dp"
+                    android:layout_height="13dp"
+                    android:layout_marginBottom="17.5dp"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginTop="17.5dp"
                     android:src="@drawable/message" />
 
                 <EditText
-                    android:layout_marginLeft="8dp"
                     android:id="@+id/fetch_code_getveri_input"
-                    android:layout_width="200dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
+                    style="@style/font_grey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginRight="14dp"
+                    android:layout_toEndOf="@+id/message_img"
+                    android:layout_toRightOf="@+id/message_img"
                     android:background="@null"
-                    android:hint="@string/verification"
-                    android:textColor="@color/textGrey2"
-                    android:textColorHint="@color/textGrey2"
-                    android:textSize="20sp"
-                    android:layout_toRightOf="@+id/imageView14"
-                    android:layout_toEndOf="@+id/imageView14" />
+                    android:hint="@string/verification" />
             </RelativeLayout>
         </RelativeLayout>
 
         <Button
             android:id="@+id/reset_password_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="15dp"
             android:background="@drawable/corners_grey_btn"
             android:text="@string/nextstep"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/meet_question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="17.5dp"
             android:text="遇到问题？"
-            android:textSize="16sp"
-            android:textColor="@color/titleBlue" />
+            android:textColor="@color/textBlue"
+            android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

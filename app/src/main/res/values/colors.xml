@@ -3,8 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="titleBlue">#5a87cd</color>
-    <color name="textGrey">#A5BEDF</color>
-    <color name="textGrey2">#999999</color>
+    <color name="titleBlue">#3E7EE1</color>
+    <color name="btnGrey">#C3C3C3</color>
+    <color name="textGrey">#999999</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="textBlack">#333333</color>
+    <color name="textBlue">#5588FE</color>
+    <color name="btnDeepBlue">#2B5BC8</color>
+    <color name="backgroundColor">#EEEEF3</color>
 </resources>

@@ -38,7 +38,7 @@ public class GetVerificationActivity extends Activity {
     @BindView(R.id.get_code_btn)
     Button getCodeBtn;
 
-    @BindColor(R.color.textGrey)
+    @BindColor(R.color.btnGrey)
     int textGrey;
     @BindColor(R.color.white)
     int white;

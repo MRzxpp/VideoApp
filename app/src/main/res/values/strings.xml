@@ -4,9 +4,9 @@
     <string name="monitoring">监控</string>
     <string name="photos">相册</string>
     <string name="boats">船舶</string>
-    <string name="inputPassword">请输入密码</string>
+    <string name="inputPassword">请输入6–20位密码</string>
     <string name="inputPhonenum">请输入您的手机号</string>
-    <string name="verification">6位短信验证码</string>
+    <string name="verification">请输入短信验证码</string>
     <string name="getVerification">点击获取验证码</string>
     <string name="inputPasswordAgain">请再次输入密码</string>
     <string name="setNewPassword">设置新密码</string>

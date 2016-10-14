@@ -10,13 +10,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -41,20 +46,16 @@ public class SignupActivity extends Activity {
     @BindView(R.id.message_text)
     EditText code;
     @BindView(R.id.eye1)
-    ImageView Eye1;
+    TextView Eye1;
     @BindView(R.id.eye2)
-    ImageView Eye2;
+    TextView Eye2;
     @BindView(R.id.get_fetch_code)
     Button getFetchCode;
     @BindView(R.id.clear1)
     ImageView clear1;
     @BindView(R.id.clear2)
     ImageView clear2;
-    @BindDrawable(R.drawable.eyeblue)
-    Drawable blueEye;
-    @BindDrawable(R.drawable.eye)
-    Drawable greyEye;
-    @BindColor(R.color.textGrey)
+    @BindColor(R.color.btnGrey)
     int textGrey;
     @BindColor(R.color.white)
     int white;
@@ -113,30 +114,39 @@ public class SignupActivity extends Activity {
 
     @OnClick(R.id.signup_button)
     public void signupService(View view) {
-        if (phoneNumber.getText().toString().length() != 11) {
-            Toast.makeText(SignupActivity.this, "请输入正确的手机号", Toast.LENGTH_SHORT)
+        Pattern passwordPattern = Pattern.compile("^(?![0-9]+$)(?![a-zA-Z]+$)$");
+        Matcher passwordMatcher = passwordPattern.matcher(password.getText().toString());
+        Pattern phoneNumPattern = Pattern.compile("^[1][358][0-9]{9}$");
+        Matcher phoneNumMatcher = phoneNumPattern.matcher(phoneNumber.getText().toString());
+        if (phoneNumber.getText().toString().equals("")) {
+            Toast.makeText(SignupActivity.this, "请输入手机号", Toast.LENGTH_SHORT)
+                    .show();
+        } else if (!phoneNumMatcher.matches()) {
+            Toast.makeText(SignupActivity.this, "手机号格式不正确，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().equals("") || rePassword.getText().toString().equals("")) {
             Toast.makeText(SignupActivity.this, "请输入密码", Toast.LENGTH_SHORT)
                     .show();
         } else if (!password.getText().toString().equals(rePassword.getText().toString())) {
-            Toast.makeText(SignupActivity.this, "两次输入密码不一致", Toast.LENGTH_SHORT)
+            Toast.makeText(SignupActivity.this, "两次输入的密码不一致，请重新输入", Toast.LENGTH_SHORT)
+                    .show();
+        } else if (password.getText().toString().length() < 6) {
+            Toast.makeText(SignupActivity.this, "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
+                    .show();
+        } else if (!passwordMatcher.matches()) {
+            Toast.makeText(SignupActivity.this, "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (code.getText().toString().equals("")) {
             Toast.makeText(SignupActivity.this, "请输入验证码", Toast.LENGTH_SHORT)
                     .show();
         } else {
-//            RegisterBean registerBean = new RegisterBean();
-//            registerBean.setCode(code.getText().toString());
-//            registerBean.setMobileNo(phoneNumber.getText().toString());
-//            registerBean.setPassword(password.getText().toString());
             ApiManage.getInstence().getUserApiService().signupAction(phoneNumber.getText().toString(), password.getText().toString(), code.getText().toString())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<SmartResult>() {
                         @Override
                         public void onCompleted() {
-                            Log.i("info", "注册成功");
+                            Log.i("info", "注册完成");
                         }
 
                         @Override
@@ -148,30 +158,31 @@ public class SignupActivity extends Activity {
                         public void onNext(SmartResult smartResult) {
                             Log.i("info", String.valueOf(smartResult.getCode()));
                             Log.i("info", smartResult.getMsg());
+                            if (smartResult.getCode() != 1) {
+                                Toast.makeText(SignupActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                Toast.makeText(SignupActivity.this, "注册成功，请登录", Toast.LENGTH_SHORT)
+                                        .show();
+                            }
                         }
                     });
         }
     }
 
-    @OnClick(R.id.eye1)
+    @OnClick({R.id.eye1, R.id.eye2})
     public void setPasswordVisiable(View view) {
-        if (Eye1.getDrawable() != blueEye) {
-            Eye1.setImageDrawable(blueEye);
-            password.setInputType(InputType.TYPE_CLASS_TEXT);
-        } else {
-            Eye1.setImageDrawable(greyEye);
-            password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        }
-    }
-
-    @OnClick(R.id.eye2)
-    public void setRePasswordVisiable(View view) {
-        if (Eye2.getDrawable() != blueEye) {
-            Eye2.setImageDrawable(blueEye);
-            rePassword.setInputType(InputType.TYPE_CLASS_TEXT);
-        } else {
-            Eye2.setImageDrawable(greyEye);
-            rePassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        switch (view.getId()) {
+            case R.id.eye1: {
+                ChangeVisiable.changeVisiable(Eye1, password);
+                break;
+            }
+            case R.id.eye2: {
+                ChangeVisiable.changeVisiable(Eye2, rePassword);
+                break;
+            }
+            default:
+                break;
         }
     }
 
@@ -190,5 +201,6 @@ public class SignupActivity extends Activity {
                 break;
         }
     }
+
 
 }
