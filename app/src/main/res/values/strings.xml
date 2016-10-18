@@ -16,4 +16,5 @@
     <string name="login">登录</string>
     <string name="savenewpwd">保存新密码</string>
     <string name="nextstep">下一步</string>
+    <string name="warning">监控开启时，有人上船偷盗，设备会自动发出警告音，吓退小偷，同时会自动拍照，留存证据，保障您的渔船安全！</string>
 </resources>

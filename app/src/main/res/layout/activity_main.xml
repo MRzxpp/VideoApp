@@ -11,50 +11,11 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <RelativeLayout
-            android:id="@+id/top_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/titleBlue"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/addUser"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_marginBottom="13dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="13dp"
-                android:background="@color/titleBlue"
-                android:src="@drawable/addboat" />
-
-            <Spinner
-                android:id="@+id/spinner_index_choices"
-                android:layout_width="115dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:longClickable="false"
-                android:scrollbarSize="18dp" />
-
-            <ImageView
-                android:id="@+id/settings"
-                android:layout_width="22dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="13dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="13dp"
-                android:background="@color/titleBlue"
-                android:src="@drawable/settings" />
-
-        </RelativeLayout>
-
         <FrameLayout
-            android:id="@+id/main_ground"
+            android:id="@+id/fragment_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.00"
-            android:background="@color/backgroundColor" />
+            android:layout_weight="1"/>
 
         <LinearLayout
             android:id="@+id/buttom_buttons"
@@ -64,6 +25,7 @@
             android:orientation="horizontal">
 
             <RelativeLayout
+                android:id="@+id/to_boat_fragment"
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
@@ -90,6 +52,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/to_photos_fragment"
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
@@ -115,6 +78,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/to_monitor_fragment"
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
@@ -140,10 +104,10 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/to_my_fragment"
                 android:layout_width="90dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="skipToLoginPage">
+                android:layout_weight="1">
 
                 <ImageView
                     android:id="@+id/myApp_img"

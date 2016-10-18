@@ -1,6 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/titleBlue">
+
+        <TextView
+            android:id="@+id/photos_fragment_title_photos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="108.5dp"
+            android:text="相册"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/white_line1"
+            android:layout_width="50dp"
+            android:layout_height="3dp"
+            android:layout_below="@id/photos_fragment_title_photos"
+            android:layout_marginLeft="101.5dp"
+            android:layout_marginTop="10dp"
+            android:src="@color/white" />
+
+        <TextView
+            android:id="@+id/photos_fragment_title_videos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="108dp"
+            android:text="视频"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/white_line2"
+            android:layout_width="50dp"
+            android:layout_height="3dp"
+            android:layout_below="@id/photos_fragment_title_videos"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="101dp"
+            android:layout_marginTop="10dp"
+            android:src="@color/white"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/backgroundColor">
+
+        <ImageView
+            android:id="@+id/photos_background"
+            android:layout_width="165dp"
+            android:layout_height="165dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="105.5dp"
+            android:src="@drawable/boat_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/photos_background"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35.5dp"
+            android:text="暂无内容！"
+            android:textColor="@color/textGrey"
+            android:textSize="14sp" />
+    </RelativeLayout>
 
 </LinearLayout>
