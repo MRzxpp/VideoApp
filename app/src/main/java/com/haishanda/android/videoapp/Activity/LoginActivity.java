@@ -3,34 +3,27 @@ package com.haishanda.android.videoapp.Activity;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
-import com.haishanda.android.videoapp.VideoApplication;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMOptions;
 
 import java.util.List;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -134,6 +127,9 @@ public class LoginActivity extends Activity {
                                         EMClient.getInstance().groupManager().loadAllGroups();
                                         EMClient.getInstance().chatManager().loadAllConversations();
                                         Log.d("main", "登录聊天服务器成功！");
+                                        Intent intent = new Intent();
+                                        intent.setClass(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
 
                                     @Override
@@ -148,7 +144,9 @@ public class LoginActivity extends Activity {
                                 });
                             }
                             Log.i("info", String.valueOf(smartResult.getCode()));
-                            Log.i("info", smartResult.getMsg());
+                            if (smartResult.getMsg() != null) {
+                                Log.i("info", smartResult.getMsg());
+                            }
                         }
                     });
         }

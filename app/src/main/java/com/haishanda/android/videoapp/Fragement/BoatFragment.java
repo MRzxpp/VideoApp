@@ -2,6 +2,8 @@ package com.haishanda.android.videoapp.Fragement;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Zhongsz on 2016/10/14.
@@ -87,4 +90,14 @@ public class BoatFragment extends Fragment {
             }
         });
     }
+
+    @OnClick(R.id.add_boat_btn)
+    public void addBoat(View view) {
+        CamerasFragment camerasFragment = new CamerasFragment();
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.cameras, camerasFragment);
+        fragmentTransaction.commit();
+    }
+
 }
