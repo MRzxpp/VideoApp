@@ -1,11 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="48"
+        android:background="@color/titleBlue">
+
+        <TextView
+            android:id="@+id/camera_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="摄像头"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/back_to_boat_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/back" />
+    </RelativeLayout>
 
     <io.vov.vitamio.widget.VideoView
         android:id="@+id/test_play_video"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="360dp"
+        android:layout_height="270dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="298"
+        android:background="@color/backgroundColor">
+
+        <ImageView
+            android:id="@+id/test_print"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:id="@+id/interphone_btn"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="94dp"
+            android:src="@drawable/interphone" />
+
+        <ImageView
+            android:id="@+id/record_btn"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="114dp"
+            android:layout_toLeftOf="@id/interphone_btn"
+            android:src="@drawable/record" />
+
+
+        <ImageView
+            android:id="@+id/printscreen_btn"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="114dp"
+            android:layout_toRightOf="@id/interphone_btn"
+            android:src="@drawable/printscreen" />
+    </RelativeLayout>
 
 </LinearLayout>

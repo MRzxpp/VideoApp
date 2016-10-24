@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.haishanda.android.videoapp.Activity.PlayVideoActivity;
+import com.haishanda.android.videoapp.Activity.TestActivity;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.BindView;
@@ -20,6 +21,8 @@ import butterknife.OnClick;
  */
 
 public class CamerasFragment extends Fragment {
+    private static final String MEDIA = "media";
+    private static final int LOCAL_VIDEO = 4;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,6 +36,14 @@ public class CamerasFragment extends Fragment {
     public void playVideo(View view) {
         Intent intent = new Intent();
         intent.setClass(getActivity(), PlayVideoActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.test3)
+    public void playVideo2(View view) {
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), TestActivity.class);
+        intent.putExtra(MEDIA, LOCAL_VIDEO);
         startActivity(intent);
     }
 }

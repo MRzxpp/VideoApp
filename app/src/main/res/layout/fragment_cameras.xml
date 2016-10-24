@@ -6,7 +6,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,6 +31,7 @@
                         android:id="@+id/camera_1"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/boat_background" />
 
                     <TextView
@@ -52,6 +54,7 @@
                         android:id="@+id/camera_2"
                         android:layout_width="160dp"
                         android:layout_height="160dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/boat_background" />
 
                     <TextView
