@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/titleBlue">
+
+        <TextView
+            android:id="@+id/boat_config_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="关于本船"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:id="@+id/back_to_config_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/back" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="97dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/both_stroke_white">
+
+        <RelativeLayout
+            android:id="@+id/boat_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bottom_stroke">
+
+            <TextView
+                android:id="@+id/about_boat_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="船舶名称"
+                android:textColor="#333333"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@id/to_rename_boat_fragment"
+                android:layout_width="12dp"
+                android:layout_height="22dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/arrow_right" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/gateway_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="48dp">
+
+            <TextView
+                android:id="@+id/gateway_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="网关账号"
+                android:textColor="#333333"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/both_stroke_white">
+
+        <TextView
+            android:id="@+id/gateway_tdcode_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:text="网关二维码"
+            android:textColor="#333333"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/to_gateway_tdcode_fragment"
+            android:layout_width="12dp"
+            android:layout_height="22dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/arrow_right" />
+    </RelativeLayout>
+</LinearLayout>

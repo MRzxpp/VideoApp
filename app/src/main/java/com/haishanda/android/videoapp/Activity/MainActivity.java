@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.haishanda.android.videoapp.Fragement.BoatFragment;
 import com.haishanda.android.videoapp.Fragement.MonitorFragment;
 import com.haishanda.android.videoapp.Fragement.MyFragment;
-import com.haishanda.android.videoapp.Fragement.PhotosFragment;
+import com.haishanda.android.videoapp.Fragement.PhotosIndexFragment;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.BindColor;
@@ -109,8 +109,8 @@ public class MainActivity extends FragmentActivity {
                 break;
             }
             case (R.id.to_photos_fragment): {
-                PhotosFragment photosFragment = new PhotosFragment();
-                fragmentTransaction.replace(R.id.fragment_main, photosFragment);
+                PhotosIndexFragment photosIndexFragment = new PhotosIndexFragment();
+                fragmentTransaction.replace(R.id.fragment_main, photosIndexFragment);
                 lastPickedText.setTextColor(textGrey);
                 setChangedImg();
                 photosText.setTextColor(textBlue);

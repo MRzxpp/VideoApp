@@ -17,4 +17,6 @@
     <string name="savenewpwd">保存新密码</string>
     <string name="nextstep">下一步</string>
     <string name="warning">监控开启时，有人上船偷盗，设备会自动发出警告音，吓退小偷，同时会自动拍照，留存证据，保障您的渔船安全！</string>
+    <string name="config">设置</string>
+    <string name="delete_tip">删除本船后您将无法继续监控“苏南渔0578”再次监控需要重新添加该船只。确定删除船舶“苏南渔业0578”，请输入账号密码。</string>
 </resources>

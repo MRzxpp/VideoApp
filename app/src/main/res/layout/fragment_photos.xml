@@ -5,54 +5,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/titleBlue">
-
-        <TextView
-            android:id="@+id/photos_fragment_title_photos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="108.5dp"
-            android:text="相册"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/white_line1"
-            android:layout_width="50dp"
-            android:layout_height="3dp"
-            android:layout_below="@id/photos_fragment_title_photos"
-            android:layout_marginLeft="101.5dp"
-            android:layout_marginTop="10dp"
-            android:src="@color/white" />
-
-        <TextView
-            android:id="@+id/photos_fragment_title_videos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="108dp"
-            android:text="视频"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/white_line2"
-            android:layout_width="50dp"
-            android:layout_height="3dp"
-            android:layout_below="@id/photos_fragment_title_videos"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="101dp"
-            android:layout_marginTop="10dp"
-            android:src="@color/white"
-            android:visibility="invisible" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
+        android:id="@+id/photos_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -76,5 +29,4 @@
             android:textColor="@color/textGrey"
             android:textSize="14sp" />
     </RelativeLayout>
-
 </LinearLayout>

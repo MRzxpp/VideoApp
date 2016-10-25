@@ -1,26 +1,21 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
-import android.graphics.PixelFormat;
-import android.media.AudioManager;
+
 import android.os.Bundle;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.haishanda.android.videoapp.R;
 
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
-import io.vov.vitamio.MediaPlayer.OnCompletionListener;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
-import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
+
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.widget.MediaController;
@@ -57,7 +52,11 @@ public class PlayVideoActivity extends Activity {
     @OnClick(R.id.printscreen_btn)
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
-        System.out.print("aaaaa");
+        testPrint.setImageBitmap(videoView.getCurrentFrame());
     }
 
+    @OnClick(R.id.record_btn)
+    public void recordVideo(View view) {
+        Log.i(TAG, "recordVideo");
+    }
 }

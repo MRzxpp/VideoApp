@@ -1,11 +1,5 @@
-package com.haishanda.android.videoapp.Activity;
-
-/**
- * Created by Zhongsz on 2016/10/24.
- */
-
 /*
- * Copyright (C) 2013 yixia.com
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,192 +14,219 @@ package com.haishanda.android.videoapp.Activity;
  * limitations under the License.
  */
 
+package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
-import android.graphics.PixelFormat;
-import android.media.AudioManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
+import android.media.MediaRecorder;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
-
+import android.widget.ToggleButton;
 
 import com.haishanda.android.videoapp.R;
 
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
-import io.vov.vitamio.MediaPlayer.OnCompletionListener;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
-import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
-import io.vov.vitamio.Vitamio;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TestActivity extends Activity implements OnBufferingUpdateListener, OnCompletionListener, OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
+public class TestActivity extends Activity {
+    private static final String TAG = "MediaProjectionDemo";
+    private static final int PERMISSION_CODE = 1;
+    private static final List<Resolution> RESOLUTIONS = new ArrayList<Resolution>() {{
+        add(new Resolution(640, 360));
+        add(new Resolution(960, 540));
+        add(new Resolution(1366, 768));
+        add(new Resolution(1600, 900));
+    }};
 
-    private static final String TAG = "MediaPlayerDemo";
-    private int mVideoWidth=720;
-    private int mVideoHeight=1280;
-    private MediaPlayer mMediaPlayer;
-    private SurfaceView mPreview;
-    private SurfaceHolder holder;
-    private String path;
-    private Bundle extras;
-    private static final String MEDIA = "media";
-    private static final int LOCAL_AUDIO = 1;
-    private static final int STREAM_AUDIO = 2;
-    private static final int RESOURCES_AUDIO = 3;
-    private static final int LOCAL_VIDEO = 4;
-    private static final int STREAM_VIDEO = 5;
-    private boolean mIsVideoSizeKnown = false;
-    private boolean mIsVideoReadyToBePlayed = false;
+    private int mScreenDensity;
+    private MediaProjectionManager mProjectionManager;
 
-    /**
-     * Called when the activity is first created.
-     */
+    private int mDisplayWidth;
+    private int mDisplayHeight;
+    private boolean mScreenSharing;
+
+    private MediaProjection mMediaProjection;
+    private VirtualDisplay mVirtualDisplay;
+    private Surface mSurface;
+    private SurfaceView mSurfaceView;
+    private ToggleButton mToggle;
+
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        Vitamio.isInitialized(getApplicationContext());
-        setContentView(R.layout.mediaplayer_2);
-        mPreview = (SurfaceView) findViewById(R.id.surface);
-        holder = mPreview.getHolder();
-        holder.addCallback(this);
-        holder.setFormat(PixelFormat.RGBA_8888);
-        extras = getIntent().getExtras();
-        Log.d(TAG, "extras=======");
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.media_projection);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        mScreenDensity = metrics.densityDpi;
 
+        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
+        mSurface = mSurfaceView.getHolder().getSurface();
+        mProjectionManager =
+                (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+        ArrayAdapter<Resolution> arrayAdapter = new ArrayAdapter<Resolution>(
+                this, android.R.layout.simple_list_item_1, RESOLUTIONS);
+        Spinner s = (Spinner) findViewById(R.id.spinner);
+        s.setAdapter(arrayAdapter);
+        s.setOnItemSelectedListener(new ResolutionSelector());
+        s.setSelection(0);
+
+        mToggle = (ToggleButton) findViewById(R.id.screen_sharing_toggle);
     }
 
-    private void playVideo(Integer Media) {
-        doCleanUp();
-        try {
-            switch (Media) {
-                case LOCAL_VIDEO:
-                /*
-				 * TODO: Set the path variable to a local media file path.
-				 */
-                    path = "http://www.modrails.com/videos/passenger_nginx.mov";
-                    if (path == "") {
-                        // Tell the user to provide a media file URL.
-                        Toast.makeText(TestActivity.this, "Please edit MediaPlayerDemo_Video Activity, " + "and set the path variable to your media file path." + " Your media file must be stored on sdcard.", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    break;
-                case STREAM_VIDEO:
-				/*
-				 * TODO: Set path variable to progressive streamable mp4 or
-				 * 3gpp format URL. Http protocol should be used.
-				 * Mediaplayer can only play "progressive streamable
-				 * contents" which basically means: 1. the movie atom has to
-				 * precede all the media data atoms. 2. The clip has to be
-				 * reasonably interleaved.
-				 *
-				 */
-                    path = "http://www.modrails.com/videos/passenger_nginx.mov";
-                    if (path == "") {
-                        // Tell the user to provide a media file URL.
-                        Toast.makeText(TestActivity.this, "Please edit MediaPlayerDemo_Video Activity," + " and set the path variable to your media file URL.", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    break;
-
-            }
-
-
-            // Create a new media player and set the listeners
-            mMediaPlayer = new MediaPlayer(this);
-            mMediaPlayer.setDataSource(path);
-            mMediaPlayer.setDisplay(holder);
-            mMediaPlayer.prepareAsync();
-            mMediaPlayer.setOnBufferingUpdateListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnVideoSizeChangedListener(this);
-            setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        } catch (Exception e) {
-            Log.e(TAG, "error: " + e.getMessage(), e);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMediaProjection != null) {
+            mMediaProjection.stop();
+            mMediaProjection = null;
         }
     }
 
-    public void onBufferingUpdate(MediaPlayer arg0, int percent) {
-        // Log.d(TAG, "onBufferingUpdate percent:" + percent);
-
-    }
-
-    public void onCompletion(MediaPlayer arg0) {
-        Log.d(TAG, "onCompletion called");
-    }
-
-    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        Log.v(TAG, "onVideoSizeChanged called");
-        if (width == 0 || height == 0) {
-            Log.e(TAG, "invalid video width(" + width + ") or height(" + height + ")");
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != PERMISSION_CODE) {
+            Log.e(TAG, "Unknown request code: " + requestCode);
             return;
         }
-        mIsVideoSizeKnown = true;
-        mVideoWidth = width;
-        mVideoHeight = height;
-        if (mIsVideoReadyToBePlayed && mIsVideoSizeKnown) {
-            startVideoPlayback();
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this,
+                    "User denied screen sharing permission", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
+        mMediaProjection.registerCallback(new MediaProjectionCallback(), null);
+        mVirtualDisplay = createVirtualDisplay();
+    }
+
+    public void onToggleScreenShare(View view) {
+        if (((ToggleButton) view).isChecked()) {
+            shareScreen();
+        } else {
+            stopScreenSharing();
         }
     }
 
-    public void onPrepared(MediaPlayer mediaplayer) {
-        Log.d(TAG, "onPrepared called");
-        mIsVideoReadyToBePlayed = true;
-        if (mIsVideoReadyToBePlayed && mIsVideoSizeKnown) {
-            startVideoPlayback();
+    private void shareScreen() {
+        mScreenSharing = true;
+        if (mSurface == null) {
+            return;
+        }
+        if (mMediaProjection == null) {
+            startActivityForResult(mProjectionManager.createScreenCaptureIntent(),
+                    PERMISSION_CODE);
+            return;
+        }
+        mVirtualDisplay = createVirtualDisplay();
+    }
+
+    private void stopScreenSharing() {
+        if (mToggle.isChecked()) {
+            mToggle.setChecked(false);
+        }
+        mScreenSharing = false;
+        if (mVirtualDisplay != null) {
+            mVirtualDisplay.release();
+            mVirtualDisplay = null;
         }
     }
 
-    public void surfaceChanged(SurfaceHolder surfaceholder, int i, int j, int k) {
-        Log.d(TAG, "surfaceChanged called");
-        playVideo(extras.getInt(MEDIA));
+    private VirtualDisplay createVirtualDisplay() {
+        return mMediaProjection.createVirtualDisplay("ScreenSharingDemo",
+                mDisplayWidth, mDisplayHeight, mScreenDensity,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                mSurface, null /*Callbacks*/, null /*Handler*/);
     }
 
-    public void surfaceDestroyed(SurfaceHolder surfaceholder) {
-        Log.d(TAG, "surfaceDestroyed called");
+    private void resizeVirtualDisplay() {
+        if (mVirtualDisplay == null) {
+            return;
+        }
+        mVirtualDisplay.resize(mDisplayWidth, mDisplayHeight, mScreenDensity);
     }
 
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated called");
-        playVideo(extras.getInt(MEDIA));
+    private class ResolutionSelector implements Spinner.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+            Resolution r = (Resolution) parent.getItemAtPosition(pos);
+            ViewGroup.LayoutParams lp = mSurfaceView.getLayoutParams();
+            if (getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE) {
+                mDisplayHeight = r.y;
+                mDisplayWidth = r.x;
+            } else {
+                mDisplayHeight = r.x;
+                mDisplayWidth = r.y;
+            }
+            lp.height = mDisplayHeight;
+            lp.width = mDisplayWidth;
+            mSurfaceView.setLayoutParams(lp);
+        }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) { /* Ignore */ }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        releaseMediaPlayer();
-        doCleanUp();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        releaseMediaPlayer();
-        doCleanUp();
-    }
-
-    private void releaseMediaPlayer() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+    private class MediaProjectionCallback extends MediaProjection.Callback {
+        @Override
+        public void onStop() {
+            mMediaProjection = null;
+            stopScreenSharing();
         }
     }
 
-    private void doCleanUp() {
-        mVideoWidth = 0;
-        mVideoHeight = 0;
-        mIsVideoReadyToBePlayed = false;
-        mIsVideoSizeKnown = false;
+    private class SurfaceCallbacks implements SurfaceHolder.Callback {
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            mDisplayWidth = width;
+            mDisplayHeight = height;
+            resizeVirtualDisplay();
+        }
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            mSurface = holder.getSurface();
+            if (mScreenSharing) {
+                shareScreen();
+            }
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            if (!mScreenSharing) {
+                stopScreenSharing();
+            }
+        }
     }
 
-    private void startVideoPlayback() {
-        Log.v(TAG, "startVideoPlayback");
-        holder.setFixedSize(mVideoWidth, mVideoHeight);
-        mMediaPlayer.start();
+    private static class Resolution {
+        int x;
+        int y;
+
+        public Resolution(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return x + "x" + y;
+        }
     }
 }
-

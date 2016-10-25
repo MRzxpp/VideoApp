@@ -8,15 +8,18 @@ import android.view.ViewGroup;
 
 import com.haishanda.android.videoapp.R;
 
+import butterknife.ButterKnife;
+
 /**
- * Created by Zhongsz on 2016/10/14.
+ * Created by Zhongsz on 2016/10/25.
  */
 
 public class PhotosFragment extends Fragment {
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_photos, container, false);
+        View view = inflater.inflate(R.layout.fragment_photos, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 }

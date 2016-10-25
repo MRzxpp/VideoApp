@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/titleBlue">
+
+        <TextView
+            android:id="@+id/add_boat_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="添加船舶"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:id="@+id/back_to_fragment_boat_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/back" />
+
+        <ImageView
+            android:id="@+id/add_boat_scan_tdcode_btn"
+            android:layout_width="22dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/scan_tdcode" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="26dp"
+        android:layout_marginTop="27dp"
+        android:text="右上角扫描设备二维码，免输编号。"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="18dp">
+
+        <RelativeLayout
+            android:id="@+id/layout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/both_stroke_white">
+
+            <EditText
+                android:id="@+id/boat_number"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="14dp"
+                android:hint="请输入船舶设备编号"
+                android:textColor="#333333"
+                android:textColorHint="@color/textGrey"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout1"
+            android:background="@drawable/both_stroke_white">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="14dp"
+                android:hint="请输入绑定密码"
+                android:inputType="textPassword"
+                android:textColorHint="@color/textGrey"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/confirm_add_boat_btn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/corners_blue_btn"
+        android:text="确认添加"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

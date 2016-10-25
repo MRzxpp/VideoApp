@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="112dp"
+        android:src="@drawable/confirm_delete_boat" />
+
+    <TextView
+        android:id="@+id/delete_boat_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="185dp"
+        android:text="是否保留“苏南渔0578”的照片和视频？"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/save_video_and_photos_btn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/delete_boat_tip"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="163dp"
+        android:background="@drawable/corners_blue_btn"
+        android:text="是，保留"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/delete_video_and_photos_btn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/save_video_and_photos_btn"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/corners_white_btn"
+        android:text="否，删除"
+        android:textColor="#E13E3E"
+        android:textSize="16sp" />
+
+</RelativeLayout>
