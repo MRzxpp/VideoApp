@@ -18,7 +18,6 @@ package com.google.zxing.client.android;
 
 import android.net.Uri;
 import com.google.zxing.Result;
-import com.google.zxing.client.android.result.ResultHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -52,17 +51,6 @@ final class ScanFromWebPageManager {
 
 	boolean isScanFromWebPage() {
 		return returnUrlTemplate != null;
-	}
-
-	String buildReplyURL(Result rawResult, ResultHandler resultHandler) {
-		String result = returnUrlTemplate;
-		result = replace(CODE_PLACEHOLDER, returnRaw ? rawResult.getText() : resultHandler.getDisplayContents(),
-				result);
-		result = replace(RAW_CODE_PLACEHOLDER, rawResult.getText(), result);
-		result = replace(FORMAT_PLACEHOLDER, rawResult.getBarcodeFormat().toString(), result);
-		result = replace(TYPE_PLACEHOLDER, resultHandler.getType().toString(), result);
-		result = replace(META_PLACEHOLDER, String.valueOf(rawResult.getResultMetadata()), result);
-		return result;
 	}
 
 	private static String replace(CharSequence placeholder, CharSequence with, String pattern) {

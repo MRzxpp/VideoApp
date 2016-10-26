@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/about_boat_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
@@ -97,7 +98,7 @@
             android:textSize="15sp" />
 
         <ImageView
-            android:id="@+id/to_gateway_tdcode_fragment"
+            android:id="@+id/to_gateway_qrcode_fragment"
             android:layout_width="12dp"
             android:layout_height="22dp"
             android:layout_alignParentRight="true"

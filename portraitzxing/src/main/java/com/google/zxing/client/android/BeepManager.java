@@ -51,9 +51,6 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
 	}
 
 	synchronized void updatePrefs() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-		playBeep = shouldBeep(prefs, activity);
-		vibrate = prefs.getBoolean(PreferencesActivity.KEY_VIBRATE, false);
 		if (playBeep && mediaPlayer == null) {
 			// The volume on STREAM_SYSTEM is not adjustable, and users found it
 			// too loud,
@@ -73,17 +70,7 @@ final class BeepManager implements MediaPlayer.OnErrorListener, Closeable {
 		}
 	}
 
-	private static boolean shouldBeep(SharedPreferences prefs, Context activity) {
-		boolean shouldPlayBeep = prefs.getBoolean(PreferencesActivity.KEY_PLAY_BEEP, true);
-		if (shouldPlayBeep) {
-			// See if sound settings overrides this
-			AudioManager audioService = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
-			if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
-				shouldPlayBeep = false;
-			}
-		}
-		return shouldPlayBeep;
-	}
+
 
 	private MediaPlayer buildMediaPlayer(Context activity) {
 		MediaPlayer mediaPlayer = new MediaPlayer();

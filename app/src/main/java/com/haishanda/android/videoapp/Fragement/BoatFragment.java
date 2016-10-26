@@ -12,8 +12,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.zxing.client.android.CaptureActivity;
+import com.haishanda.android.videoapp.Activity.AddBoatActivity;
+import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -49,8 +54,6 @@ public class BoatFragment extends Fragment {
         list.add("我的相册2");
         list.add("监控");
         list.add("我的账户");
-//        myTextView = (TextView)findViewById(R.id.TextView_city);
-//        mySpinner = (Spinner) findViewById(R.id.spinner_index_choices);
         //第二步：为下拉列表定义一个适配器，这里就用到里前面定义的list。
         adapter = new ArrayAdapter<String>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, list);
         //第三步：为适配器设置下拉列表下拉时的菜单样式。
@@ -94,17 +97,15 @@ public class BoatFragment extends Fragment {
 
     @OnClick(R.id.add_boat_btn)
     public void addBoat(View view) {
-        CamerasFragment camerasFragment = new CamerasFragment();
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.cameras, camerasFragment);
-        fragmentTransaction.commit();
+        Intent intent = new Intent(getActivity(), AddBoatActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.boat_config_btn)
-    public void testZxing(View view) {
-        Intent intent = new Intent(getActivity(), CaptureActivity.class);
+    public void skipToBoatConfigActivity(View view) {
+        Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
         startActivity(intent);
     }
+
 
 }

@@ -30,7 +30,7 @@
             android:src="@drawable/back" />
 
         <ImageView
-            android:id="@+id/add_boat_scan_tdcode_btn"
+            android:id="@+id/add_boat_scan_qrcode_btn"
             android:layout_width="22dp"
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
@@ -79,6 +79,7 @@
             android:background="@drawable/both_stroke_white">
 
             <EditText
+                android:id="@+id/boat_password"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="14dp"
