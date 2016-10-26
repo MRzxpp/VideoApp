@@ -1,5 +1,6 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,10 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 
-import com.haishanda.android.videoapp.Activity.MainActivity;
+import com.google.zxing.client.android.CaptureActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 
 /**
  * Created by Zhongsz on 2016/10/14.
@@ -98,6 +99,12 @@ public class BoatFragment extends Fragment {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.cameras, camerasFragment);
         fragmentTransaction.commit();
+    }
+
+    @OnClick(R.id.boat_config_btn)
+    public void testZxing(View view) {
+        Intent intent = new Intent(getActivity(), CaptureActivity.class);
+        startActivity(intent);
     }
 
 }

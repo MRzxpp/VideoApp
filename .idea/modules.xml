@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/VideoApp.iml" filepath="$PROJECT_DIR$/VideoApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/portraitzxing/portraitzxing.iml" filepath="$PROJECT_DIR$/portraitzxing/portraitzxing.iml" />
       <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zxinglibrary/zxinglibrary.iml" filepath="$PROJECT_DIR$/zxinglibrary/zxinglibrary.iml" />
     </modules>
   </component>
 </project>

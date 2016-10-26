@@ -30,7 +30,7 @@
             android:scrollbarSize="18dp" />
 
         <ImageView
-            android:id="@+id/settings"
+            android:id="@+id/boat_config_btn"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
