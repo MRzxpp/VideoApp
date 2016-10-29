@@ -3,9 +3,12 @@ package com.haishanda.android.videoapp.Activity;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
+import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
@@ -24,6 +28,8 @@ import com.hyphenate.chat.EMMessage;
 
 import java.util.List;
 
+import butterknife.BindColor;
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -43,6 +49,14 @@ public class LoginActivity extends Activity {
     TextView Eye;
     @BindView(R.id.clear3)
     ImageView clear3;
+    @BindView(R.id.login_btn)
+    Button loginBtn;
+    @BindColor(R.color.white)
+    int white;
+    @BindDrawable(R.drawable.corners_blue_btn)
+    Drawable blueBtn;
+    @BindDrawable(R.drawable.corners_grey_btn)
+    Drawable greyBtn;
 
 
     @Override
@@ -51,39 +65,10 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         clear3.setVisibility(View.INVISIBLE);
+        loginBtn.setEnabled(false);
         password.addTextChangedListener(new ClearBtnListener(clear3, password));
+        password.addTextChangedListener(new LoginListener(username, password, loginBtn, blueBtn, greyBtn, white, white));
 
-        EMMessageListener msgListener = new EMMessageListener() {
-
-            @Override
-            public void onMessageReceived(List<EMMessage> messages) {
-                //收到消息
-                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
-                notificationManager.notify(1, notificationUtil.initNotify().build());
-            }
-
-            @Override
-            public void onCmdMessageReceived(List<EMMessage> messages) {
-                //收到透传消息
-            }
-
-            @Override
-            public void onMessageReadAckReceived(List<EMMessage> messages) {
-                //收到已读回执
-            }
-
-            @Override
-            public void onMessageDeliveryAckReceived(List<EMMessage> message) {
-                //收到已送达回执
-            }
-
-            @Override
-            public void onMessageChanged(EMMessage message, Object change) {
-                //消息状态变动
-            }
-        };
-        EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
 
     @OnClick(R.id.fast_signup_btn)
@@ -127,6 +112,39 @@ public class LoginActivity extends Activity {
                                         EMClient.getInstance().groupManager().loadAllGroups();
                                         EMClient.getInstance().chatManager().loadAllConversations();
                                         Log.d("main", "登录聊天服务器成功！");
+
+                                        EMMessageListener msgListener = new EMMessageListener() {
+
+                                            @Override
+                                            public void onMessageReceived(List<EMMessage> messages) {
+                                                //收到消息
+                                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                                NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
+                                                notificationManager.notify(1, notificationUtil.initNotify().build());
+                                            }
+
+                                            @Override
+                                            public void onCmdMessageReceived(List<EMMessage> messages) {
+                                                //收到透传消息
+                                            }
+
+                                            @Override
+                                            public void onMessageReadAckReceived(List<EMMessage> messages) {
+                                                //收到已读回执
+                                            }
+
+                                            @Override
+                                            public void onMessageDeliveryAckReceived(List<EMMessage> message) {
+                                                //收到已送达回执
+                                            }
+
+                                            @Override
+                                            public void onMessageChanged(EMMessage message, Object change) {
+                                                //消息状态变动
+                                            }
+                                        };
+                                        EMClient.getInstance().chatManager().addMessageListener(msgListener);
+
                                         Intent intent = new Intent();
                                         intent.setClass(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
@@ -158,7 +176,7 @@ public class LoginActivity extends Activity {
     @OnClick(R.id.back_to_index_btn)
     public void returnLastPage(View view) {
         Intent intent = new Intent();
-        intent.setClass(LoginActivity.this, MainActivity.class);
+        intent.setClass(LoginActivity.this, WelcomeActivity.class);
         startActivity(intent);
     }
 
@@ -178,6 +196,5 @@ public class LoginActivity extends Activity {
     public void clearPassword(View view) {
         password.setText("");
     }
-
 
 }

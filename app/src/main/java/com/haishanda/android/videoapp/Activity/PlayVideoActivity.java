@@ -2,14 +2,23 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
+import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,11 +41,13 @@ public class PlayVideoActivity extends Activity {
     ImageView testPrint;
 
     private static final String TAG = "PlayVideoActivity";
+    private ImageMessageDao imageMessageDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
+        imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
 
@@ -49,10 +60,12 @@ public class PlayVideoActivity extends Activity {
         videoView.requestFocus();//取得焦点
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @OnClick(R.id.printscreen_btn)
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
-        testPrint.setImageBitmap(videoView.getCurrentFrame());
+        SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), "aaa");
+        List<ImageMessage> list = imageMessageDao.loadAll();
     }
 
     @OnClick(R.id.record_btn)

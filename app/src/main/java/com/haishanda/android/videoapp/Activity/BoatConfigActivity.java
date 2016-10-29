@@ -7,13 +7,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.haishanda.android.videoapp.Fragement.AboutBoatFragment;
 import com.haishanda.android.videoapp.Fragement.CamerasFragment;
+import com.haishanda.android.videoapp.Fragement.DeleteBoatFragment;
 import com.haishanda.android.videoapp.Fragement.RenameBoatFragment;
 import com.haishanda.android.videoapp.Fragement.ResetBoatPasswordFragment;
 import com.haishanda.android.videoapp.R;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -22,6 +25,7 @@ import butterknife.OnClick;
  */
 
 public class BoatConfigActivity extends FragmentActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +39,7 @@ public class BoatConfigActivity extends FragmentActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.to_about_boat_fragment)
+    @OnClick(R.id.about_boat_layout)
     public void skipToAboutBoatFragment() {
         AboutBoatFragment aboutBoatFragment = new AboutBoatFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -44,7 +48,7 @@ public class BoatConfigActivity extends FragmentActivity {
         fragmentTransaction.commit();
     }
 
-    @OnClick(R.id.to_rename_boat_fragment)
+    @OnClick(R.id.rename_boat_layout)
     public void skipToRenameBoatFragment() {
         RenameBoatFragment renameBoatFragment = new RenameBoatFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -53,17 +57,22 @@ public class BoatConfigActivity extends FragmentActivity {
         fragmentTransaction.commit();
     }
 
-    @OnClick(R.id.to_resetpwd_boat_fragment)
+    @OnClick(R.id.reset_boat_pwd_layout)
     public void skipToResetPwdBoatFragment() {
         ResetBoatPasswordFragment resetBoatPasswordFragment = new ResetBoatPasswordFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.boat_config_layout, resetBoatPasswordFragment);
         fragmentTransaction.commit();
+
     }
 
     @OnClick(R.id.delete_boat_btn)
     public void deleteBoat() {
-        //Todo delete boat function
+        DeleteBoatFragment deleteBoatFragment = new DeleteBoatFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.boat_config_layout, deleteBoatFragment);
+        fragmentTransaction.commit();
     }
 }

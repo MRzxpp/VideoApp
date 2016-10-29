@@ -16,6 +16,9 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
+import com.haishanda.android.videoapp.Listener.EditChangedListener;
+import com.haishanda.android.videoapp.Listener.FetchCodeListener;
+import com.haishanda.android.videoapp.Listener.SignUpListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
@@ -51,6 +54,8 @@ public class SignupActivity extends Activity {
     TextView Eye2;
     @BindView(R.id.get_fetch_code)
     Button getFetchCode;
+    @BindView(R.id.signup_button)
+    Button signUpBtn;
     @BindView(R.id.clear1)
     ImageView clear1;
     @BindView(R.id.clear2)
@@ -69,10 +74,14 @@ public class SignupActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
+        getFetchCode.setEnabled(false);
+        signUpBtn.setEnabled(false);
         clear1.setVisibility(View.INVISIBLE);
         clear2.setVisibility(View.INVISIBLE);
         password.addTextChangedListener(new ClearBtnListener(clear1, password));
         rePassword.addTextChangedListener(new ClearBtnListener(clear2, rePassword));
+        phoneNumber.addTextChangedListener(new FetchCodeListener(phoneNumber, getFetchCode, blueBtn, greyBtn, white, white));
+        code.addTextChangedListener(new SignUpListener(phoneNumber, password, rePassword, code, signUpBtn, blueBtn, greyBtn, white, white));
     }
 
     @OnClick(R.id.back_to_login_btn)

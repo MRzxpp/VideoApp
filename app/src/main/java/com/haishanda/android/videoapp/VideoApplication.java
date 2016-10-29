@@ -2,7 +2,10 @@ package com.haishanda.android.videoapp;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.haishanda.android.videoapp.greendao.gen.DaoMaster;
+import com.haishanda.android.videoapp.greendao.gen.DaoSession;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
@@ -11,8 +14,12 @@ import com.hyphenate.chat.EMOptions;
  */
 
 public class VideoApplication extends Application {
-    public static Context applicationContext;
-//    private static VideoApplication instance;
+    private static VideoApplication application;
+    public static Context instance;
+    private DaoMaster.DevOpenHelper mHelper;
+    private SQLiteDatabase db;
+    private DaoMaster mDaoMaster;
+    private DaoSession mDaoSession;
     // login user name
 //    public final String PREF_USERNAME = "username";
 
@@ -23,25 +30,42 @@ public class VideoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        applicationContext = this;
-        EMOptions options = new EMOptions();
-        options.setAcceptInvitationAlways(false);
-        options.setRequireAck(true);
-        options.setRequireDeliveryAck(true);
-// 默认添加好友时，是不需要验证的，改成需要验证
-        options.setAcceptInvitationAlways(false);
-//初始化
-        EMClient.getInstance().init(VideoApplication.applicationContext, options);
-//在做打包混淆时，关闭debug模式，避免消耗不必要的资源
-        EMClient.getInstance().setDebugMode(true);
+        application = this;
+        setDatabase();
     }
 
-//    public static VideoApplication getInstance() {
-//        return instance;
-//    }
+    public static Context getInstance() {
+        return instance;
+    }
 
-    @Override
-    protected void attachBaseContext(Context base) {
+    public static VideoApplication getApplication() {
+        return application;
+    }
 
+    /**
+     * 设置greenDao
+     */
+
+    private void setDatabase() {
+
+        // 通过DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的SQLiteOpenHelper 对象。
+        // 可能你已经注意到了，你并不需要去编写「CREATE TABLE」这样的 SQL 语句，因为greenDAO 已经帮你做了。
+        // 注意：默认的DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。
+        // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。
+        mHelper = new DaoMaster.DevOpenHelper(this, "notes-db", null);
+        db = mHelper.getWritableDatabase();
+        // 注意：该数据库连接属于DaoMaster，所以多个 Session 指的是相同的数据库连接。
+        mDaoMaster = new DaoMaster(db);
+        mDaoSession = mDaoMaster.newSession();
+
+    }
+
+    public DaoSession getDaoSession() {
+        return mDaoSession;
+    }
+
+
+    public SQLiteDatabase getDb() {
+        return db;
     }
 }

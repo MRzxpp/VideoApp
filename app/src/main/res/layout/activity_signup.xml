@@ -21,6 +21,7 @@
             android:textSize="18sp" />
 
         <ImageView
+            android:layout_centerVertical="true"
             android:id="@+id/back_to_login_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -235,7 +236,7 @@
                 <EditText
                     android:id="@+id/message_text"
                     style="@style/font_grey"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginLeft="13dp"

@@ -1,5 +1,6 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.ButterKnife;
@@ -27,13 +29,10 @@ public class ResetBoatPasswordFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.back_to_about_boat_btn)
+    @OnClick(R.id.back_to_boat_config_btn)
     public void backToAboutBoatFragment() {
-        AboutBoatFragment aboutBoatFragment = new AboutBoatFragment();
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.reset_password_layout, aboutBoatFragment);
-        fragmentTransaction.commit();
+        Intent intent=new Intent(getActivity(),BoatConfigActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.get_new_boat_pwd_btn)

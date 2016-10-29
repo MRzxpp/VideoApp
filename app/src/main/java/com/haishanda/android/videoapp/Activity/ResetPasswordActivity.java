@@ -18,6 +18,7 @@ import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -47,7 +48,7 @@ public class ResetPasswordActivity extends Activity {
         setContentView(R.layout.activity_resetpassword);
         ButterKnife.bind(this);
         savePasswordBtn.setEnabled(false);
-        resetPassword.addTextChangedListener(new EditChangedListener(resetPassword, savePasswordBtn, blueBtn, greyBtn, textGrey, white));
+        resetPassword.addTextChangedListener(new EditChangedListener(resetPassword, savePasswordBtn, blueBtn, greyBtn, white, white));
     }
 
     @OnClick(R.id.back_to_get_veri_btn)

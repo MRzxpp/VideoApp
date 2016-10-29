@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.zxing.client.android.CaptureActivity;
 import com.haishanda.android.videoapp.Activity.AddBoatActivity;
 import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
+import com.haishanda.android.videoapp.Activity.PlayVideoActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class BoatFragment extends Fragment {
 
     @OnClick(R.id.boat_config_btn)
     public void skipToBoatConfigActivity(View view) {
-        Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
+        Intent intent = new Intent(getActivity(), PlayVideoActivity.class);
         startActivity(intent);
     }
 

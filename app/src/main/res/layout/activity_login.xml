@@ -20,6 +20,7 @@
             android:textSize="18sp" />
 
         <ImageView
+            android:layout_centerVertical="true"
             android:id="@+id/back_to_index_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

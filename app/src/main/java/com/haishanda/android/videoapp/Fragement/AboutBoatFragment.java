@@ -28,16 +28,7 @@ public class AboutBoatFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.to_rename_boat_fragment)
-    public void skipToRenameBoatFragment() {
-        RenameBoatFragment renameBoatFragment = new RenameBoatFragment();
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.about_boat_page, renameBoatFragment);
-        fragmentTransaction.commit();
-    }
-
-    @OnClick(R.id.to_gateway_qrcode_fragment)
+    @OnClick(R.id.gateway_qrcode_layout)
     public void skipToGatewayQRCodeFragment() {
         QRCodeFragment qrCodeFragment = new QRCodeFragment();
         FragmentManager fragmentManager = getChildFragmentManager();
@@ -47,8 +38,8 @@ public class AboutBoatFragment extends Fragment {
     }
 
     @OnClick(R.id.back_to_config_btn)
-    public void backToConfigPage() {
-        Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
+    public void backToConfigPage(){
+        Intent intent=new Intent(getActivity(),BoatConfigActivity.class);
         startActivity(intent);
     }
 }

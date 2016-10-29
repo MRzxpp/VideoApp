@@ -21,7 +21,8 @@
             android:textSize="18dp" />
 
         <ImageView
-            android:id="@+id/back_to_fragment_boat_btn"
+            android:layout_centerVertical="true"
+            android:id="@+id/back_to_boat_fragment_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="13dp"
@@ -63,10 +64,13 @@
 
             <EditText
                 android:id="@+id/boat_number"
+                style="@style/font_grey"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="14dp"
+                android:background="@null"
                 android:hint="请输入船舶设备编号"
+                android:inputType="number"
                 android:textColor="#333333"
                 android:textColorHint="@color/textGrey"
                 android:textSize="14sp" />
@@ -80,9 +84,11 @@
 
             <EditText
                 android:id="@+id/boat_password"
+                style="@style/font_grey"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="14dp"
+                android:background="@null"
                 android:hint="请输入绑定密码"
                 android:inputType="textPassword"
                 android:textColorHint="@color/textGrey"
@@ -98,7 +104,7 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:layout_marginTop="15dp"
-        android:background="@drawable/corners_blue_btn"
+        android:background="@drawable/corners_grey_btn"
         android:text="确认添加"
         android:textColor="@color/white"
         android:textSize="16sp" />

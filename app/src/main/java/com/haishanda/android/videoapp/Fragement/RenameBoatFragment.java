@@ -1,5 +1,6 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.BindView;
@@ -39,8 +41,9 @@ public class RenameBoatFragment extends Fragment {
         //Todo save new name;
     }
 
-    @OnClick(R.id.back_to_about_boat_btn)
+    @OnClick(R.id.back_to_boat_config_btn)
     public void backToFrontPage() {
-        //Todo back to about page or config page
+        Intent intent=new Intent(getActivity(),BoatConfigActivity.class);
+        startActivity(intent);
     }
 }

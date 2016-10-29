@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
+    android:clickable="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -21,9 +22,10 @@
             android:textSize="18dp" />
 
         <ImageView
-            android:id="@+id/back_to_about_boat_btn"
+            android:id="@+id/back_to_boat_config_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginBottom="13dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="12dp"
@@ -51,21 +53,22 @@
 
         <EditText
             android:id="@+id/boat_new_name"
+            style="@style/font_grey"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="14dp"
+            android:background="@null"
             android:hint="请输入船舶名称"
-            android:textColor="@color/black"
             android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/clear5"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/clearpwd"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="14dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="14dp"
+            android:src="@drawable/clearpwd" />
     </RelativeLayout>
 
 </LinearLayout>
