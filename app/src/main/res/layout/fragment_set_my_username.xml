@@ -11,70 +11,56 @@
         android:background="@color/titleBlue">
 
         <TextView
+            android:id="@+id/my_center_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="船舶监控"
+            android:text="昵称"
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/monitor_config"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:id="@+id/back_to_my_center_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginBottom="13dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="12dp"
-            android:src="@drawable/settings" />
+            android:src="@drawable/back" />
 
         <TextView
-            android:id="@+id/edit_monitor_message"
+            android:id="@+id/save_my_username_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
-            android:text="编辑"
+            android:text="保存"
             android:textColor="#ffffff"
             android:textSize="18sp" />
+
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="86dp"
-        android:background="@color/white">
+        android:layout_height="48dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/both_stroke_white">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:text="船长："
-            android:textColor="#666666"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginTop="36dp"
-            android:text="当有报警时间发生时，这里将为您呈现最新的报警图片。"
-            android:textColor="#666666"
-            android:textSize="15sp" />
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="14dp"
+            android:hint="请输入昵称"
+            android:textColorHint="@color/textGrey"
+            android:textSize="14sp" />
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/monitor_messages"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
-
-    </ListView>
 
 </LinearLayout>

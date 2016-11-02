@@ -56,7 +56,7 @@ public class BoatFragment extends Fragment {
         list.add("监控");
         list.add("我的账户");
         //第二步：为下拉列表定义一个适配器，这里就用到里前面定义的list。
-        adapter = new ArrayAdapter<String>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, list);
+        adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, list);
         //第三步：为适配器设置下拉列表下拉时的菜单样式。
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //第四步：将适配器添加到下拉列表上

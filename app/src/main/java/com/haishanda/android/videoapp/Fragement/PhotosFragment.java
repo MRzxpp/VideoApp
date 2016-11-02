@@ -52,7 +52,7 @@ public class PhotosFragment extends Fragment {
         String[] imageUrls;
         List<String> imageUrlsCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {
-            imageUrlsCopy.add(i, "/sdcard/VideoApp/aaa/" + imagePaths.get(i).getImgPath());
+            imageUrlsCopy.add(i, "/sdcard/VideoApp/" + boatName + "/" + imagePaths.get(i).getImgPath());
         }
         imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
         if (imageUrls.length != 0) {

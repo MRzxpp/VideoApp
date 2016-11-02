@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/titleBlue">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="监控时间段"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/back_to_monitor_config_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:id="@+id/save_monitor_time_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:text="保存"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="296dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="在下面的时间段中，选择您需要监控船舶的时间段，设备将开始自动帮您看守船舶。"
+            android:textColor="#666666"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="255dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:text="开始时间"
+            android:textColor="@color/textBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="70dp"
+            android:layout_marginTop="10dp"
+            android:text="结束时间"
+            android:textColor="@color/textBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="至"
+            android:textColor="@color/textBlue"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/next_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:background="#FF0000"
+            android:text="第二天"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <com.haishanda.android.videoapp.Views.PickerView
+            android:id="@+id/starttime_hour"
+            android:layout_width="36dp"
+            android:layout_height="96dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="90dp"
+            android:text=":"
+            android:textColor="#333333"
+            android:textSize="32sp" />
+
+        <com.haishanda.android.videoapp.Views.PickerView
+            android:id="@+id/starttime_minute"
+            android:layout_width="36dp"
+            android:layout_height="96dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="110dp" />
+
+        <com.haishanda.android.videoapp.Views.PickerView
+            android:id="@+id/endtime_hour"
+            android:layout_width="36dp"
+            android:layout_height="96dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="110dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="90dp"
+            android:text=":"
+            android:textColor="#333333"
+            android:textSize="32sp" />
+
+        <com.haishanda.android.videoapp.Views.PickerView
+            android:id="@+id/endtime_minute"
+            android:layout_width="36dp"
+            android:layout_height="96dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

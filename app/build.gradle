@@ -56,6 +56,7 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'org.greenrobot:greendao:3.2.0'
     compile'org.greenrobot:greendao-generator:3.2.0'
+    compile 'com.orhanobut:dialogplus:1.11@aar'
     compile files('libs/hyphenatechat_3.1.5.jar')
     compile project(':vitamio')
     compile project(':portraitzxing')
