@@ -77,9 +77,10 @@ public class GetVerificationActivity extends Activity {
 
     @OnClick(R.id.back_to_login_btn2)
     public void returnLastPage(View view) {
-        Intent intent = new Intent();
-        intent.setClass(GetVerificationActivity.this, LoginActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(GetVerificationActivity.this, LoginActivity.class);
+//        startActivity(intent);
+        this.finish();
     }
 
     @OnClick(R.id.get_code_btn)
@@ -108,6 +109,11 @@ public class GetVerificationActivity extends Activity {
                     }
 
                 });
+    }
 
+    @OnClick(R.id.meet_problem)
+    public void skipToProblemPage(View view) {
+        Intent intent = new Intent(GetVerificationActivity.this, ProblemActivity.class);
+        startActivity(intent);
     }
 }

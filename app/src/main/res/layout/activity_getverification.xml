@@ -136,7 +136,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/meet_question"
+            android:id="@+id/meet_problem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"

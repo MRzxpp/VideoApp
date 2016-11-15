@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.Listener.LoginListener;
@@ -90,7 +91,7 @@ public class LoginActivity extends Activity {
             ApiManage.getInstence().getUserApiService().loginAction(username.getText().toString(), password.getText().toString())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<SmartResult>() {
+                    .subscribe(new Observer<SmartResult<UserBean>>() {
                         @Override
                         public void onCompleted() {
                             Log.i("info", "登录结束");
@@ -102,11 +103,11 @@ public class LoginActivity extends Activity {
                         }
 
                         @Override
-                        public void onNext(SmartResult smartResult) {
+                        public void onNext(SmartResult<UserBean> smartResult) {
                             if (smartResult.getCode() != 1) {
                                 Toast.makeText(LoginActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT).show();
                             } else {
-                                EMClient.getInstance().login("appmonitor_1", username.getText().toString(), new EMCallBack() {//回调
+                                EMClient.getInstance().login("appmonitor_"+String.valueOf(smartResult.getData().getId()), username.getText().toString(), new EMCallBack() {//回调
                                     @Override
                                     public void onSuccess() {
                                         EMClient.getInstance().groupManager().loadAllGroups();
@@ -175,9 +176,7 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.back_to_index_btn)
     public void returnLastPage(View view) {
-        Intent intent = new Intent();
-        intent.setClass(LoginActivity.this, WelcomeActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 
     @OnClick(R.id.forget_password_btn)

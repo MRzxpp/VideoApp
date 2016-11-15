@@ -10,8 +10,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.R;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,12 +33,14 @@ public class PhotosAdapter extends ArrayAdapter {
     private LayoutInflater inflater;
 
     private String[] imagePath;
+    private String boatName;
 
-    public PhotosAdapter(Context context, String[] imagePath) {
+    public PhotosAdapter(Context context, String[] imagePath, String boatName) {
         super(context, R.layout.adapter_photos, imagePath);
 
         this.context = context;
         this.imagePath = imagePath;
+        this.boatName = boatName;
 
         inflater = LayoutInflater.from(context);
     }
@@ -46,6 +54,8 @@ public class PhotosAdapter extends ArrayAdapter {
         Glide
                 .with(context)
                 .load(imagePath[position])
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into((ImageView) convertView);
 
         convertView.setOnClickListener(new View.OnClickListener() {
@@ -53,11 +63,19 @@ public class PhotosAdapter extends ArrayAdapter {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("imagePath", imagePath[position]);
+                intent.putExtra("boatName", boatName);
                 intent.setClass(context, PlayPhotoActivity.class);
                 context.startActivity(intent);
             }
         });
 
         return convertView;
+    }
+
+    public void removeItem(String singalPath) {
+        List<String> imagePaths = Arrays.asList(imagePath);
+        imagePaths.remove(singalPath);
+        notifyDataSetInvalidated();
+        notifyDataSetChanged();
     }
 }

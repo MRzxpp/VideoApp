@@ -1,22 +1,18 @@
 package com.haishanda.android.videoapp.Activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.haishanda.android.videoapp.Fragement.AboutBoatFragment;
-import com.haishanda.android.videoapp.Fragement.CamerasFragment;
 import com.haishanda.android.videoapp.Fragement.DeleteBoatFragment;
 import com.haishanda.android.videoapp.Fragement.RenameBoatFragment;
 import com.haishanda.android.videoapp.Fragement.ResetBoatPasswordFragment;
 import com.haishanda.android.videoapp.R;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 

@@ -32,6 +32,8 @@ public class ApiManage {
 
     private VideoApi videoApi;
     private UserApi userApi;
+    private BoatApi boatApi;
+    private LiveApi liveApi;
 
 
     public VideoApi getVideoApiService() {
@@ -63,5 +65,37 @@ public class ApiManage {
             }
         }
         return userApi;
+    }
+
+    public LiveApi getLiveApiService() {
+        if (liveApi == null) {
+            synchronized (zhihuMonitor) {
+                if (liveApi == null) {
+                    liveApi = new Retrofit.Builder()
+                            .baseUrl(Config.SERVER_HOME)
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build().create(LiveApi.class);
+
+                }
+            }
+        }
+        return liveApi;
+    }
+
+    public BoatApi getBoatApiService() {
+        if (boatApi == null) {
+            synchronized (zhihuMonitor) {
+                if (boatApi == null) {
+                    boatApi = new Retrofit.Builder()
+                            .baseUrl(Config.SERVER_HOME)
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build().create(BoatApi.class);
+
+                }
+            }
+        }
+        return boatApi;
     }
 }

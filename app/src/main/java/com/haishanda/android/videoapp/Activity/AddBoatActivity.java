@@ -48,8 +48,9 @@ public class AddBoatActivity extends Activity {
 
     @OnClick(R.id.back_to_boat_fragment_btn)
     public void backToLastPage(View view) {
-        Intent intent = new Intent(AddBoatActivity.this, MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(AddBoatActivity.this, MainActivity.class);
+//        startActivity(intent);
+        this.finish();
     }
 
     @OnClick(R.id.add_boat_scan_qrcode_btn)

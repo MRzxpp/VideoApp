@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="48"
+        android:layout_height="48dp"
         android:background="@color/titleBlue">
 
         <TextView
@@ -24,16 +24,27 @@
             android:id="@+id/back_to_boat_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginBottom="13dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="12dp"
             android:src="@drawable/back" />
+
+        <ImageView
+            android:id="@+id/toggle_fullscreen"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/fullscreen" />
     </RelativeLayout>
 
     <io.vov.vitamio.widget.VideoView
         android:id="@+id/test_play_video"
         android:layout_width="360dp"
-        android:layout_height="270dp" />
+        android:layout_height="270dp"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"

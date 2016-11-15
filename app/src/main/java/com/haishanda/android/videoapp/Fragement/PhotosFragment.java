@@ -5,9 +5,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 
+import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
@@ -34,6 +38,17 @@ public class PhotosFragment extends Fragment {
 
     String[] imagePaths = {};
     ImageMessageDao imageMessageDao;
+    PhotosAdapter adapter;
+    String boatName;
+
+    public PhotosAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(PhotosAdapter adapter) {
+        this.adapter = adapter;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,11 +56,15 @@ public class PhotosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         ButterKnife.bind(this, view);
         imagePaths = loadBoatImagePaths("aaa");
-        photosGridView.setAdapter(new PhotosAdapter(getContext(), imagePaths));
+        adapter = new PhotosAdapter(getContext(), imagePaths, boatName);
+        adapter.notifyDataSetInvalidated();
+        adapter.notifyDataSetChanged();
+        photosGridView.setAdapter(adapter);
         return view;
     }
 
     public String[] loadBoatImagePaths(String boatName) {
+        this.boatName = boatName;
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
         List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();

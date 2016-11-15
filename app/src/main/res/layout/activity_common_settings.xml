@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/backgroundColor">
 
     <FrameLayout
         android:id="@+id/common_settings_layout"
@@ -109,7 +110,7 @@
                 android:layout_height="48dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="147dp"
-                android:background="@drawable/bottom_stroke">
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -130,6 +131,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/bottom_stroke"
                 android:id="@+id/help_and_feedback_layout"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"

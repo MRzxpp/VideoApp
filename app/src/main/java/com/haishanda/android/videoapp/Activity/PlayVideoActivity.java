@@ -2,6 +2,7 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Utils.CustomMediaController;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
@@ -42,6 +44,7 @@ public class PlayVideoActivity extends Activity {
 
     private static final String TAG = "PlayVideoActivity";
     private ImageMessageDao imageMessageDao;
+    private CustomMediaController mCustomMediaController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +57,12 @@ public class PlayVideoActivity extends Activity {
         String path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
         videoView.setVideoPath(path);//设置播放地址
         MediaController mMediaController = new MediaController(this);
+        mCustomMediaController = new CustomMediaController(this, videoView, this);
         mMediaController.show(5000);//控制器显示5s后自动隐藏
-        videoView.setMediaController(mMediaController);//绑定控制器
+        videoView.setMediaController(mCustomMediaController);//绑定控制器
         videoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
         videoView.requestFocus();//取得焦点
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -65,11 +70,17 @@ public class PlayVideoActivity extends Activity {
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
         SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), "aaa");
-        List<ImageMessage> list = imageMessageDao.loadAll();
+        android.util.Log.d("PlayVideo", " 截图成功");
     }
 
     @OnClick(R.id.record_btn)
     public void recordVideo(View view) {
         Log.i(TAG, "recordVideo");
+    }
+
+    @OnClick(R.id.back_to_boat_btn)
+    public void backToBoat(View view) {
+        Intent intent = new Intent(PlayVideoActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }

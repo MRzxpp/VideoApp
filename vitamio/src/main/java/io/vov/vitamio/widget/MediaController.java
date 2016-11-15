@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -93,7 +94,7 @@ public class MediaController extends FrameLayout {
   private boolean mDragging;
   private boolean mInstantSeeking = false;
   private boolean mFromXml = false;
-  private ImageButton mPauseButton;
+  private ImageView mPauseButton;
   private AudioManager mAM;
   private OnShownListener mShownListener;
   private OnHiddenListener mHiddenListener;
@@ -240,7 +241,7 @@ public class MediaController extends FrameLayout {
   }
 
   private void initControllerView(View v) {
-    mPauseButton = (ImageButton) v.findViewById(getResources().getIdentifier("mediacontroller_play_pause", "id", mContext.getPackageName()));
+    mPauseButton = (ImageView) v.findViewById(getResources().getIdentifier("mediacontroller_play_pause", "id", mContext.getPackageName()));
     if (mPauseButton != null) {
       mPauseButton.requestFocus();
       mPauseButton.setOnClickListener(mPauseListener);

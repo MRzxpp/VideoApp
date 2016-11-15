@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -86,9 +87,10 @@ public class SignupActivity extends Activity {
 
     @OnClick(R.id.back_to_login_btn)
     public void returnLastPage(View view) {
-        Intent intent = new Intent();
-        intent.setClass(SignupActivity.this, LoginActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(SignupActivity.this, LoginActivity.class);
+//        startActivity(intent);
+        this.finish();
     }
 
     @OnClick(R.id.get_fetch_code)
@@ -123,9 +125,9 @@ public class SignupActivity extends Activity {
 
     @OnClick(R.id.signup_button)
     public void signupService(View view) {
-        Pattern passwordPattern = Pattern.compile("^(?![0-9]+$)(?![a-zA-Z]+$)$");
+        Pattern passwordPattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}$");
         Matcher passwordMatcher = passwordPattern.matcher(password.getText().toString());
-        Pattern phoneNumPattern = Pattern.compile("^[1][358][0-9]{9}$");
+        Pattern phoneNumPattern = Pattern.compile("^[1][3578][0-9]{9}$");
         Matcher phoneNumMatcher = phoneNumPattern.matcher(phoneNumber.getText().toString());
         if (phoneNumber.getText().toString().equals("")) {
             Toast.makeText(SignupActivity.this, "请输入手机号", Toast.LENGTH_SHORT)
@@ -141,6 +143,9 @@ public class SignupActivity extends Activity {
                     .show();
         } else if (password.getText().toString().length() < 6) {
             Toast.makeText(SignupActivity.this, "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
+                    .show();
+        } else if (password.getText().toString().length() > 20) {
+            Toast.makeText(SignupActivity.this, "密码长度过长，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (!passwordMatcher.matches()) {
             Toast.makeText(SignupActivity.this, "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
@@ -173,6 +178,8 @@ public class SignupActivity extends Activity {
                             } else {
                                 Toast.makeText(SignupActivity.this, "注册成功，请登录", Toast.LENGTH_SHORT)
                                         .show();
+                                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                                startActivity(intent);
                             }
                         }
                     });

@@ -16,12 +16,20 @@
         "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_control_normal_holo.png"
     },
     {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\mediacontroller_pause1.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\mediacontroller_pause1.png"
+    },
+    {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\scrubber_primary_holo.9.png",
         "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_primary_holo.9.png"
     },
     {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\scrubber_control_disabled_holo.png",
         "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_control_disabled_holo.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\mediacontroller_play2.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\mediacontroller_play2.png"
     },
     {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\mediacontroller_pause.png",

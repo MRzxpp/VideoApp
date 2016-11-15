@@ -53,9 +53,10 @@ public class ResetPasswordActivity extends Activity {
 
     @OnClick(R.id.back_to_get_veri_btn)
     public void backToGetVeriPage(View view) {
-        Intent intent = new Intent();
-        intent.setClass(ResetPasswordActivity.this, GetVerificationActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(ResetPasswordActivity.this, GetVerificationActivity.class);
+//        startActivity(intent);
+        this.finish();
     }
 
     @OnClick(R.id.eye3)

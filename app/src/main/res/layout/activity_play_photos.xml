@@ -10,6 +10,7 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/back_to_photos_btn"
             android:layout_width="12dp"
             android:layout_height="22dp"
             android:layout_marginLeft="15dp"
@@ -17,6 +18,7 @@
             android:src="@drawable/back" />
 
         <ImageView
+            android:id="@+id/show_image_info"
             android:layout_width="22dp"
             android:layout_height="22dp"
             android:layout_alignParentRight="true"
@@ -30,7 +32,16 @@
             android:layout_height="270dp"
             android:layout_centerInParent="true" />
 
+        <TextView
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/photo_main"
+            android:id="@+id/photo_serial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <ImageView
+            android:id="@+id/share_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentBottom="true"
@@ -39,6 +50,7 @@
             android:src="@drawable/share_photo" />
 
         <ImageView
+            android:id="@+id/delete_photo"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentBottom="true"

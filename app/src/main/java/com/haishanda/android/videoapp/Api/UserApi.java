@@ -29,7 +29,11 @@ public interface UserApi {
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/userLogin")
-    Observable<SmartResult> loginAction(@Field("name") String username,
+    Observable<SmartResult<UserBean>> loginAction(@Field("name") String username,
                                         @Field("password") String password);
+
+
+
+
 
 }

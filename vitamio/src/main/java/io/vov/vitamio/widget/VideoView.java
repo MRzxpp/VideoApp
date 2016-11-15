@@ -315,7 +315,12 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = getDefaultSize(mVideoWidth, widthMeasureSpec);
         int height = getDefaultSize(mVideoHeight, heightMeasureSpec);
-        setMeasuredDimension(width, height);
+//        setMeasuredDimension(width, height);
+        if (width != 0 && height != 0) {
+            setMeasuredDimension(width, width*3/4);
+        } else {
+            setMeasuredDimension(640, 480);
+        }
     }
 
     /**
@@ -412,7 +417,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
         }
     }
 
-    private void   openVideo() {
+    private void openVideo() {
 //    if (mUri == null || mSurfaceHolder == null || !Vitamio.isInitialized(mContext))
 //      return;
         if (mUri == null || mSurfaceHolder == null)
