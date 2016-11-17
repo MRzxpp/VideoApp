@@ -1,11 +1,17 @@
 package com.haishanda.android.videoapp.Api;
 
 import com.haishanda.android.videoapp.Config.Config;
+import com.haishanda.android.videoapp.VideoApplication;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -75,7 +81,9 @@ public class ApiManage {
                             .baseUrl(Config.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
-                            .build().create(LiveApi.class);
+                            .client(genericClient())
+                            .build()
+                            .create(LiveApi.class);
 
                 }
             }
@@ -91,11 +99,36 @@ public class ApiManage {
                             .baseUrl(Config.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
-                            .build().create(BoatApi.class);
+                            .client(genericClient())
+                            .build()
+                            .create(BoatApi.class);
 
                 }
             }
         }
         return boatApi;
     }
+
+    private OkHttpClient genericClient() {
+        final String token = VideoApplication.getApplication().getToken();
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request()
+                                .newBuilder()
+                                .addHeader("Content-Type", "application/json;charset=UTF-8")
+                                .addHeader("Connection", "keep-alive")
+                                .addHeader("Accept", "*/*")
+                                .addHeader("token", token)
+                                .build();
+                        return chain.proceed(request);
+                    }
+                })
+                .retryOnConnectionFailure(true)
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .build();
+        return httpClient;
+    }
+
 }

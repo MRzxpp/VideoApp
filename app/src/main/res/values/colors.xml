@@ -12,4 +12,6 @@
     <color name="textBlue">#5588FE</color>
     <color name="btnDeepBlue">#2B5BC8</color>
     <color name="backgroundColor">#EEEEF3</color>
+    <color name="light_gray">#fff5f5f5</color>
+    <color name="light_black">#EF333333</color>
 </resources>

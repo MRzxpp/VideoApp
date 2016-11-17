@@ -15,9 +15,9 @@ import rx.Observable;
 public interface LiveApi {
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/liveStart")
-    Observable<SmartResult<CameraLive>> getLiveStream(@Field("cameraId") String cameraId);
+    Observable<SmartResult<CameraLive>> getLiveStream(@Field("cameraId") int cameraId);
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/liveStop")
-    Observable<SmartResult> stopLiveStream(@Field("liveId") String liveId);
+    Observable<SmartResult> stopLiveStream(@Field("liveId") int liveId);
 }

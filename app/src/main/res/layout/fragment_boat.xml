@@ -21,13 +21,16 @@
             android:background="@color/titleBlue"
             android:src="@drawable/addboat" />
 
-        <Spinner
+        <com.haishanda.android.videoapp.Utils.niceSpinner.NiceSpinner
             android:id="@+id/spinner_index_choices"
-            android:layout_width="115dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:background="@color/titleBlue"
             android:longClickable="false"
-            android:scrollbarSize="18dp" />
+            android:scrollbarSize="18dp"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/boat_config_btn"
@@ -57,6 +60,7 @@
             android:src="@drawable/boat_background" />
 
         <TextView
+            android:id="@+id/boat_not_add_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/boat_background"
@@ -65,6 +69,21 @@
             android:text="您还没有添加船舶监控设备，请添加！"
             android:textColor="#9B9B9B"
             android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/add_boat_btn_big"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_below="@id/boat_not_add_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="34dp"
+            android:src="@drawable/addboat_big" />
+
+        <GridView
+            android:id="@+id/live_adapter_fields"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numColumns="2" />
     </RelativeLayout>
 
 </LinearLayout>

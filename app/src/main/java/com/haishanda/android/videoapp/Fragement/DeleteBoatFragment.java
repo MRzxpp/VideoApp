@@ -1,11 +1,15 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
+import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
@@ -25,6 +32,10 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Zhongsz on 2016/10/26.
@@ -48,6 +59,7 @@ public class DeleteBoatFragment extends Fragment {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
+    private final String Tag="删除船舶";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,11 +74,29 @@ public class DeleteBoatFragment extends Fragment {
 
     @OnClick(R.id.delete_boat_next_step_btn)
     public void skipToConfirmDeleteFragment() {
-        ConfirmDeleteBoatFragment confirmDeleteBoatFragment = new ConfirmDeleteBoatFragment();
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.delete_boat_message, confirmDeleteBoatFragment);
-        fragmentTransaction.commit();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("确定删除本船么?");
+        builder.setTitle("警告");
+        builder.setPositiveButton("删除", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                deleteThisBoat();
+                ConfirmDeleteBoatFragment confirmDeleteBoatFragment = new ConfirmDeleteBoatFragment();
+                FragmentManager fragmentManager = getChildFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.delete_boat_message, confirmDeleteBoatFragment);
+                fragmentTransaction.commit();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+
     }
 
     @OnClick(R.id.back_to_boat_config_btn)
@@ -85,5 +115,35 @@ public class DeleteBoatFragment extends Fragment {
         boatPassword.setText("");
     }
 
+    private void deleteThisBoat() {
+        String machineId = "";
+        String password = "";
+        ApiManage.getInstence().getBoatApiService().removeBoat(machineId, password)
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SmartResult>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(Tag, "add finished");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(Tag, "add error");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(SmartResult smartResult) {
+                        if (smartResult.getCode() == 1) {
+                            Log.i(Tag, "add successfully");
+                            Toast.makeText(getContext(), "添加船舶成功", Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.i(Tag, "add failed!");
+                            Toast.makeText(getContext(), smartResult.getMsg(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
 
 }

@@ -22,6 +22,7 @@ import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
+import com.haishanda.android.videoapp.VideoApplication;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -107,7 +108,10 @@ public class LoginActivity extends Activity {
                             if (smartResult.getCode() != 1) {
                                 Toast.makeText(LoginActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT).show();
                             } else {
-                                EMClient.getInstance().login("appmonitor_"+String.valueOf(smartResult.getData().getId()), username.getText().toString(), new EMCallBack() {//回调
+                                //token inject
+                                VideoApplication.getApplication().setToken(smartResult.getData().getToken());
+                                //emclient login
+                                EMClient.getInstance().login("appmonitor_" + String.valueOf(smartResult.getData().getId()), username.getText().toString(), new EMCallBack() {//回调
                                     @Override
                                     public void onSuccess() {
                                         EMClient.getInstance().groupManager().loadAllGroups();

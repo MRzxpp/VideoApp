@@ -9,6 +9,8 @@ import com.haishanda.android.videoapp.greendao.gen.DaoSession;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
+import java.util.Map;
+
 /**
  * Created by Zhongsz on 2016/10/12.
  */
@@ -20,6 +22,15 @@ public class VideoApplication extends Application {
     private SQLiteDatabase db;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
+    private String Token;
+
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String token) {
+        Token = token;
+    }
     // login user name
 //    public final String PREF_USERNAME = "username";
 

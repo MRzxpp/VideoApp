@@ -1,0 +1,67 @@
+package com.haishanda.android.videoapp.Bean;
+
+import org.greenrobot.greendao.annotation.Entity;
+
+import org.greenrobot.greendao.annotation.Generated;
+
+/**
+ * Created by Zhongsz on 2016/11/16.
+ */
+@Entity
+public class BoatMessage {
+    private int machineId;
+    private String name;
+    private int cameraId;
+    private String cameraImagePath;
+    private String addTime;
+    private String updateTime;
+    @Generated(hash = 499122169)
+    public BoatMessage(int machineId, String name, int cameraId,
+            String cameraImagePath, String addTime, String updateTime) {
+        this.machineId = machineId;
+        this.name = name;
+        this.cameraId = cameraId;
+        this.cameraImagePath = cameraImagePath;
+        this.addTime = addTime;
+        this.updateTime = updateTime;
+    }
+    @Generated(hash = 1737508029)
+    public BoatMessage() {
+    }
+    public int getMachineId() {
+        return this.machineId;
+    }
+    public void setMachineId(int machineId) {
+        this.machineId = machineId;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getCameraId() {
+        return this.cameraId;
+    }
+    public void setCameraId(int cameraId) {
+        this.cameraId = cameraId;
+    }
+    public String getCameraImagePath() {
+        return this.cameraImagePath;
+    }
+    public void setCameraImagePath(String cameraImagePath) {
+        this.cameraImagePath = cameraImagePath;
+    }
+    public String getAddTime() {
+        return this.addTime;
+    }
+    public void setAddTime(String addTime) {
+        this.addTime = addTime;
+    }
+    public String getUpdateTime() {
+        return this.updateTime;
+    }
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+}

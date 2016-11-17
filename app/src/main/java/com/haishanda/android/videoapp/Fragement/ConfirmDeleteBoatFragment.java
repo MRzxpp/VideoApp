@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.ButterKnife;
