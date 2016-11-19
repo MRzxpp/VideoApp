@@ -27,11 +27,12 @@ public class LiveAdapter extends ArrayAdapter {
     private LayoutInflater inflater;
 
     private String[] imagePath;
-    private List<Integer> cameraId;
+    private List<Long> cameraId;
     private String boatName;
     private final Drawable defaultImage = getContext().getDrawable(R.drawable.boat_background);
+    private int machineId;
 
-    public LiveAdapter(Context context, String[] imagePath, List<Integer> cameraId, String boatName) {
+    public LiveAdapter(Context context, String[] imagePath, List<Long> cameraId, String boatName) {
         super(context, R.layout.adapter_live, imagePath);
         this.imagePath = imagePath;
         this.context = context;

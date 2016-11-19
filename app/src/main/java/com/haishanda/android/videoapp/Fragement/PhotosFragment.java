@@ -55,7 +55,8 @@ public class PhotosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         ButterKnife.bind(this, view);
-        imagePaths = loadBoatImagePaths("aaa");
+        boatName = VideoApplication.getApplication().getCurrentBoatName();
+        imagePaths = loadBoatImagePaths(boatName);
         adapter = new PhotosAdapter(getContext(), imagePaths, boatName);
         adapter.notifyDataSetInvalidated();
         adapter.notifyDataSetChanged();

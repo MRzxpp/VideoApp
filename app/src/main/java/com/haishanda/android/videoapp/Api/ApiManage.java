@@ -110,7 +110,6 @@ public class ApiManage {
     }
 
     private OkHttpClient genericClient() {
-        final String token = VideoApplication.getApplication().getToken();
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -120,7 +119,7 @@ public class ApiManage {
                                 .addHeader("Content-Type", "application/json;charset=UTF-8")
                                 .addHeader("Connection", "keep-alive")
                                 .addHeader("Accept", "*/*")
-                                .addHeader("token", token)
+                                .addHeader("token", VideoApplication.getApplication().getToken())
                                 .build();
                         return chain.proceed(request);
                     }

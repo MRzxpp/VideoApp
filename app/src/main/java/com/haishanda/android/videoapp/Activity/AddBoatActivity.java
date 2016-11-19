@@ -12,9 +12,12 @@ import android.widget.Toast;
 
 import com.google.zxing.client.android.CaptureActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -57,8 +60,6 @@ public class AddBoatActivity extends Activity {
 
     @OnClick(R.id.back_to_boat_fragment_btn)
     public void backToLastPage(View view) {
-//        Intent intent = new Intent(AddBoatActivity.this, MainActivity.class);
-//        startActivity(intent);
         this.finish();
     }
 

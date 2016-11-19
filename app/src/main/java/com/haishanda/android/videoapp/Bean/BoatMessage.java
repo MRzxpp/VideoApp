@@ -3,6 +3,9 @@ package com.haishanda.android.videoapp.Bean;
 import org.greenrobot.greendao.annotation.Entity;
 
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
+import org.greenrobot.greendao.annotation.Unique;
 
 /**
  * Created by Zhongsz on 2016/11/16.
@@ -11,12 +14,14 @@ import org.greenrobot.greendao.annotation.Generated;
 public class BoatMessage {
     private int machineId;
     private String name;
-    private int cameraId;
+    @Id(autoincrement = false)
+    @Index(unique = true)
+    private long cameraId;
     private String cameraImagePath;
     private String addTime;
     private String updateTime;
-    @Generated(hash = 499122169)
-    public BoatMessage(int machineId, String name, int cameraId,
+    @Generated(hash = 1893233633)
+    public BoatMessage(int machineId, String name, long cameraId,
             String cameraImagePath, String addTime, String updateTime) {
         this.machineId = machineId;
         this.name = name;
@@ -40,10 +45,10 @@ public class BoatMessage {
     public void setName(String name) {
         this.name = name;
     }
-    public int getCameraId() {
+    public long getCameraId() {
         return this.cameraId;
     }
-    public void setCameraId(int cameraId) {
+    public void setCameraId(long cameraId) {
         this.cameraId = cameraId;
     }
     public String getCameraImagePath() {
@@ -64,4 +69,6 @@ public class BoatMessage {
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
+
+
 }

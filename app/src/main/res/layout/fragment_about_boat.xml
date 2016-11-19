@@ -51,12 +51,21 @@
                 android:background="@drawable/bottom_stroke">
 
                 <TextView
-                    android:id="@+id/about_boat_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="船舶名称"
                     android:textColor="#333333"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/about_boat_boatname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="37dp"
+                    android:textColor="@color/textGrey"
                     android:textSize="15sp" />
 
             </RelativeLayout>
@@ -69,12 +78,21 @@
                 android:layout_marginTop="48dp">
 
                 <TextView
-                    android:id="@+id/gateway_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="网关账号"
+                    android:text="上网设备序列号"
                     android:textColor="#333333"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/about_boat_serial_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="37dp"
+                    android:textColor="@color/textGrey"
                     android:textSize="15sp" />
             </RelativeLayout>
         </RelativeLayout>
@@ -86,15 +104,6 @@
             android:layout_marginTop="170dp"
             android:background="@drawable/both_stroke_white">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:text="网关二维码"
-                android:textColor="#333333"
-                android:textSize="15sp" />
-
             <ImageView
                 android:id="@+id/to_gateway_qrcode_fragment"
                 android:layout_width="12dp"
@@ -103,6 +112,17 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="15dp"
                 android:src="@drawable/arrow_right" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="16dp"
+                android:text="上网设备二维码"
+                android:textColor="#333333"
+                android:textSize="15sp" />
         </RelativeLayout>
     </FrameLayout>
 

@@ -27,7 +27,7 @@ public interface BoatApi {
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/resetModulePassword")
-    Observable<SmartResult> resetBoatPassword(@Field("machineId") String machineId);
+    Observable<SmartResult> resetBoatPassword(@Field("machineId") int machineId);
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/removeMachine")
@@ -42,5 +42,8 @@ public interface BoatApi {
 
     @GET("monitor-platform-web/rest/user/queryCameras")
     Observable<SmartResult<List<QueryCameras>>> queryCameras(@Query("machineId") int machineId);
+
+    @GET("monitor-platform-web/rest/user/queryCameras")
+    Call<SmartResult<List<QueryCameras>>> queryCamerasCopy(@Query("machineId") int machineId);
 
 }

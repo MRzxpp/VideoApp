@@ -3,6 +3,8 @@ package com.haishanda.android.videoapp.Fragement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,9 @@ public class RenameBoatFragment extends Fragment {
 
     @OnClick(R.id.back_to_boat_config_btn)
     public void backToFrontPage() {
-        Intent intent=new Intent(getActivity(),BoatConfigActivity.class);
-        startActivity(intent);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(this);
+        fragmentTransaction.commit();
     }
 }

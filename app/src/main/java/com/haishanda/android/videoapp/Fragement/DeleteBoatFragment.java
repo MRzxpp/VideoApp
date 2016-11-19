@@ -59,7 +59,7 @@ public class DeleteBoatFragment extends Fragment {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
-    private final String Tag="删除船舶";
+    private final String Tag = "删除船舶";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,8 +101,10 @@ public class DeleteBoatFragment extends Fragment {
 
     @OnClick(R.id.back_to_boat_config_btn)
     public void backToBoatConfigActivity() {
-        Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
-        startActivity(intent);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(this);
+        fragmentTransaction.commit();
     }
 
     @OnClick(R.id.eye4)

@@ -21,23 +21,36 @@ import butterknife.OnClick;
  */
 
 public class BoatConfigActivity extends FragmentActivity {
+    private Bundle extra;
+    private String boatName;
+    private int machineId;
+    private String globalId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boat_config);
         ButterKnife.bind(this);
+        extra = getIntent().getExtras();
+        boatName = extra.getString("boatName");
+        machineId = extra.getInt("machineId");
+        globalId = extra.getString("globalId");
+
     }
 
     @OnClick(R.id.back_to_boat_fragment_btn)
     public void backToLastPage(View view) {
-        Intent intent = new Intent(BoatConfigActivity.this, MainActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 
     @OnClick(R.id.about_boat_layout)
     public void skipToAboutBoatFragment() {
+        Bundle data = new Bundle();
+        data.putString("boatName", boatName);
+        data.putString("globalId", globalId);
         AboutBoatFragment aboutBoatFragment = new AboutBoatFragment();
+        aboutBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.boat_config_layout, aboutBoatFragment);
@@ -55,7 +68,10 @@ public class BoatConfigActivity extends FragmentActivity {
 
     @OnClick(R.id.reset_boat_pwd_layout)
     public void skipToResetPwdBoatFragment() {
+        Bundle data = new Bundle();
+        data.putInt("machineId", machineId);
         ResetBoatPasswordFragment resetBoatPasswordFragment = new ResetBoatPasswordFragment();
+        resetBoatPasswordFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.boat_config_layout, resetBoatPasswordFragment);

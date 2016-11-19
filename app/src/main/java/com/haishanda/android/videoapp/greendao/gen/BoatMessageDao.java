@@ -15,7 +15,7 @@ import com.haishanda.android.videoapp.Bean.BoatMessage;
 /** 
  * DAO for table "BOAT_MESSAGE".
 */
-public class BoatMessageDao extends AbstractDao<BoatMessage, Void> {
+public class BoatMessageDao extends AbstractDao<BoatMessage, Long> {
 
     public static final String TABLENAME = "BOAT_MESSAGE";
 
@@ -26,7 +26,7 @@ public class BoatMessageDao extends AbstractDao<BoatMessage, Void> {
     public static class Properties {
         public final static Property MachineId = new Property(0, int.class, "machineId", false, "MACHINE_ID");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property CameraId = new Property(2, int.class, "cameraId", false, "CAMERA_ID");
+        public final static Property CameraId = new Property(2, long.class, "cameraId", true, "_id");
         public final static Property CameraImagePath = new Property(3, String.class, "cameraImagePath", false, "CAMERA_IMAGE_PATH");
         public final static Property AddTime = new Property(4, String.class, "addTime", false, "ADD_TIME");
         public final static Property UpdateTime = new Property(5, String.class, "updateTime", false, "UPDATE_TIME");
@@ -47,10 +47,13 @@ public class BoatMessageDao extends AbstractDao<BoatMessage, Void> {
         db.execSQL("CREATE TABLE " + constraint + "\"BOAT_MESSAGE\" (" + //
                 "\"MACHINE_ID\" INTEGER NOT NULL ," + // 0: machineId
                 "\"NAME\" TEXT," + // 1: name
-                "\"CAMERA_ID\" INTEGER NOT NULL ," + // 2: cameraId
+                "\"_id\" INTEGER PRIMARY KEY NOT NULL ," + // 2: cameraId
                 "\"CAMERA_IMAGE_PATH\" TEXT," + // 3: cameraImagePath
                 "\"ADD_TIME\" TEXT," + // 4: addTime
                 "\"UPDATE_TIME\" TEXT);"); // 5: updateTime
+        // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_BOAT_MESSAGE__id ON BOAT_MESSAGE" +
+                " (\"_id\" ASC);");
     }
 
     /** Drops the underlying database table. */
@@ -114,8 +117,8 @@ public class BoatMessageDao extends AbstractDao<BoatMessage, Void> {
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.getLong(offset + 2);
     }    
 
     @Override
@@ -123,7 +126,7 @@ public class BoatMessageDao extends AbstractDao<BoatMessage, Void> {
         BoatMessage entity = new BoatMessage( //
             cursor.getInt(offset + 0), // machineId
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
-            cursor.getInt(offset + 2), // cameraId
+            cursor.getLong(offset + 2), // cameraId
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // cameraImagePath
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // addTime
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // updateTime
@@ -135,27 +138,30 @@ public class BoatMessageDao extends AbstractDao<BoatMessage, Void> {
     public void readEntity(Cursor cursor, BoatMessage entity, int offset) {
         entity.setMachineId(cursor.getInt(offset + 0));
         entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setCameraId(cursor.getInt(offset + 2));
+        entity.setCameraId(cursor.getLong(offset + 2));
         entity.setCameraImagePath(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setAddTime(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setUpdateTime(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(BoatMessage entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(BoatMessage entity, long rowId) {
+        entity.setCameraId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(BoatMessage entity) {
-        return null;
+    public Long getKey(BoatMessage entity) {
+        if(entity != null) {
+            return entity.getCameraId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(BoatMessage entity) {
-        // TODO
-        return false;
+        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
     }
 
     @Override

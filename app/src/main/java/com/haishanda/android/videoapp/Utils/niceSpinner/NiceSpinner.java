@@ -2,6 +2,7 @@ package com.haishanda.android.videoapp.Utils.niceSpinner;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -25,6 +26,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.haishanda.android.videoapp.Activity.AddBoatActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.List;
@@ -152,7 +154,6 @@ public class NiceSpinner extends TextView {
                 if (onItemSelectedListener != null) {
                     onItemSelectedListener.onItemSelected(parent, view, position, id);
                 }
-
                 adapter.notifyItemSelected(position);
                 setText(adapter.getItemInDataset(position).toString());
                 dismissDropDown();
