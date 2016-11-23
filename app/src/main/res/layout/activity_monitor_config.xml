@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Activity.MonitorConfigActivity">
 
     <FrameLayout
         android:id="@+id/monitor_config_layout"
@@ -32,14 +35,14 @@
                 android:layout_marginBottom="13dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="12dp"
-                android:src="@drawable/clearpwd" />
+                android:src="@drawable/monitor_config_close" />
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_marginTop="63dp"
             android:layout_width="match_parent"
             android:layout_height="136dp"
+            android:layout_marginTop="63dp"
             android:background="@drawable/letter">
 
             <TextView
@@ -65,7 +68,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="195dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="214dp"
             android:background="@drawable/both_stroke_white">
 
@@ -104,38 +107,57 @@
                     android:src="@drawable/arrow_right" />
             </RelativeLayout>
 
-            <RelativeLayout
+            <com.andexert.expandablelayout.library.ExpandableLayout
+                xmlns:expandable="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/monitor_open"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/monitor_time"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="48dp"
-                android:background="@drawable/bottom_stroke">
-
-                <TextView
+                android:background="@drawable/bottom_stroke"
+                expandable:contentLayout="@layout/view_content"
+                expandable:headerLayout="@layout/view_header">
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="是否开启手机远程实时监控"
-                    android:textColor="#333333"
-                    android:textSize="15sp" />
+                    android:layout_height="48dp">
+                    <TextView
+                        android:layout_centerVertical="true"
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="是否开启手机远程实时监控"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
 
-                <Switch
-                    android:id="@+id/is_monitor_open"
-                    android:layout_width="51dp"
-                    android:layout_height="31dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15dp" />
+                    <RelativeLayout
+                        android:layout_centerVertical="true"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginTop="1dp">
 
-            </RelativeLayout>
+                        <com.kyleduo.switchbutton.SwitchButton
+                            android:id="@+id/is_monitor_open"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            app:kswAnimationDuration="300"
+                            app:kswBackDrawable="@drawable/switch_back_drawable"
+                            app:kswThumbDrawable="@drawable/knob"
+                            app:kswThumbMarginTop="3dp" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+            </com.andexert.expandablelayout.library.ExpandableLayout>
 
             <RelativeLayout
+                android:layout_below="@id/monitor_open"
                 android:id="@+id/monitor_warning"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="98dp"
                 android:background="@drawable/bottom_stroke">
 
                 <TextView
@@ -157,11 +179,12 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:layout_below="@id/monitor_warning"
                 android:id="@+id/monitor_voice"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="147dp">
+                >
 
                 <TextView
                     android:layout_width="wrap_content"

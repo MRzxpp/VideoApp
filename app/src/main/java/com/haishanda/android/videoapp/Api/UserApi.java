@@ -5,6 +5,7 @@ import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -30,10 +31,12 @@ public interface UserApi {
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/userLogin")
     Observable<SmartResult<UserBean>> loginAction(@Field("name") String username,
-                                        @Field("password") String password);
+                                                  @Field("password") String password);
 
-
-
+    @FormUrlEncoded
+    @POST("/monitor-platform-web/rest/userLogin")
+    Call<SmartResult<UserBean>> loginActionCopy(@Field("name") String username,
+                                                @Field("password") String password);
 
 
 }

@@ -15,6 +15,7 @@ import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
 import com.haishanda.android.videoapp.R;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
+import com.orhanobut.dialogplus.ViewHolder;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

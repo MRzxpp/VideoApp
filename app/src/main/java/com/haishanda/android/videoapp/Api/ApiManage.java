@@ -40,6 +40,7 @@ public class ApiManage {
     private UserApi userApi;
     private BoatApi boatApi;
     private LiveApi liveApi;
+    private MonitorApi monitorApi;
 
 
     public VideoApi getVideoApiService() {
@@ -107,6 +108,24 @@ public class ApiManage {
             }
         }
         return boatApi;
+    }
+
+    public MonitorApi getMonitorApiService() {
+        if (monitorApi == null) {
+            synchronized (zhihuMonitor) {
+                if (monitorApi == null) {
+                    monitorApi = new Retrofit.Builder()
+                            .baseUrl(Config.SERVER_HOME)
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .client(genericClient())
+                            .build()
+                            .create(MonitorApi.class);
+
+                }
+            }
+        }
+        return monitorApi;
     }
 
     private OkHttpClient genericClient() {

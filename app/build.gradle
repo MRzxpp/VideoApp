@@ -57,6 +57,8 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'org.greenrobot:greendao-generator:3.2.0'
     compile 'com.orhanobut:dialogplus:1.11@aar'
+    compile 'com.kyleduo.switchbutton:library:1.4.4'
+    compile 'com.github.traex.expandablelayout:library:1.2.2'
     compile files('libs/hyphenatechat_3.1.5.jar')
     compile project(':vitamio')
     compile project(':portraitzxing')

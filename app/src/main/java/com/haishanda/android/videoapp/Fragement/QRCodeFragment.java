@@ -81,6 +81,8 @@ public class QRCodeFragment extends Fragment {
         } catch (WriterException e) {
             e.printStackTrace();
             return null;
+        } catch (NullPointerException e) {
+            return null;
         }
 
     }

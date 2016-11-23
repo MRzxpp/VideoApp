@@ -31,7 +31,7 @@ public interface BoatApi {
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/removeMachine")
-    Observable<SmartResult> removeBoat(@Field("machineId") String machineId,
+    Observable<SmartResult> removeBoat(@Field("machineId") int machineId,
                                        @Field("password") String password);
 
     @GET("monitor-platform-web/rest/user/queryMachines")
@@ -45,5 +45,10 @@ public interface BoatApi {
 
     @GET("monitor-platform-web/rest/user/queryCameras")
     Call<SmartResult<List<QueryCameras>>> queryCamerasCopy(@Query("machineId") int machineId);
+
+    @FormUrlEncoded
+    @POST("/monitor-platform-web/rest/user/editMachineName")
+    Observable<SmartResult> editMachineName(@Field("machineId") int machineId,
+                                            @Field("name") String boatName);
 
 }

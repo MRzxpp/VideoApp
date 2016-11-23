@@ -81,7 +81,11 @@ public class BoatConfigActivity extends FragmentActivity {
 
     @OnClick(R.id.delete_boat_btn)
     public void deleteBoat() {
+        Bundle data = new Bundle();
+        data.putString("boatName", boatName);
+        data.putInt("machineId", machineId);
         DeleteBoatFragment deleteBoatFragment = new DeleteBoatFragment();
+        deleteBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.boat_config_layout, deleteBoatFragment);

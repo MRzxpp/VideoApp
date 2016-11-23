@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20.5dp"
+        android:text="图片详情"
+        android:textColor="#333333"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/close_image_details_btn"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/image_details_cancel" />
+
+    <ImageView
+        android:id="@+id/image_details_icon"
+        android:layout_width="172dp"
+        android:layout_height="65dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80.5dp"
+        android:src="@drawable/image_details" />
+
+    <TextView
+        android:id="@+id/image_info_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_details_icon"
+        android:layout_marginStart="22.5dp"
+        android:layout_marginTop="39.5dp"
+        android:textColor="@color/textBlack"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/image_info_addtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_info_name"
+        android:layout_marginStart="22.5dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/textBlack"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/image_info_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/image_info_addtime"
+        android:layout_marginStart="22.5dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/textBlack"
+        android:textSize="14sp" />
+
+
+</RelativeLayout>

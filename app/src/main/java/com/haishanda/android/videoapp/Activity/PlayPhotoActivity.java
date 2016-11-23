@@ -5,18 +5,23 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.haishanda.android.videoapp.Adapter.ImageInfoAdapter;
 import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.Fragement.PhotosFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnItemClickListener;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -61,8 +66,21 @@ public class PlayPhotoActivity extends Activity {
 
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
-        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
-        imageMessageDao.deleteAll();
+        DialogPlus dialogPlus = DialogPlus.newDialog(this)
+                .setAdapter(new ImageInfoAdapter(this, "testname", "testtime", "testsize"))
+                .setCancelable(true)
+                .setGravity(Gravity.CENTER)
+                .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)  // or any custom width ie: 300
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+                        Log.i("DialogPlus", "Item clicked");
+                    }
+                })
+                .setExpanded(true)
+                .create();
+        dialogPlus.show();
     }
 
     @OnClick(R.id.share_image)

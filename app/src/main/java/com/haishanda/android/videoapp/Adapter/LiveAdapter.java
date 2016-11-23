@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -65,6 +66,9 @@ public class LiveAdapter extends ArrayAdapter {
                 context.startActivity(intent);
             }
         });
+
+        TextView boatName = (TextView) convertView.findViewById(R.id.live_adapter_text);
+        boatName.setText("摄像头" + cameraId.get(position));
 
         return convertView;
     }

@@ -71,7 +71,7 @@
                     android:layout_marginTop="15dp"
                     android:src="@drawable/username" />
 
-                <EditText
+                <TextView
                     android:id="@+id/boat_username_text"
                     style="@style/font_grey"
                     android:layout_width="match_parent"
@@ -81,8 +81,7 @@
                     android:layout_toEndOf="@+id/imageView2"
                     android:layout_toRightOf="@+id/imageView2"
                     android:background="@null"
-                    android:hint="@string/inputPhonenum"
-                    android:inputType="phone" />
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -144,19 +143,45 @@
                         android:textColor="@color/textBlue"
                         android:textSize="14sp" />
                 </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+                <CheckBox
+                    android:id="@+id/delete_video_and_photos_check"
+                    style="@style/CustomCheckboxTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="3dp"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="3dp"
+                    android:layout_toLeftOf="@id/delete_video_and_photos_check"
+                    android:text="同时删除本船的照片和视频"
+                    android:textColor="@color/textBlue"
+                    android:textSize="14sp" />
+
+
 
             </RelativeLayout>
 
             <Button
-                android:id="@+id/delete_boat_next_step_btn"
+                android:id="@+id/delete_boat_btn"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="140dp"
                 android:background="@drawable/corners_grey_btn"
-                android:text="下一步"
+                android:text="删除本船"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>

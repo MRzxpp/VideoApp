@@ -97,6 +97,11 @@ public class BoatFragment extends Fragment {
         }
         list.add(list.size(), "添加船舶");
         VideoApplication.getApplication().setCurrentBoatName(list.get(0));
+        if (list.get(0) != "添加船舶") {
+            VideoApplication.getApplication().setCurrentMachineId(boatInfos.get(list.get(0)));
+        } else {
+            VideoApplication.getApplication().setCurrentMachineId(-1);
+        }
         this.boatLists = list;
 
         if (list.size() > 1) {
@@ -117,6 +122,7 @@ public class BoatFragment extends Fragment {
                         machineId = boatInfos.get(parent.getItemAtPosition(position - 1).toString());
                         globalId = boatGlobalIds.get(parent.getItemAtPosition(position - 1).toString());
                         VideoApplication.getApplication().setCurrentBoatName(mySpinner.getText().toString());
+                        VideoApplication.getApplication().setCurrentMachineId(machineId);
                         adapter.notifyDataSetInvalidated();
                         adapter.notifyDataSetChanged();
                     } else {
@@ -128,6 +134,7 @@ public class BoatFragment extends Fragment {
                         machineId = boatInfos.get(parent.getItemAtPosition(position).toString());
                         globalId = boatGlobalIds.get(parent.getItemAtPosition(position).toString());
                         VideoApplication.getApplication().setCurrentBoatName(mySpinner.getText().toString());
+                        VideoApplication.getApplication().setCurrentMachineId(machineId);
                         adapter.notifyDataSetInvalidated();
                         adapter.notifyDataSetChanged();
                     } else {
@@ -148,7 +155,7 @@ public class BoatFragment extends Fragment {
             globalId = boatGlobalIds.get(mySpinner.getText().toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "获取船舶列表失败，请检查", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "未获取到船舶列表，请检查", Toast.LENGTH_LONG).show();
         }
     }
 

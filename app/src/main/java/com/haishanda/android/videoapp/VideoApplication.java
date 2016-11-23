@@ -23,7 +23,15 @@ public class VideoApplication extends Application {
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
     private String Token;
+    private int currentMachineId;
 
+    public int getCurrentMachineId() {
+        return currentMachineId;
+    }
+
+    public void setCurrentMachineId(int currentMachineId) {
+        this.currentMachineId = currentMachineId;
+    }
 
     public String getCurrentBoatName() {
         return currentBoatName;

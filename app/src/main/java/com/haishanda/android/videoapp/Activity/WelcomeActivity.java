@@ -44,6 +44,18 @@ public class WelcomeActivity extends Activity {
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
 
+        LoginActivity loginActivity = new LoginActivity();
+        if (loginActivity.loginWithExistMessage()) {
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.gradually_appear);
         boolean isLogin = EMClient.getInstance().isLoggedInBefore();
         if (isLogin) {
@@ -59,7 +71,7 @@ public class WelcomeActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EMClient.getInstance().logout(true);
+//        EMClient.getInstance().logout(true);
     }
 
     @OnClick({R.id.welcome_to_login, R.id.welcome_to_signup})
