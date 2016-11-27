@@ -24,12 +24,14 @@ import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.Bean.QueryCameras;
 import com.haishanda.android.videoapp.Bean.QueryMachines;
+import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.niceSpinner.NiceSpinner;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -190,9 +192,28 @@ public class BoatFragment extends Fragment {
                 .build());
         Call<SmartResult<List<QueryMachines>>> call = ApiManage.getInstence().getBoatApiService().queryMachinesCopy();
         try {
+            TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
+            TimeBean timeBean;
+            int beginHour;
+            int beginMinute;
+            int endHour;
+            int endMinute;
             Response<SmartResult<List<QueryMachines>>> response = call.execute();
             for (QueryMachines queryMachines : response.body().getData()
                     ) {
+                int begin = (Integer.valueOf(queryMachines.getBegin()));
+                int span = (Integer.valueOf(queryMachines.getSpan()));
+                beginHour = begin / 60;
+                beginMinute = begin - 60 * beginHour;
+                if (begin + span < 1440) {
+                    endHour = (begin + span) / 60;
+                    endMinute = begin + span - (60 * endHour);
+                } else {
+                    endHour = (begin + span - 1440) / 60;
+                    endMinute = (begin + span - 1440) - (60 * endHour);
+                }
+                timeBean = new TimeBean(beginHour, beginMinute, endHour, endMinute, queryMachines.getId());
+                timeBeanDao.insertOrReplace(timeBean);
                 boatInfos.put(queryMachines.getName(), queryMachines.getId());
                 boatGlobalIds.put(queryMachines.getName(), queryMachines.getGlobalId());
             }

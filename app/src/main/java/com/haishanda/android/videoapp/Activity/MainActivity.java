@@ -132,7 +132,7 @@ public class MainActivity extends FragmentActivity {
             }
             case (R.id.to_my_fragment): {
                 MyFragment myFragment = new MyFragment();
-                fragmentTransaction.replace(R.id.fragment_main, myFragment);
+                fragmentTransaction.replace(R.id.fragment_main, myFragment, "myFragment");
                 lastPickedText.setTextColor(textGrey);
                 setChangedImg();
                 myAppText.setTextColor(textBlue);

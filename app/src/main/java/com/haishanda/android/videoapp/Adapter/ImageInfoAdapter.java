@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.haishanda.android.videoapp.R;
+import com.orhanobut.dialogplus.DialogPlus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,8 +71,8 @@ public class ImageInfoAdapter extends BaseAdapter {
         return convertView;
     }
 
-    @OnClick(R.id.close_image_details_btn)
-    public void closeDetails(){
-
-    }
+//    @OnClick(R.id.close_image_details_btn)
+//    public void closeDetails() {
+//
+//    }
 }

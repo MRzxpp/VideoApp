@@ -30,4 +30,9 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+
+
+
+
+    <style name="CommonDialogTheme" parent="Base.AlertDialog.AppCompat.Light"/>
 </resources>

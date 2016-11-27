@@ -50,6 +50,9 @@ public class GetVerificationActivity extends Activity {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
+    private String mobileNo = "0";
+    private final String TAG = "忘记密码";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,21 +68,41 @@ public class GetVerificationActivity extends Activity {
 
     @OnClick(R.id.reset_password_btn)
     public void skipToResetPasswordPage(View view) {
-        if (!phoneNum.getText().toString().equals("")) {
-            Intent intent = new Intent();
-            intent.setClass(GetVerificationActivity.this, ResetPasswordActivity.class);
-            startActivity(intent);
-        } else {
-            Toast.makeText(getApplicationContext(), "请输入手机号和验证码", Toast.LENGTH_SHORT).show();
-        }
+        ApiManage.getInstence().getUserApiService().validateResetCode(this.mobileNo, fetchCode.getText().toString())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SmartResult>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "error");
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "网络连接错误", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(SmartResult smartResult) {
+                        if (smartResult.getCode() == 1) {
+                            Log.i(TAG, "validate success");
+                            Intent intent = new Intent(GetVerificationActivity.this, ResetPasswordActivity.class);
+                            intent.putExtra("mobileNo", GetVerificationActivity.this.mobileNo);
+                            startActivity(intent);
+                        } else {
+                            Log.i(TAG, "validate failed");
+                            Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "验证码输入错误", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                });
 
     }
 
     @OnClick(R.id.back_to_login_btn2)
     public void returnLastPage(View view) {
-//        Intent intent = new Intent();
-//        intent.setClass(GetVerificationActivity.this, LoginActivity.class);
-//        startActivity(intent);
         this.finish();
     }
 
@@ -88,7 +111,8 @@ public class GetVerificationActivity extends Activity {
         CountDownTimerUtil countDownTimerUtil = new CountDownTimerUtil(getCodeBtn, 120000, 1000, blueBtn, greyBtn, white, white);
         countDownTimerUtil.start();
         String mobileNo = phoneNum.getText().toString();
-        ApiManage.getInstence().getUserApiService().getFetchCode(mobileNo)
+        this.mobileNo = mobileNo;
+        ApiManage.getInstence().getUserApiService().getResetCode(mobileNo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SmartResult>() {

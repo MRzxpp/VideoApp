@@ -95,7 +95,7 @@ public class SignupActivity extends Activity {
 
     @OnClick(R.id.get_fetch_code)
     public void send_fetch_code(View view) {
-        CountDownTimerUtil countDownTimerUtil = new CountDownTimerUtil(getFetchCode, 120000, 1000, blueBtn, greyBtn, white, textGrey);
+        CountDownTimerUtil countDownTimerUtil = new CountDownTimerUtil(getFetchCode, 120000, 1000, blueBtn, greyBtn, white, white);
         countDownTimerUtil.start();
         String mobileNo = phoneNumber.getText().toString();
         ApiManage.getInstence().getUserApiService().getFetchCode(mobileNo)
@@ -173,13 +173,14 @@ public class SignupActivity extends Activity {
                             Log.i("info", String.valueOf(smartResult.getCode()));
                             Log.i("info", smartResult.getMsg());
                             if (smartResult.getCode() != 1) {
-                                Toast.makeText(SignupActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT)
+                                Toast.makeText(SignupActivity.this, smartResult.getMsg() != null ? smartResult.getMsg() : "注册失败，请重试！", Toast.LENGTH_SHORT)
                                         .show();
                             } else {
                                 Toast.makeText(SignupActivity.this, "注册成功，请登录", Toast.LENGTH_SHORT)
                                         .show();
                                 Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
                                 startActivity(intent);
+                                SignupActivity.this.finish();
                             }
                         }
                     });

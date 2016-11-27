@@ -27,8 +27,8 @@ public class ImageMessageDao extends AbstractDao<ImageMessage, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property ParentDir = new Property(1, String.class, "parentDir", false, "PARENT_DIR");
         public final static Property ImgPath = new Property(2, String.class, "imgPath", false, "IMG_PATH");
-        public final static Property AddTime = new Property(3, java.util.Date.class, "addTime", false, "ADD_TIME");
-        public final static Property UpdateTime = new Property(4, java.util.Date.class, "updateTime", false, "UPDATE_TIME");
+        public final static Property AddTime = new Property(3, String.class, "addTime", false, "ADD_TIME");
+        public final static Property UpdateTime = new Property(4, String.class, "updateTime", false, "UPDATE_TIME");
     }
 
 
@@ -47,8 +47,8 @@ public class ImageMessageDao extends AbstractDao<ImageMessage, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"PARENT_DIR\" TEXT," + // 1: parentDir
                 "\"IMG_PATH\" TEXT," + // 2: imgPath
-                "\"ADD_TIME\" INTEGER," + // 3: addTime
-                "\"UPDATE_TIME\" INTEGER);"); // 4: updateTime
+                "\"ADD_TIME\" TEXT," + // 3: addTime
+                "\"UPDATE_TIME\" TEXT);"); // 4: updateTime
     }
 
     /** Drops the underlying database table. */
@@ -76,14 +76,14 @@ public class ImageMessageDao extends AbstractDao<ImageMessage, Long> {
             stmt.bindString(3, imgPath);
         }
  
-        java.util.Date addTime = entity.getAddTime();
+        String addTime = entity.getAddTime();
         if (addTime != null) {
-            stmt.bindLong(4, addTime.getTime());
+            stmt.bindString(4, addTime);
         }
  
-        java.util.Date updateTime = entity.getUpdateTime();
+        String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindLong(5, updateTime.getTime());
+            stmt.bindString(5, updateTime);
         }
     }
 
@@ -106,14 +106,14 @@ public class ImageMessageDao extends AbstractDao<ImageMessage, Long> {
             stmt.bindString(3, imgPath);
         }
  
-        java.util.Date addTime = entity.getAddTime();
+        String addTime = entity.getAddTime();
         if (addTime != null) {
-            stmt.bindLong(4, addTime.getTime());
+            stmt.bindString(4, addTime);
         }
  
-        java.util.Date updateTime = entity.getUpdateTime();
+        String updateTime = entity.getUpdateTime();
         if (updateTime != null) {
-            stmt.bindLong(5, updateTime.getTime());
+            stmt.bindString(5, updateTime);
         }
     }
 
@@ -128,8 +128,8 @@ public class ImageMessageDao extends AbstractDao<ImageMessage, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // parentDir
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // imgPath
-            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // addTime
-            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)) // updateTime
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // addTime
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // updateTime
         );
         return entity;
     }
@@ -139,8 +139,8 @@ public class ImageMessageDao extends AbstractDao<ImageMessage, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setParentDir(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setImgPath(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setAddTime(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setUpdateTime(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
+        entity.setAddTime(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setUpdateTime(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     @Override

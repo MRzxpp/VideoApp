@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
+    android:clickable="true"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/layout_11"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/titleBlue">
@@ -30,48 +33,21 @@
             android:src="@drawable/back" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <com.haishanda.android.videoapp.Utils.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/notification_open"
         android:layout_width="match_parent"
-        android:layout_height="69.5dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_11"
         android:layout_marginTop="10dp"
-        android:background="@color/white">
+        expandable:contentLayout="@layout/view_content"
+        expandable:headerLayout="@layout/view_header">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="16.5dp"
-            android:text="在通知栏显示新消息"
-            android:textColor="#333333"
-            android:textSize="15sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="37.5dp"
-            android:text="若关闭，当收到报警图片时，将不在通知栏显示报警信息。
-建议保存开启。"
-            android:textColor="@color/textBlue"
-            android:textSize="10sp" />
-
-        <Switch
-            android:id="@+id/is_monitor_warning_open"
-            android:layout_width="51dp"
-            android:layout_height="31dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp" />
-    </RelativeLayout>
-
-    <ListView
-        android:id="@+id/monitor_warning_config_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
+    </com.haishanda.android.videoapp.Utils.ExpandableLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_below="@id/notification_open"
         android:layout_marginTop="15dp"
         android:background="@color/white">
 
@@ -84,13 +60,24 @@
             android:textColor="#333333"
             android:textSize="15sp" />
 
-        <Switch
-            android:id="@+id/is_sending_email"
-            android:layout_width="51dp"
-            android:layout_height="31dp"
-            android:layout_alignParentRight="true"
+        <RelativeLayout
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp" />
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="1dp">
+
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/is_sending_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                app:kswAnimationDuration="300"
+                app:kswBackDrawable="@drawable/switch_back_drawable"
+                app:kswThumbDrawable="@drawable/knob"
+                app:kswThumbMarginTop="3dp" />
+        </RelativeLayout>
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

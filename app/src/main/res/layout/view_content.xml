@@ -1,22 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/text"
+    <RelativeLayout
+        android:id="@+id/text12"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#c0392b"
-        android:gravity="center"
-        android:hint="Hello World !"
-        android:textColor="@android:color/white" />
+        android:layout_height="28dp">
 
-    <Button
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:text="收到新消息时"
+            android:textColor="#666666"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text"
-        android:text="click ME !" />
+        android:layout_below="@id/text12"
+        android:background="@drawable/both_stroke_white">
+
+        <RelativeLayout
+            android:id="@+id/content1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bottom_stroke">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="手机发出声音提示我"
+                    android:textColor="#333333"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="1dp">
+
+                <com.kyleduo.switchbutton.SwitchButton
+                    android:id="@+id/is_mobile_voice_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:kswAnimationDuration="300"
+                    app:kswBackDrawable="@drawable/switch_back_drawable"
+                    app:kswThumbDrawable="@drawable/knob"
+                    app:kswThumbMarginTop="3dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/content2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content1"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bottom_stroke">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="手机振动提示我"
+                    android:textColor="#333333"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="1dp">
+
+                <com.kyleduo.switchbutton.SwitchButton
+                    android:id="@+id/is_mobile_shake_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:kswAnimationDuration="300"
+                    app:kswBackDrawable="@drawable/switch_back_drawable"
+                    app:kswThumbDrawable="@drawable/knob"
+                    app:kswThumbMarginTop="3dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content2"
+            android:layout_marginLeft="15dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    android:id="@+id/text11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="声音提醒间隔"
+                    android:textColor="#333333"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/text11"
+                    android:text="第一次提醒后，后推您所设置的时间再次提醒。"
+                    android:textColor="@color/textBlue"
+                    android:textSize="9sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/time_gap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="37dp" />
+
+            <ImageView
+                android:id="@+id/to_set_time_gap"
+                android:layout_width="12dp"
+                android:layout_height="22dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/arrow_right" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

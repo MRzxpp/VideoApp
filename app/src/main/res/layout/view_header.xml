@@ -1,16 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="69.5dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/both_stroke_white">
 
     <TextView
-        android:id="@+id/header_text"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="ExpandableLayout Header!"
-        android:textColor="@android:color/white" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="16.5dp"
+        android:text="在通知栏显示新消息"
+        android:textColor="#333333"
+        android:textSize="15sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="37.5dp"
+        android:text="若关闭，当收到报警图片时，将不在通知栏显示报警信息。
+建议保持开启。"
+        android:textColor="@color/textBlue"
+        android:textSize="10sp" />
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="1dp">
+
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/is_notification_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            app:kswAnimationDuration="300"
+            app:kswBackDrawable="@drawable/switch_back_drawable"
+            app:kswThumbDrawable="@drawable/knob"
+            app:kswThumbMarginTop="3dp" />
+    </RelativeLayout>
 </RelativeLayout>

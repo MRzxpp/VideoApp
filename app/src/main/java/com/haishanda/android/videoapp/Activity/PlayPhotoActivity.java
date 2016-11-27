@@ -1,9 +1,8 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -18,7 +17,10 @@ import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.Fragement.PhotosFragment;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Utils.FileSizeUtil;
+import com.haishanda.android.videoapp.Utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
@@ -41,7 +43,9 @@ public class PlayPhotoActivity extends Activity {
     @BindView(R.id.photo_main)
     ImageView photoMain;
 
+    private String imagePath;
     private List<ImageMessage> imageMessage;
+    private String boatName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,8 @@ public class PlayPhotoActivity extends Activity {
         setContentView(R.layout.activity_play_photos);
         ButterKnife.bind(this);
         extra = getIntent().getExtras();
-        String imagePath = extra.getString("imagePath");
+        imagePath = extra.getString("imagePath");
+        boatName = extra.getString("boatName");
         Glide
                 .with(this)
                 .load(imagePath)
@@ -66,8 +71,13 @@ public class PlayPhotoActivity extends Activity {
 
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
+        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 1, imagePath.length());
+        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
+        QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
+        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
+        ImageMessage im = imageMessage.get(0);
         DialogPlus dialogPlus = DialogPlus.newDialog(this)
-                .setAdapter(new ImageInfoAdapter(this, "testname", "testtime", "testsize"))
+                .setAdapter(new ImageInfoAdapter(this, imageName, im.getAddTime(), FileSizeUtil.getAutoFileOrFilesSize(imagePath)))
                 .setCancelable(true)
                 .setGravity(Gravity.CENTER)
                 .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)  // or any custom width ie: 300
@@ -89,7 +99,26 @@ public class PlayPhotoActivity extends Activity {
     }
 
     @OnClick(R.id.delete_photo)
-    public void deletePhoto(View view) {
+    public void deletePhoto(final View view) {
+        final MaterialDialog materialDialog = new MaterialDialog(this);
+        materialDialog.setMessage("是否确认删除?");
+        materialDialog.setPositiveButton("确认", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAction(view);
+                materialDialog.dismiss();
+            }
+        });
+        materialDialog.setNegativeButton("取消", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                materialDialog.dismiss();
+            }
+        });
+        materialDialog.show();
+    }
+
+    private void deleteAction(View view) {
         String imagePath = extra.getString("imagePath");
         String boatName = extra.getString("boatName");
         String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 1, imagePath.length());

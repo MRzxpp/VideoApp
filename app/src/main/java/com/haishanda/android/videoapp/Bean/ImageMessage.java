@@ -15,11 +15,11 @@ public class ImageMessage {
     private Long id;
     private String parentDir;
     private String imgPath;
-    private Date addTime;
-    private Date updateTime;
-    @Generated(hash = 1080324986)
-    public ImageMessage(Long id, String parentDir, String imgPath, Date addTime,
-            Date updateTime) {
+    private String addTime;
+    private String updateTime;
+    @Generated(hash = 257556371)
+    public ImageMessage(Long id, String parentDir, String imgPath, String addTime,
+            String updateTime) {
         this.id = id;
         this.parentDir = parentDir;
         this.imgPath = imgPath;
@@ -47,16 +47,17 @@ public class ImageMessage {
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
-    public Date getAddTime() {
+    public String getAddTime() {
         return this.addTime;
     }
-    public void setAddTime(Date addTime) {
+    public void setAddTime(String addTime) {
         this.addTime = addTime;
     }
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return this.updateTime;
     }
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
+
 }

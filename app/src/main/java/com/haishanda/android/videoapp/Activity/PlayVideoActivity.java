@@ -3,11 +3,17 @@ package com.haishanda.android.videoapp.Activity;
 import android.app.Activity;
 
 import android.content.Intent;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,13 +25,27 @@ import com.haishanda.android.videoapp.Bean.QueryCameras;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
+import com.haishanda.android.videoapp.Utils.DownloadUtil;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +58,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 import retrofit2.Call;
 import retrofit2.Response;
+import retrofit2.http.Url;
 import rx.Observer;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
@@ -61,6 +82,7 @@ public class PlayVideoActivity extends Activity {
     private String boatName;
     private long cameraId;
     private String path;
+    private DownloadUtil l;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +136,11 @@ public class PlayVideoActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        SaveImageToLocalUtil.saveCameraIconAction(videoView.getCurrentFrame(), boatName, this.cameraId);
+        try {
+            SaveImageToLocalUtil.saveCameraIconAction(videoView.getCurrentFrame(), boatName, this.cameraId);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         videoView.pause();
     }
 
@@ -151,13 +177,55 @@ public class PlayVideoActivity extends Activity {
     @OnClick(R.id.printscreen_btn)
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
-        SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), boatName);
+        try {
+            SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), boatName);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "视频还未加载完成！暂时无法截图", Toast.LENGTH_LONG).show();
+        }
+
         Log.i("PlayVideo", " 截图成功");
     }
 
     @OnClick(R.id.record_btn)
     public void recordVideo(View view) {
         Log.i(TAG, "recordVideo");
+        final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                //这里就一条消息
+            }
+        };
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //另起线程执行下载，安卓最新sdk规范，网络操作不能再主线程。
+                l = new DownloadUtil(path);
+
+                /**
+                 * 下载文件到sd卡，虚拟设备必须要开始设置sd卡容量
+                 * downhandler是Download的内部类，作为回调接口实时显示下载数据
+                 */
+                int status = l.down2sd("downtemp/", "test.flv", l.new downhandler() {
+                    @Override
+                    public void setSize(int size) {
+                        Message msg = handler.obtainMessage();
+                        msg.arg1 = size;
+                        msg.sendToTarget();
+                        Log.d("log", Integer.toString(size));
+                    }
+                });
+                //log输出
+                Log.d("log", Integer.toString(status));
+
+            }
+        }).start();
+    }
+
+    @OnClick(R.id.interphone_btn)
+    public void talkService() {
+        l.getUrlcon().disconnect();
     }
 
     @OnClick(R.id.back_to_boat_btn)
@@ -184,30 +252,9 @@ public class PlayVideoActivity extends Activity {
             Intent intent = new Intent(PlayVideoActivity.this, LoginActivity.class);
             startActivity(intent);
         }
-//        ApiManage.getInstence().getLiveApiService().getLiveStream(cameraId)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<SmartResult<CameraLive>>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(SmartResult<CameraLive> cameraLiveSmartResult) {
-//                        String liveUrl = cameraLiveSmartResult.getData().getLiveUrl();
-//                        int liveId = cameraLiveSmartResult.getData().getLiveId();
-//                        liveUrlCopy[0] = liveUrl;
-//                        liveIdCopy[0] = liveId;
-//                    }
-//                });
         this.liveId = liveIdCopy[0];
         return liveUrlCopy[0];
     }
+
 
 }

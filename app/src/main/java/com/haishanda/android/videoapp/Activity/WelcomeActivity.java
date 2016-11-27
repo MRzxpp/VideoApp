@@ -10,10 +10,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
+import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
+import com.hyphenate.chat.EMChatConfig;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
+
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,6 +51,14 @@ public class WelcomeActivity extends Activity {
         EMClient.getInstance().init(this, options);
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+
+//        TimeBean timeBean = new TimeBean(12, 30, 12, 30, 0);
+//        TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
+//        QueryBuilder<TimeBean> queryBuilder = timeBeanDao.queryBuilder();
+//        List<TimeBean> list = queryBuilder.list();
+//        if (list.size() == 0) {
+//            timeBeanDao.insert(timeBean);
+//        }
 
         LoginActivity loginActivity = new LoginActivity();
         if (loginActivity.loginWithExistMessage()) {

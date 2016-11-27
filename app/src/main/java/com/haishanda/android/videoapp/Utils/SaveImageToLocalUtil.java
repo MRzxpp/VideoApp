@@ -1,10 +1,10 @@
 package com.haishanda.android.videoapp.Utils;
 
 import android.graphics.Bitmap;
-import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.RequiresApi;
+import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
@@ -17,6 +17,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Zhongsz on 2016/10/28.
@@ -24,7 +25,6 @@ import java.io.IOException;
 
 public class SaveImageToLocalUtil {
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void saveAction(Bitmap img, String boatName) {
         File sdcardDir = Environment.getExternalStorageDirectory();
         String path = sdcardDir.getPath() + "/VideoApp";
@@ -48,7 +48,7 @@ public class SaveImageToLocalUtil {
             e.printStackTrace();
         }
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
-        ImageMessage imageMessage = new ImageMessage(null, boatName, imgName, null, null);
+        ImageMessage imageMessage = new ImageMessage(null, boatName, imgName, format.format(System.currentTimeMillis()), null);
         imageMessageDao.insert(imageMessage);
     }
 

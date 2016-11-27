@@ -15,7 +15,7 @@ import com.haishanda.android.videoapp.Bean.LoginMessage;
 /** 
  * DAO for table "LOGIN_MESSAGE".
 */
-public class LoginMessageDao extends AbstractDao<LoginMessage, Void> {
+public class LoginMessageDao extends AbstractDao<LoginMessage, Long> {
 
     public static final String TABLENAME = "LOGIN_MESSAGE";
 
@@ -26,6 +26,7 @@ public class LoginMessageDao extends AbstractDao<LoginMessage, Void> {
     public static class Properties {
         public final static Property Username = new Property(0, String.class, "username", false, "USERNAME");
         public final static Property Password = new Property(1, String.class, "password", false, "PASSWORD");
+        public final static Property Id = new Property(2, long.class, "id", true, "_id");
     }
 
 
@@ -42,7 +43,8 @@ public class LoginMessageDao extends AbstractDao<LoginMessage, Void> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"LOGIN_MESSAGE\" (" + //
                 "\"USERNAME\" TEXT," + // 0: username
-                "\"PASSWORD\" TEXT);"); // 1: password
+                "\"PASSWORD\" TEXT," + // 1: password
+                "\"_id\" INTEGER PRIMARY KEY NOT NULL );"); // 2: id
         // Add Indexes
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_LOGIN_MESSAGE_USERNAME ON LOGIN_MESSAGE" +
                 " (\"USERNAME\" ASC);");
@@ -69,6 +71,7 @@ public class LoginMessageDao extends AbstractDao<LoginMessage, Void> {
         if (password != null) {
             stmt.bindString(2, password);
         }
+        stmt.bindLong(3, entity.getId());
     }
 
     @Override
@@ -84,18 +87,20 @@ public class LoginMessageDao extends AbstractDao<LoginMessage, Void> {
         if (password != null) {
             stmt.bindString(2, password);
         }
+        stmt.bindLong(3, entity.getId());
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.getLong(offset + 2);
     }    
 
     @Override
     public LoginMessage readEntity(Cursor cursor, int offset) {
         LoginMessage entity = new LoginMessage( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // username
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // password
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // password
+            cursor.getLong(offset + 2) // id
         );
         return entity;
     }
@@ -104,23 +109,27 @@ public class LoginMessageDao extends AbstractDao<LoginMessage, Void> {
     public void readEntity(Cursor cursor, LoginMessage entity, int offset) {
         entity.setUsername(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setPassword(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setId(cursor.getLong(offset + 2));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(LoginMessage entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(LoginMessage entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(LoginMessage entity) {
-        return null;
+    public Long getKey(LoginMessage entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(LoginMessage entity) {
-        // TODO
-        return false;
+        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
     }
 
     @Override

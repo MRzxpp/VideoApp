@@ -2,8 +2,13 @@ package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +21,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.haishanda.android.videoapp.Activity.PlayVideoActivity;
 import com.haishanda.android.videoapp.R;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
  * Created by Zhongsz on 2016/11/16.
  */
-
+@SuppressWarnings("ResourceType")
 public class LiveAdapter extends ArrayAdapter {
 
     private Context context;
@@ -30,7 +36,6 @@ public class LiveAdapter extends ArrayAdapter {
     private String[] imagePath;
     private List<Long> cameraId;
     private String boatName;
-    private final Drawable defaultImage = getContext().getDrawable(R.drawable.boat_background);
     private int machineId;
 
     public LiveAdapter(Context context, String[] imagePath, List<Long> cameraId, String boatName) {
@@ -51,7 +56,7 @@ public class LiveAdapter extends ArrayAdapter {
         Glide
                 .with(context)
                 .load(imagePath[position])
-                .error(defaultImage)
+                .error(R.drawable.boat_background)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into((ImageView) convertView.findViewById(R.id.live_adapter_photo));

@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Api;
 
 import com.haishanda.android.videoapp.Config.Config;
+import com.haishanda.android.videoapp.Utils.NullOnEmptyConverterFactory;
 import com.haishanda.android.videoapp.VideoApplication;
 
 import java.io.File;
@@ -36,28 +37,10 @@ public class ApiManage {
         return apiManage;
     }
 
-    private VideoApi videoApi;
     private UserApi userApi;
     private BoatApi boatApi;
     private LiveApi liveApi;
     private MonitorApi monitorApi;
-
-
-    public VideoApi getVideoApiService() {
-        if (videoApi == null) {
-            synchronized (zhihuMonitor) {
-                if (videoApi == null) {
-                    videoApi = new Retrofit.Builder()
-                            .baseUrl(Config.SERVER_HOME)
-                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build().create(VideoApi.class);
-
-                }
-            }
-        }
-        return videoApi;
-    }
 
     public UserApi getUserApiService() {
         if (userApi == null) {
@@ -68,6 +51,24 @@ public class ApiManage {
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .build().create(UserApi.class);
+                }
+            }
+        }
+        return userApi;
+    }
+
+    public UserApi getUserApiServiceWithToken() {
+        if (userApi == null) {
+            synchronized (zhihuMonitor) {
+                if (userApi == null) {
+                    userApi = new Retrofit.Builder()
+                            .baseUrl(Config.SERVER_HOME)
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .addConverterFactory(new NullOnEmptyConverterFactory())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .client(genericClient())
+                            .build()
+                            .create(UserApi.class);
                 }
             }
         }

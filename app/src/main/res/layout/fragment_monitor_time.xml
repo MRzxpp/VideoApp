@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
+    android:clickable="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -91,18 +92,18 @@
             android:textColor="@color/textBlue"
             android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/next_day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="15dp"
-            android:background="#FF0000"
-            android:text="第二天"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+        <!--<TextView-->
+            <!--android:id="@+id/next_day"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:layout_marginRight="15dp"-->
+            <!--android:background="#FF0000"-->
+            <!--android:text="第二天"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="12sp" />-->
 
         <com.haishanda.android.videoapp.Views.PickerView
             android:id="@+id/starttime_hour"
@@ -157,5 +158,28 @@
 
     </RelativeLayout>
 
+    <!--<TextView-->
+        <!--android:id="@+id/begintext1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="invisible" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/begintext2"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="invisible" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/endtext1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="invisible" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/endtext2"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="invisible" />-->
 
 </LinearLayout>

@@ -107,56 +107,54 @@
                     android:src="@drawable/arrow_right" />
             </RelativeLayout>
 
-            <com.andexert.expandablelayout.library.ExpandableLayout
-                xmlns:expandable="http://schemas.android.com/apk/res-auto"
+            <RelativeLayout
                 android:id="@+id/monitor_open"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/monitor_time"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_below="@id/monitor_time"
                 android:layout_marginLeft="15dp"
-                android:background="@drawable/bottom_stroke"
-                expandable:contentLayout="@layout/view_content"
-                expandable:headerLayout="@layout/view_header">
+                android:background="@drawable/bottom_stroke">
+
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp">
+
                     <TextView
-                        android:layout_centerVertical="true"
                         android:id="@+id/textView6"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:text="是否开启手机远程实时监控"
                         android:textColor="#333333"
                         android:textSize="15sp" />
-
-                    <RelativeLayout
-                        android:layout_centerVertical="true"
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginTop="1dp">
-
-                        <com.kyleduo.switchbutton.SwitchButton
-                            android:id="@+id/is_monitor_open"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            app:kswAnimationDuration="300"
-                            app:kswBackDrawable="@drawable/switch_back_drawable"
-                            app:kswThumbDrawable="@drawable/knob"
-                            app:kswThumbMarginTop="3dp" />
-                    </RelativeLayout>
                 </RelativeLayout>
 
-            </com.andexert.expandablelayout.library.ExpandableLayout>
+
+                <RelativeLayout
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="1dp">
+
+                    <com.kyleduo.switchbutton.SwitchButton
+                        android:id="@+id/is_monitor_open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        app:kswAnimationDuration="300"
+                        app:kswBackDrawable="@drawable/switch_back_drawable"
+                        app:kswThumbDrawable="@drawable/knob"
+                        app:kswThumbMarginTop="3dp" />
+                </RelativeLayout>
+            </RelativeLayout>
 
             <RelativeLayout
-                android:layout_below="@id/monitor_open"
                 android:id="@+id/monitor_warning"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:layout_below="@+id/monitor_open"
                 android:layout_marginLeft="15dp"
                 android:background="@drawable/bottom_stroke">
 
@@ -179,12 +177,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_below="@id/monitor_warning"
                 android:id="@+id/monitor_voice"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginLeft="15dp"
-                >
+                android:layout_below="@id/monitor_warning"
+                android:layout_marginLeft="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -213,6 +210,8 @@
                     android:layout_marginRight="15dp"
                     android:src="@drawable/arrow_right" />
             </RelativeLayout>
+
+
         </RelativeLayout>
     </FrameLayout>
 </LinearLayout>

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
+    android:clickable="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -19,7 +20,7 @@
             android:src="@drawable/my_head" />
 
         <TextView
-            android:id="@+id/my_username"
+            android:id="@+id/my_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/my_head_img"
@@ -33,7 +34,7 @@
             android:id="@+id/my_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/my_username"
+            android:layout_below="@id/my_nickname"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="11dp"
             android:text="电话号码"

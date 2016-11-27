@@ -14,24 +14,41 @@ public class LoginMessage {
     private String username;
     @Index(unique = true)
     private String password;
-    @Generated(hash = 1481530845)
-    public LoginMessage(String username, String password) {
+    @Id(autoincrement = false)
+    private long id;
+
+    @Generated(hash = 902572478)
+    public LoginMessage(String username, String password, long id) {
         this.username = username;
         this.password = password;
+        this.id = id;
     }
+
     @Generated(hash = 2079515228)
     public LoginMessage() {
     }
+
     public String getUsername() {
         return this.username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
+
     public String getPassword() {
         return this.password;
     }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

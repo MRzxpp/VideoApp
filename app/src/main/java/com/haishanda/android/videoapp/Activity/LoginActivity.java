@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserBean;
+import com.haishanda.android.videoapp.Bean.UserMessageBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.Listener.LoginListener;
@@ -28,10 +29,14 @@ import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
+import com.hyphenate.EMConnectionListener;
+import com.hyphenate.EMError;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.util.NetUtils;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -121,9 +126,13 @@ public class LoginActivity extends Activity {
                                 Toast.makeText(LoginActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT).show();
                             } else {
                                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-                                LoginMessage loginMessage = new LoginMessage(username.getText().toString(), password.getText().toString());
+                                LoginMessage loginMessage = new LoginMessage(username.getText().toString(), password.getText().toString(),smartResult.getData().getId());
                                 loginMessageDao.deleteAll();
                                 loginMessageDao.insert(loginMessage);
+
+                                UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
+                                UserMessageBean userMessageBean = new UserMessageBean(smartResult.getData().getName(), smartResult.getData().getPortrait(), smartResult.getData().getId());
+                                userMessageBeanDao.insertOrReplace(userMessageBean);
                                 //token inject
                                 VideoApplication.getApplication().setToken(smartResult.getData().getToken());
                                 //emclient login
@@ -142,6 +151,7 @@ public class LoginActivity extends Activity {
                                                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
                                                 notificationManager.notify(1, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+
                                             }
 
                                             @Override
@@ -165,10 +175,12 @@ public class LoginActivity extends Activity {
                                             }
                                         };
                                         EMClient.getInstance().chatManager().addMessageListener(msgListener);
+                                        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
 
                                         Intent intent = new Intent();
                                         intent.setClass(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
+                                        LoginActivity.this.finish();
                                     }
 
                                     @Override
@@ -224,7 +236,7 @@ public class LoginActivity extends Activity {
                 .build());
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        LoginMessage loginMessage = new LoginMessage("1", "1");
+        LoginMessage loginMessage = new LoginMessage("1", "1",-1);
         try {
             loginMessage = queryBuilder.uniqueOrThrow();
         } catch (DaoException e) {
@@ -238,6 +250,9 @@ public class LoginActivity extends Activity {
         try {
             Response<SmartResult<UserBean>> response = call.execute();
             if (response.body().getCode() == 1) {
+                UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
+                UserMessageBean userMessageBean = new UserMessageBean(response.body().getData().getName(), response.body().getData().getPortrait(), response.body().getData().getId());
+                userMessageBeanDao.insertOrReplace(userMessageBean);
                 isLogined[0] = true;
                 //token inject
                 VideoApplication.getApplication().setToken(response.body().getData().getToken());
@@ -281,6 +296,12 @@ public class LoginActivity extends Activity {
                             }
                         };
                         EMClient.getInstance().chatManager().addMessageListener(msgListener);
+                        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
+
+//                        Intent intent = new Intent();
+//                        intent.setClass(LoginActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                        LoginActivity.this.finish();
                     }
 
                     @Override
@@ -302,6 +323,52 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         return isLogined[0];
+    }
+
+
+    //实现ConnectionListener接口
+    private class MyConnectionListener implements EMConnectionListener {
+        @Override
+        public void onConnected() {
+        }
+
+        @Override
+        public void onDisconnected(final int error) {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (error == EMError.USER_REMOVED) {
+                        Toast.makeText(getApplicationContext(), "账户已被移除，请联系经销商", Toast.LENGTH_LONG).show();
+                        logoutAndDeleteLoginMessage();
+                        // 显示帐号已经被移除
+                    } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                        // 显示帐号在其他设备登录
+                        Toast.makeText(getApplicationContext(), "账户在其他地方登录", Toast.LENGTH_LONG).show();
+                        logoutAndDeleteLoginMessage();
+                    } else {
+                        if (NetUtils.hasNetwork(LoginActivity.this)) {
+                            Toast.makeText(getApplicationContext(), "连接环信服务器失败", Toast.LENGTH_LONG).show();
+                            logoutAndDeleteLoginMessage();
+                        }
+                        //连接不到聊天服务器
+                        else {
+                            Toast.makeText(getApplicationContext(), "当前网络不可用", Toast.LENGTH_LONG).show();
+                            logoutAndDeleteLoginMessage();
+                        }
+                        //当前网络不可用，请检查网络设置
+                    }
+                }
+            });
+        }
+    }
+
+    private void logoutAndDeleteLoginMessage() {
+        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
+        loginMessageDao.deleteAll();
+        EMClient.getInstance().logout(true);
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        startActivity(intent);
     }
 
 }
