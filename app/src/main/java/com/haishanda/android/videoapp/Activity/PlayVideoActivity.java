@@ -25,6 +25,7 @@ import com.haishanda.android.videoapp.Utils.CustomMediaController;
 import com.haishanda.android.videoapp.Utils.DownloadUtil;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 
 
@@ -173,6 +174,10 @@ public class PlayVideoActivity extends Activity {
         Log.i(TAG, "printScreen");
         try {
             SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), boatName);
+            final MaterialDialog dialog = new MaterialDialog(this);
+            dialog.setMessage("截图成功！");
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.show();
         } catch (NullPointerException e) {
             e.printStackTrace();
             Toast.makeText(this, "视频还未加载完成！暂时无法截图", Toast.LENGTH_LONG).show();

@@ -130,6 +130,7 @@ public class PlayPhotoActivity extends Activity {
         ImageMessage im = imageMessage.get(0);
         imageMessageDao.delete(im);
         Log.d("PhotoAction", "删除成功");
+
         backToPhotos(view);
     }
 }

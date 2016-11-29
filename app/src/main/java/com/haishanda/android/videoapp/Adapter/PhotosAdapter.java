@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -56,7 +57,7 @@ public class PhotosAdapter extends ArrayAdapter {
                 .load(imagePath[position])
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into((ImageView) convertView);
+                .into((ImageView) convertView.findViewById(R.id.photo_adapter));
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +69,9 @@ public class PhotosAdapter extends ArrayAdapter {
                 context.startActivity(intent);
             }
         });
+
+        TextView boatNameView = (TextView) convertView.findViewById(R.id.boat_name_text);
+        boatNameView.setText(boatName);
 
         return convertView;
     }

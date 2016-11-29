@@ -110,8 +110,4 @@ public class MyFragment extends Fragment {
         initViews();
     }
 
-    public void refresh() {
-        onResume();
-    }
-
 }

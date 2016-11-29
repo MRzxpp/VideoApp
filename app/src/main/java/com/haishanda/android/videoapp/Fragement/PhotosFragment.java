@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
@@ -35,6 +36,8 @@ public class PhotosFragment extends Fragment {
     GridView photosGridView;
     @BindView(R.id.photos_background)
     ImageView photosBackground;
+    @BindView(R.id.photos_background_text)
+    TextView photosBackgroundText;
 
     String[] imagePaths = {};
     ImageMessageDao imageMessageDao;
@@ -55,13 +58,18 @@ public class PhotosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         boatName = VideoApplication.getApplication().getCurrentBoatName();
         imagePaths = loadBoatImagePaths(boatName);
         adapter = new PhotosAdapter(getContext(), imagePaths, boatName);
         adapter.notifyDataSetInvalidated();
         adapter.notifyDataSetChanged();
         photosGridView.setAdapter(adapter);
-        return view;
     }
 
     public String[] loadBoatImagePaths(String boatName) {
@@ -77,6 +85,7 @@ public class PhotosFragment extends Fragment {
         imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
         if (imageUrls.length != 0) {
             photosBackground.setVisibility(View.INVISIBLE);
+            photosBackgroundText.setVisibility(View.INVISIBLE);
         }
         return imageUrls;
     }
