@@ -63,13 +63,17 @@ public class ResetBoatPasswordFragment extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         Log.i(TAG, "reset failed");
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "网络错误", Toast.LENGTH_LONG).show();
                     }
+
                     @Override
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
                             Toast.makeText(getContext(), "已发送", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.i(TAG, smartResult.getMsg());
+                            Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "发送失败", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

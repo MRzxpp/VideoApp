@@ -66,14 +66,15 @@ public class AddBoatActivity extends Activity {
     @OnClick(R.id.add_boat_scan_qrcode_btn)
     public void scanBoatQRCode() {
         Intent intent = new Intent(AddBoatActivity.this, CaptureActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 0);
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             // ZXing回傳的內容
             String contents = intent.getStringExtra("codedContent");
-            Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
+            boatNumber.setText(contents);
         }
     }
 

@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/titleBlue">
+        android:background="@color/white">
 
         <TextView
             android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="账户余额"
-            android:textColor="#ffffff"
+            android:textColor="@color/textBlack"
             android:textSize="18dp" />
 
         <ImageView
@@ -27,115 +27,16 @@
             android:layout_marginBottom="13dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="12dp"
-            android:src="@drawable/back" />
+            android:src="@drawable/back_in_black" />
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <ListView
+        android:scrollbars="vertical"
+        android:id="@+id/account_balance_main"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@drawable/account_background">
-
-        <TextView
-            android:id="@+id/account_balance_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="18.5dp"
-            android:layout_toRightOf="@id/account_balance_num"
-            android:text="元"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@drawable/meal_background"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="5dp"
-                android:text="当前套餐:"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/meal_current"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="41dp"
-                android:layout_marginTop="28dp"
-                android:text="100元包24小时"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/left_stroke_white">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="5dp"
-                android:text="套餐剩余:"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/meal_left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="41dp"
-                android:layout_marginTop="28dp"
-                android:text="17小时25分钟"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:text="当前套餐详情"
-            android:textColor="#333333"
-            android:textSize="15sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="37dp"
-            android:text="1.每个月有24个小时用于观看监控画面。
-2.超出24个小时将额外收取费用。
-3.当您处于非wifi网络时，观看将产生流
-   量费用。"
-            android:textColor="#666666"
-            android:textSize="15sp" />
-    </RelativeLayout>
+        android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+    </ListView>
 </LinearLayout>

@@ -38,6 +38,7 @@ public class ApiManage {
     }
 
     private UserApi userApi;
+    private UserApi userApiToken;
     private BoatApi boatApi;
     private LiveApi liveApi;
     private MonitorApi monitorApi;
@@ -58,10 +59,10 @@ public class ApiManage {
     }
 
     public UserApi getUserApiServiceWithToken() {
-        if (userApi == null) {
+        if (userApiToken == null) {
             synchronized (zhihuMonitor) {
-                if (userApi == null) {
-                    userApi = new Retrofit.Builder()
+                if (userApiToken == null) {
+                    userApiToken = new Retrofit.Builder()
                             .baseUrl(Config.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(new NullOnEmptyConverterFactory())
@@ -72,7 +73,7 @@ public class ApiManage {
                 }
             }
         }
-        return userApi;
+        return userApiToken;
     }
 
     public LiveApi getLiveApiService() {

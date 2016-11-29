@@ -59,7 +59,10 @@ public class BoatConfigActivity extends FragmentActivity {
 
     @OnClick(R.id.rename_boat_layout)
     public void skipToRenameBoatFragment() {
+        Bundle data = new Bundle();
+        data.putInt("machineId", machineId);
         RenameBoatFragment renameBoatFragment = new RenameBoatFragment();
+        renameBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.boat_config_layout, renameBoatFragment);

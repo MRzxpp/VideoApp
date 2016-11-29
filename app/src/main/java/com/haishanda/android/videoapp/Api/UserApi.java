@@ -1,19 +1,25 @@
 package com.haishanda.android.videoapp.Api;
 
+import com.haishanda.android.videoapp.Bean.PackageVo;
 import com.haishanda.android.videoapp.Bean.RegisterBean;
 import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 
 import java.io.File;
+import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import rx.Observable;
 
@@ -71,12 +77,15 @@ public interface UserApi {
     @POST("/monitor-platform-web/rest/user/editNickName")
     Observable<SmartResult> editNickName(@Header("token") String token, @Field("nickName") String nickName);
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/monitor-platform-web/rest/user/uploadPortrait")
-    Observable<SmartResult<String>> uploadPortrait(@Field("image") File image);
+    Observable<SmartResult<String>> uploadPortrait(@Header("token") String token, @Part MultipartBody.Part image);
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editPortrait")
-    Observable<SmartResult> editPortrait(@Field("portrait") String portrait);
+    Observable<SmartResult> editPortrait(@Header("token") String token, @Field("portrait") String portrait);
+
+    @GET("/monitor-platform-web/rest/user/queryPackages")
+    Call<SmartResult<List<PackageVo>>> queryPackage(@Header("token") String token);
 
 }

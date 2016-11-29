@@ -45,6 +45,9 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -131,25 +134,50 @@ public class SetPortraitFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_PICK_IMAGE) {
-            Uri uri = data.getData();
-            String path = getRealFilePath(getContext(), uri);
-            Glide
-                    .with(this)
-                    .load(path)
-                    .error(defaultPortrait)
-                    .into(portraitView);
-            uploadAndEditPortrait(new File(path));
+            if (data != null) {
+                Uri uri = data.getData();
+                String path = getRealFilePath(getContext(), uri);
+                Glide
+                        .with(this)
+                        .load(path)
+                        .error(defaultPortrait)
+                        .into(portraitView);
+                uploadAndEditPortrait(new File(path));
+            } else {
+                Toast.makeText(getContext(), "err****", Toast.LENGTH_LONG).show();
+            }
             //to do find the path of pic
 
         } else if (requestCode == REQUEST_CODE_CAPTURE_CAMEIA) {
             Uri uri = data.getData();
-            String path = getRealFilePath(getContext(), uri);
-            Glide
-                    .with(this)
-                    .load(path)
-                    .error(defaultPortrait)
-                    .into(portraitView);
-            uploadAndEditPortrait(new File(path));
+            if (uri == null) {
+                //use bundle to get data
+                Bundle bundle = data.getExtras();
+                if (bundle != null) {
+                    Bitmap photo = (Bitmap) bundle.get("data"); //get bitmap
+                    //spath :生成图片取个名字和路径包含类型
+                    String path = userMessageBean.getNickName() + "_portrait";
+                    saveImage(photo, path);
+                    String imagePath = Environment.getExternalStorageDirectory() + "/VideoApp/Portrait/" + path + ".jpg";
+                    Glide
+                            .with(this)
+                            .load(imagePath)
+                            .error(defaultPortrait)
+                            .into(portraitView);
+                    uploadAndEditPortrait(new File(imagePath));
+                } else {
+                    Toast.makeText(getContext(), "err****", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                //to do find the path of pic by uri
+                String path = getRealFilePath(getContext(), uri);
+                Glide
+                        .with(this)
+                        .load(path)
+                        .error(defaultPortrait)
+                        .into(portraitView);
+                uploadAndEditPortrait(new File(path));
+            }
             //to do find the path of pic
         }
     }
@@ -178,43 +206,52 @@ public class SetPortraitFragment extends Fragment {
     }
 
     private void uploadAndEditPortrait(File file) {
-        ApiManage.getInstence().getUserApiServiceWithToken().uploadPortrait(file)
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        // MultipartBody.Part is used to send also the actual filename
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+        // adds another part within the multipart request
+        String descriptionString = "image";
+        ApiManage.getInstence().getUserApiService().uploadPortrait(VideoApplication.getApplication().getToken(), body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SmartResult<String>>() {
                     @Override
                     public void onCompleted() {
-
+                        Log.d(TAG, "upload completed");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.d(TAG, "upload error");
+                        e.printStackTrace();
                     }
 
                     @Override
-                    public void onNext(final SmartResult<String> stringSmartResult) {
+                    public void onNext(SmartResult<String> stringSmartResult) {
+                        final String portraitUrl = stringSmartResult.getData();
                         if (stringSmartResult.getCode() == 1) {
-                            ApiManage.getInstence().getUserApiServiceWithToken().editPortrait(stringSmartResult.getData())
+                            Log.d(TAG, "upload success");
+                            ApiManage.getInstence().getUserApiServiceWithToken().editPortrait(VideoApplication.getApplication().getToken(), stringSmartResult.getData())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new Observer<SmartResult>() {
                                         @Override
                                         public void onCompleted() {
-
+                                            Log.d(TAG, "edit completed");
                                         }
 
                                         @Override
                                         public void onError(Throwable e) {
-
+                                            Log.d(TAG, "edit error");
+                                            e.printStackTrace();
                                         }
 
                                         @Override
                                         public void onNext(SmartResult smartResult) {
                                             if (smartResult.getCode() == 1) {
-                                                userMessageBean.setPortraitUrl(stringSmartResult.getData());
+                                                userMessageBean.setPortraitUrl(portraitUrl);
                                                 userMessageBeanDao.update(userMessageBean);
-                                                Log.d(TAG, "success");
+                                                Log.d(TAG, "edit success");
                                             } else {
                                                 Log.d(TAG, smartResult.getMsg() != null ? smartResult.getMsg() : "修改未成功！");
                                             }
@@ -256,6 +293,29 @@ public class SetPortraitFragment extends Fragment {
         }
         // 最后通知图库更新
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + Environment.getExternalStorageDirectory().getPath() + "/VideoApp/Portrait")));
+    }
+
+    public static void saveImage(Bitmap photo, String spath) {
+        File sdcardDir = Environment.getExternalStorageDirectory();
+        String path = sdcardDir.getPath() + "/VideoApp";
+        File appDir = new File(path);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        File boatDir = new File(appDir + "/Portrait");
+        if (!boatDir.exists()) {
+            boatDir.mkdir();
+        }
+        String imgName = spath + ".jpg";
+        File file = new File(boatDir, imgName);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

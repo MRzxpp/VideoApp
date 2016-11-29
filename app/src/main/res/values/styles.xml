@@ -32,7 +32,5 @@
 
 
 
-
-
-    <style name="CommonDialogTheme" parent="Base.AlertDialog.AppCompat.Light"/>
+    <style name="CommonDialogTheme" parent="Base.AlertDialog.AppCompat.Light" />
 </resources>

@@ -6,11 +6,15 @@ import com.haishanda.android.videoapp.Config.SmartResult;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -50,5 +54,10 @@ public interface BoatApi {
     @POST("/monitor-platform-web/rest/user/editMachineName")
     Observable<SmartResult> editMachineName(@Field("machineId") int machineId,
                                             @Field("name") String boatName);
+
+    @Multipart
+    @POST("/monitor-platform-web/rest/user/uploadVoice")
+    Observable<SmartResult> uploadVoice(@Part MultipartBody.Part voice, @Part MultipartBody.Part cameraId);
+
 
 }

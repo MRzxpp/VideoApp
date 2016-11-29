@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/no_top_stroke_white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="@color/backgroundColor"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="119dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/balance_background">
+
+        <TextView
+            android:id="@+id/balance_machine_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:layout_width="165dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/balance_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/white"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/yuan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5.5dp"
+                android:layout_toRightOf="@id/balance_text"
+                android:text="元"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="15dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="35dp"
+                android:layout_marginTop="2dp"
+                android:layout_toRightOf="@id/yuan"
+                android:background="@drawable/corner_white"
+                android:text="余额"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="71.5dp"
+        android:layout_marginTop="134dp"
+        android:background="@drawable/bottom_stroke_white"
+        android:baselineAligned="false">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:text="当前套餐:"
+                android:textColor="@color/textGrey"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/meal_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="41dp"
+                android:layout_marginTop="28dp"
+                android:textColor="@color/textBlack"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/left_stroke">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:text="套餐剩余:"
+                android:textColor="@color/textGrey"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/month_rent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="41dp"
+                android:layout_marginTop="28dp"
+                android:textColor="@color/textBlack"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <com.haishanda.android.videoapp.Utils.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/balance_detail_open"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="205.5dp"
+        expandable:contentLayout="@layout/balance_detail_content"
+        expandable:headerLayout="@layout/balance_detail_header">
+
+    </com.haishanda.android.videoapp.Utils.ExpandableLayout>
+
+
+</RelativeLayout>

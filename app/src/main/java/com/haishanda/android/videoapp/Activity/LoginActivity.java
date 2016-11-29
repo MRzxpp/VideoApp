@@ -28,6 +28,7 @@ import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
@@ -126,7 +127,7 @@ public class LoginActivity extends Activity {
                                 Toast.makeText(LoginActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT).show();
                             } else {
                                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-                                LoginMessage loginMessage = new LoginMessage(username.getText().toString(), password.getText().toString(),smartResult.getData().getId());
+                                LoginMessage loginMessage = new LoginMessage(username.getText().toString(), password.getText().toString(), smartResult.getData().getId());
                                 loginMessageDao.deleteAll();
                                 loginMessageDao.insert(loginMessage);
 
@@ -236,7 +237,7 @@ public class LoginActivity extends Activity {
                 .build());
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        LoginMessage loginMessage = new LoginMessage("1", "1",-1);
+        LoginMessage loginMessage = new LoginMessage("1", "1", -1);
         try {
             loginMessage = queryBuilder.uniqueOrThrow();
         } catch (DaoException e) {
@@ -344,7 +345,7 @@ public class LoginActivity extends Activity {
                         // 显示帐号已经被移除
                     } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
                         // 显示帐号在其他设备登录
-                        Toast.makeText(getApplicationContext(), "账户在其他地方登录", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "账户在其他地方登录", Toast.LENGTH_LONG).show();
                         logoutAndDeleteLoginMessage();
                     } else {
                         if (NetUtils.hasNetwork(LoginActivity.this)) {

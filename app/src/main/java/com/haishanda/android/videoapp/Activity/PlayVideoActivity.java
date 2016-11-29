@@ -4,24 +4,21 @@ import android.app.Activity;
 
 import android.content.Intent;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.CameraLive;
-import com.haishanda.android.videoapp.Bean.ImageMessage;
-import com.haishanda.android.videoapp.Bean.QueryCameras;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
@@ -31,25 +28,14 @@ import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 import io.vov.vitamio.MediaPlayer;
 
 import io.vov.vitamio.Vitamio;
@@ -58,9 +44,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.http.Url;
 import rx.Observer;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -71,8 +55,10 @@ import rx.schedulers.Schedulers;
 public class PlayVideoActivity extends Activity {
     @BindView(R.id.test_play_video)
     VideoView videoView;
-    @BindView(R.id.test_print)
-    ImageView testPrint;
+    @BindView(R.id.vocal_is_in)
+    ImageView vocalGif;
+    @BindView(R.id.voice_start)
+    ImageView voiceStart;
 
     private static final String TAG = "PlayVideoActivity";
     private ImageMessageDao imageMessageDao;
@@ -84,6 +70,9 @@ public class PlayVideoActivity extends Activity {
     private String path;
     private DownloadUtil l;
 
+    private MediaRecorder mRecorder;
+    private String mFileName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +80,11 @@ public class PlayVideoActivity extends Activity {
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
+        Glide.with(this)
+                .load(R.drawable.voice_is_in)
+                .asGif()
+                .into(vocalGif);
+        vocalGif.setVisibility(View.INVISIBLE);
         extra = getIntent().getExtras();
         cameraId = extra.getLong("cameraId");
         boatName = extra.getString("boatName");
@@ -223,9 +217,64 @@ public class PlayVideoActivity extends Activity {
         }).start();
     }
 
-    @OnClick(R.id.interphone_btn)
-    public void talkService() {
-        l.getUrlcon().disconnect();
+    public void initTalkService() {
+        voiceStart.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        startVoice();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        stopVoice();
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void startVoice() {
+        voiceStart.setImageResource(R.drawable.terminate_record);
+        vocalGif.setVisibility(View.VISIBLE);
+        String state = Environment.getExternalStorageState();
+        if (!state.equals(Environment.MEDIA_MOUNTED)) {
+            Log.i(TAG, "SD Card is not mounted,It is  " + state + ".");
+        }
+        File sdcardDir = Environment.getExternalStorageDirectory();
+        String path = sdcardDir.getPath() + "/VideoApp/" + boatName + "/Voices";
+        File appDir = new File(path);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        mFileName = path + UUID.randomUUID().toString() + ".amr";
+        File directory = new File(mFileName).getParentFile();
+        if (!directory.exists() && !directory.mkdirs()) {
+            Log.i(TAG, "Path to file could not be created");
+        }
+        Toast.makeText(getApplicationContext(), "开始录音", Toast.LENGTH_LONG).show();
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            Log.e(TAG, "prepare() failed");
+        }
+        mRecorder.start();
+    }
+
+    private void stopVoice() {
+        voiceStart.setImageResource(R.drawable.record);
+        vocalGif.setVisibility(View.INVISIBLE);
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
+        Toast.makeText(getApplicationContext(), "保存录音" + mFileName, Toast.LENGTH_LONG).show();
     }
 
     @OnClick(R.id.back_to_boat_btn)

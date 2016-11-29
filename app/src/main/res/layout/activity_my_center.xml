@@ -57,7 +57,7 @@
                     android:textColor="#333333"
                     android:textSize="15sp" />
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/little_portrait"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
