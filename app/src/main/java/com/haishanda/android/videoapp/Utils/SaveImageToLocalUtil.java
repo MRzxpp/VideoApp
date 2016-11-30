@@ -65,7 +65,7 @@ public class SaveImageToLocalUtil {
             boatDir.mkdir();
         }
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒");
-        String imgName = boatName + "_" + format.format(System.currentTimeMillis()) + ".jpg";
+        String imgName = format.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(boatDir, imgName);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);

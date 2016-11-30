@@ -85,10 +85,16 @@ public class BoatFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_boat, container, false);
         boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
         ButterKnife.bind(this, view);
-        dealSpinner();
-        setLiveAdapter();
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        dealSpinner();
+        setLiveAdapter();
+    }
+
 
     private void dealSpinner() {
         boatInfos = getBoatInfos();
@@ -289,7 +295,8 @@ public class BoatFragment extends Fragment {
 
     private String[] getCameraImagePaths() {
         QueryBuilder<BoatMessage> queryBuilder = boatMessageDao.queryBuilder();
-        List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.Name.eq(mySpinner.getText().toString())).list();
+        List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
+//        List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.Name.eq(mySpinner.getText().toString())).list();
         List<String> cameraImagePathsCopy = new ArrayList<String>();
         for (int i = 0; i < cameraDetails.size(); i++) {
             cameraImagePathsCopy.add(cameraDetails.get(i).getCameraImagePath() != null ? cameraDetails.get(i).getCameraImagePath() : "default");

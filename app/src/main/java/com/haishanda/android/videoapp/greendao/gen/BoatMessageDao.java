@@ -52,6 +52,8 @@ public class BoatMessageDao extends AbstractDao<BoatMessage, Long> {
                 "\"ADD_TIME\" TEXT," + // 4: addTime
                 "\"UPDATE_TIME\" TEXT);"); // 5: updateTime
         // Add Indexes
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_BOAT_MESSAGE_MACHINE_ID ON BOAT_MESSAGE" +
+                " (\"MACHINE_ID\" ASC);");
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_BOAT_MESSAGE__id ON BOAT_MESSAGE" +
                 " (\"_id\" ASC);");
     }

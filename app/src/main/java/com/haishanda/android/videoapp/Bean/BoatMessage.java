@@ -12,6 +12,7 @@ import org.greenrobot.greendao.annotation.Unique;
  */
 @Entity
 public class BoatMessage {
+    @Index(unique = true)
     private int machineId;
     private String name;
     @Id(autoincrement = false)

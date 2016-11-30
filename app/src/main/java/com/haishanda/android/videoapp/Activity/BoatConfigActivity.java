@@ -61,6 +61,7 @@ public class BoatConfigActivity extends FragmentActivity {
     public void skipToRenameBoatFragment() {
         Bundle data = new Bundle();
         data.putInt("machineId", machineId);
+        data.putString("boatName", boatName);
         RenameBoatFragment renameBoatFragment = new RenameBoatFragment();
         renameBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();

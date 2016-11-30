@@ -43,6 +43,9 @@ import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import rx.Observer;
@@ -73,6 +76,7 @@ public class PlayVideoActivity extends Activity {
 
     private MediaRecorder mRecorder;
     private String mFileName;
+    private String mFileNameFull;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,7 @@ public class PlayVideoActivity extends Activity {
         extra = getIntent().getExtras();
         cameraId = extra.getLong("cameraId");
         boatName = extra.getString("boatName");
+        initTalkService();
 //        String path = getLiveUrl(cameraId);
         path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
     }
@@ -188,38 +193,38 @@ public class PlayVideoActivity extends Activity {
 
     @OnClick(R.id.record_btn)
     public void recordVideo(View view) {
-        Log.i(TAG, "recordVideo");
-        final Handler handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //这里就一条消息
-            }
-        };
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //另起线程执行下载，安卓最新sdk规范，网络操作不能再主线程。
-                l = new DownloadUtil(path);
-
-                /**
-                 * 下载文件到sd卡，虚拟设备必须要开始设置sd卡容量
-                 * downhandler是Download的内部类，作为回调接口实时显示下载数据
-                 */
-                int status = l.down2sd("downtemp/", "test.flv", l.new downhandler() {
-                    @Override
-                    public void setSize(int size) {
-                        Message msg = handler.obtainMessage();
-                        msg.arg1 = size;
-                        msg.sendToTarget();
-                        Log.d("log", Integer.toString(size));
-                    }
-                });
-                //log输出
-                Log.d("log", Integer.toString(status));
-
-            }
-        }).start();
+//        Log.i(TAG, "recordVideo");
+//        final Handler handler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                //这里就一条消息
+//            }
+//        };
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //另起线程执行下载，安卓最新sdk规范，网络操作不能再主线程。
+//                l = new DownloadUtil(path);
+//
+//                /**
+//                 * 下载文件到sd卡，虚拟设备必须要开始设置sd卡容量
+//                 * downhandler是Download的内部类，作为回调接口实时显示下载数据
+//                 */
+//                int status = l.down2sd("downtemp/", "test.flv", l.new downhandler() {
+//                    @Override
+//                    public void setSize(int size) {
+//                        Message msg = handler.obtainMessage();
+//                        msg.arg1 = size;
+//                        msg.sendToTarget();
+//                        Log.d("log", Integer.toString(size));
+//                    }
+//                });
+//                //log输出
+//                Log.d("log", Integer.toString(status));
+//
+//            }
+//        }).start();
     }
 
     public void initTalkService() {
@@ -236,13 +241,13 @@ public class PlayVideoActivity extends Activity {
                     default:
                         break;
                 }
-                return false;
+                return true;
             }
         });
     }
 
     private void startVoice() {
-        voiceStart.setImageResource(R.drawable.terminate_record);
+        voiceStart.setImageResource(R.drawable.interphone_pick);
         vocalGif.setVisibility(View.VISIBLE);
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
@@ -254,16 +259,12 @@ public class PlayVideoActivity extends Activity {
         if (!appDir.exists()) {
             appDir.mkdir();
         }
-        mFileName = path + UUID.randomUUID().toString() + ".amr";
-        File directory = new File(mFileName).getParentFile();
-        if (!directory.exists() && !directory.mkdirs()) {
-            Log.i(TAG, "Path to file could not be created");
-        }
-        Toast.makeText(getApplicationContext(), "开始录音", Toast.LENGTH_LONG).show();
+        mFileName = UUID.randomUUID().toString() + ".amr";
+        mFileNameFull = path + "/" + mFileName;
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-        mRecorder.setOutputFile(mFileName);
+        mRecorder.setOutputFile(mFileNameFull);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         try {
             mRecorder.prepare();
@@ -274,11 +275,61 @@ public class PlayVideoActivity extends Activity {
     }
 
     private void stopVoice() {
-        voiceStart.setImageResource(R.drawable.record);
+        voiceStart.setImageResource(R.drawable.interphone);
         vocalGif.setVisibility(View.INVISIBLE);
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
+        if (mRecorder != null) {
+            try {
+                //下面三个参数必须加，不加的话会奔溃，在mediarecorder.stop();
+                //报错为：RuntimeException:stop failed
+                mRecorder.setOnErrorListener(null);
+                mRecorder.setOnInfoListener(null);
+                mRecorder.setPreviewDisplay(null);
+                mRecorder.stop();
+            } catch (IllegalStateException e) {
+                // TODO: handle exception
+                e.printStackTrace();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                // TODO: handle exception
+            } catch (Exception e) {
+                e.printStackTrace();
+                // TODO: handle exception
+            }
+            mRecorder.release();
+            mRecorder = null;
+        }
+        Toast.makeText(getApplicationContext(), "录音完成，正在发送至渔船", Toast.LENGTH_LONG).show();
+        File voiceFile = new File(mFileNameFull);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
+        // MultipartBody.Part is used to send also the actual filename
+        MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
+        MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
+        ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SmartResult>() {
+                    @Override
+                    public void onCompleted() {
+                        android.util.Log.d("上传录音", "completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        android.util.Log.d("上传录音", "error");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(SmartResult smartResult) {
+                        if (smartResult.getCode() == 1) {
+                            android.util.Log.d("上传录音", "success");
+                        } else {
+                            android.util.Log.d("上传录音", "failed");
+                            Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "上传录音失败", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
         Toast.makeText(getApplicationContext(), "保存录音" + mFileName, Toast.LENGTH_LONG).show();
     }
 
