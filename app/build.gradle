@@ -67,4 +67,5 @@ dependencies {
     compile project(':vitamio')
     compile project(':portraitzxing')
     compile files('libs/libammsdk.jar')
+    compile files('libs/juv-rtmp-client-1.9.2e.jar')
 }

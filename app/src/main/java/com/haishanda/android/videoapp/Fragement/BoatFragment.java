@@ -280,7 +280,6 @@ public class BoatFragment extends Fragment {
             }
         }
 
-
         return cameraIds;
     }
 

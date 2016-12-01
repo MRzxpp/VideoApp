@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,15 +11,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
+import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
 import com.hyphenate.chat.EMChatConfig;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
@@ -51,20 +55,20 @@ public class WelcomeActivity extends Activity {
         EMClient.getInstance().init(this, options);
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+        FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+        QueryBuilder<FirstLogin> queryBuilder = firstLoginDao.queryBuilder();
+        try {
+            FirstLogin firstLogin = queryBuilder.unique();
+            if (firstLogin != null) {
+                if (firstLogin.getIsFirst() != 1) {
+                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
 
-//        TimeBean timeBean = new TimeBean(12, 30, 12, 30, 0);
-//        TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
-//        QueryBuilder<TimeBean> queryBuilder = timeBeanDao.queryBuilder();
-//        List<TimeBean> list = queryBuilder.list();
-//        if (list.size() == 0) {
-//            timeBeanDao.insert(timeBean);
-//        }
-
-        LoginActivity loginActivity = new LoginActivity();
-        if (loginActivity.loginWithExistMessage()) {
-            Intent intent = new Intent();
-            intent.setClass(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
+        } catch (DaoException e) {
+            FirstLogin firstLogin = new FirstLogin(1);
+            firstLoginDao.insertOrReplace(firstLogin);
         }
 
     }
@@ -73,15 +77,7 @@ public class WelcomeActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.gradually_appear);
-        boolean isLogin = EMClient.getInstance().isLoggedInBefore();
-        if (isLogin) {
-            Intent intent = new Intent();
-            intent.setClass(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            this.finish();
-        } else {
-            loginAndRegisterBtns.startAnimation(animation);
-        }
+        loginAndRegisterBtns.startAnimation(animation);
     }
 
     @Override

@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;

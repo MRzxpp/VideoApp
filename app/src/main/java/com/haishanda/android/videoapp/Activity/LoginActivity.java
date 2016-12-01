@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
@@ -29,6 +28,7 @@ import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
@@ -50,7 +50,6 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.vov.vitamio.provider.MediaStore;
 import retrofit2.Call;
 import retrofit2.Response;
 import rx.Observer;
@@ -88,6 +87,7 @@ public class LoginActivity extends Activity {
         loginBtn.setEnabled(false);
         password.addTextChangedListener(new ClearBtnListener(clear3, password));
         password.addTextChangedListener(new LoginListener(username, password, loginBtn, blueBtn, greyBtn, white, white));
+        loginWithExistMessage();
 
     }
 
@@ -126,6 +126,10 @@ public class LoginActivity extends Activity {
                             if (smartResult.getCode() != 1) {
                                 Toast.makeText(LoginActivity.this, smartResult.getMsg(), Toast.LENGTH_SHORT).show();
                             } else {
+                                FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+                                FirstLogin firstLogin = new FirstLogin(0);
+                                firstLoginDao.deleteAll();
+                                firstLoginDao.insertOrReplace(firstLogin);
                                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
                                 LoginMessage loginMessage = new LoginMessage(username.getText().toString(), password.getText().toString(), smartResult.getData().getId());
                                 loginMessageDao.deleteAll();
@@ -143,14 +147,13 @@ public class LoginActivity extends Activity {
                                         EMClient.getInstance().groupManager().loadAllGroups();
                                         EMClient.getInstance().chatManager().loadAllConversations();
                                         Log.d("main", "登录聊天服务器成功！");
-
                                         EMMessageListener msgListener = new EMMessageListener() {
 
                                             @Override
                                             public void onMessageReceived(List<EMMessage> messages) {
                                                 //收到消息
-                                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
+                                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                                 notificationManager.notify(1, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
 
                                             }
@@ -251,6 +254,10 @@ public class LoginActivity extends Activity {
         try {
             Response<SmartResult<UserBean>> response = call.execute();
             if (response.body().getCode() == 1) {
+                FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+                FirstLogin firstLogin = new FirstLogin(0);
+                firstLoginDao.deleteAll();
+                firstLoginDao.insertOrReplace(firstLogin);
                 UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
                 UserMessageBean userMessageBean = new UserMessageBean(response.body().getData().getName(), response.body().getData().getPortrait(), response.body().getData().getId());
                 userMessageBeanDao.insertOrReplace(userMessageBean);
@@ -270,10 +277,11 @@ public class LoginActivity extends Activity {
                             @Override
                             public void onMessageReceived(List<EMMessage> messages) {
                                 //收到消息
-                                //Todo bug fix can't receive data
-                                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                //Todo bug fix can't notificate data
+                                Log.d("receive message", "success");
                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
-                                notificationManager.notify(3, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
                             }
 
                             @Override
@@ -299,10 +307,10 @@ public class LoginActivity extends Activity {
                         EMClient.getInstance().chatManager().addMessageListener(msgListener);
                         EMClient.getInstance().addConnectionListener(new MyConnectionListener());
 
-//                        Intent intent = new Intent();
-//                        intent.setClass(LoginActivity.this, MainActivity.class);
-//                        startActivity(intent);
-//                        LoginActivity.this.finish();
+                        Intent intent = new Intent();
+                        intent.setClass(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        LoginActivity.this.finish();
                     }
 
                     @Override

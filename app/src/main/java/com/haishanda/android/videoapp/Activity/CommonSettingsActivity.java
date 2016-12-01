@@ -16,10 +16,12 @@ import android.view.ViewGroup;
 
 import com.haishanda.android.videoapp.Adapter.ClearBufferAdapter;
 import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
+import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Fragement.ResetPasswordLoginedFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.hyphenate.chat.EMClient;
 import com.orhanobut.dialogplus.DialogPlus;
@@ -101,6 +103,10 @@ public class CommonSettingsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+                FirstLogin firstLogin = new FirstLogin(1);
+                firstLoginDao.deleteAll();
+                firstLoginDao.insertOrReplace(firstLogin);
                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
                 loginMessageDao.deleteAll();
                 EMClient.getInstance().logout(true);

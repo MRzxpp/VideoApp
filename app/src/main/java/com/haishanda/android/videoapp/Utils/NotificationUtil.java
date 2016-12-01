@@ -33,6 +33,6 @@ public class NotificationUtil {
     }
 
     private PendingIntent getDefalutIntent(int flags) {
-        return PendingIntent.getActivity(activity, 1, new Intent(), flags);
+        return PendingIntent.getActivity(activity, flags, new Intent(), flags);
     }
 }

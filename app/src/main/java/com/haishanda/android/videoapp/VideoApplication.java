@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -24,6 +25,7 @@ public class VideoApplication extends Application {
     private DaoSession mDaoSession;
     private String Token;
     private int currentMachineId;
+
 
     public int getCurrentMachineId() {
         return currentMachineId;
