@@ -1,10 +1,16 @@
 package com.haishanda.android.videoapp.Api;
 
+import com.haishanda.android.videoapp.Bean.AlarmVo;
 import com.haishanda.android.videoapp.Config.SmartResult;
+
+import java.util.List;
 
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -21,6 +27,9 @@ public interface MonitorApi {
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMonitorSwitch")
-    Observable<SmartResult> editMonitorSwitch (@Field("machineId") int machineId,
-                                               @Field("isSwitch") boolean isSwitch);
+    Observable<SmartResult> editMonitorSwitch(@Field("machineId") int machineId,
+                                              @Field("isSwitch") boolean isSwitch);
+
+    @GET("/monitor-platform-web/rest/user/queryAlarms")
+    Observable<SmartResult<List<AlarmVo>>> queryAlarms(@Query("lastId") int lastId);
 }

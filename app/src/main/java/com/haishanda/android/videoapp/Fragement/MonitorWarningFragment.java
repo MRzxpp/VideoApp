@@ -36,10 +36,6 @@ public class MonitorWarningFragment extends Fragment {
     @BindView(R.id.is_mobile_voice_open)
     SwitchButton isVoiceOpen;
 
-    public static final int RINGER_MODE_SILENT = 0;
-    public static final int RINGER_MODE_VIBRATE = 1;
-    public static final int RINGER_MODE_NORMAL = 2;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
