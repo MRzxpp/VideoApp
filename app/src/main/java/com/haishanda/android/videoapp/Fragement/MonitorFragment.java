@@ -96,6 +96,7 @@ public class MonitorFragment extends Fragment {
             editBtns.setVisibility(View.VISIBLE);
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.appear_from_bottom);
             editBtns.startAnimation(animation);
+            initAdapter(true, false, false);
             editMonitorMessage.setText("取消");
             editBtns.setEnabled(true);
         } else {
@@ -103,6 +104,7 @@ public class MonitorFragment extends Fragment {
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.disappear_to_bottom);
             editBtns.startAnimation(animation);
             chosenList.clear();
+            initAdapter(false, false, false);
             editMonitorMessage.setText("编辑");
             editBtns.setVisibility(View.INVISIBLE);
         }
@@ -112,22 +114,24 @@ public class MonitorFragment extends Fragment {
     public void deleteChosenMessages() {
         list.removeAll(chosenList);
         chosenList.clear();
-        initAlarms();
+        initAdapter(true, false, false);
     }
 
     @OnClick(R.id.selectAll)
     public void selectAll() {
         chosenList.addAll(list);
+        initAdapter(true, true, false);
     }
 
     @OnClick(R.id.selectNone)
     public void selectNone() {
         chosenList.clear();
+        initAdapter(true, false, true);
     }
 
 
     @OnClick(R.id.monitor_config)
-    public void skipToMonitorConfigFragment(View view) {
+    public void skipToMonitorConfigFragment() {
         Intent intent = new Intent(getActivity(), MonitorConfigActivity.class);
         startActivity(intent);
     }
@@ -136,6 +140,7 @@ public class MonitorFragment extends Fragment {
     public void onResume() {
         super.onResume();
         initAlarms();
+        initAdapter(false, false, false);
     }
 
 
@@ -159,23 +164,7 @@ public class MonitorFragment extends Fragment {
                     public void onNext(SmartResult<List<AlarmVo>> listSmartResult) {
                         if (listSmartResult.getCode() == 1) {
                             Log.d(TAG, "success");
-                            Date date;
-                            GregorianCalendar gc = new GregorianCalendar();
-                            gc.set(Calendar.YEAR, 2013);//设置年
-                            gc.set(Calendar.MONTH, 8);//这里0是1月..以此向后推
-                            gc.set(Calendar.DAY_OF_MONTH, 29);//设置天
-                            gc.set(Calendar.HOUR_OF_DAY, 5);//设置小时
-                            gc.set(Calendar.MINUTE, 7);//设置分
-                            gc.set(Calendar.SECOND, 6);//设置秒
-                            gc.set(Calendar.MILLISECOND, 200);//设置毫秒
-                            date = gc.getTime();
-                            AlarmVo alarmVo = new AlarmVo(1, "name", "url,url,url,url", date);
-                            list.add(alarmVo);
-                            list.add(alarmVo);
-                            list.add(alarmVo);
                             list.addAll(listSmartResult.getData());
-//                            monitorMessages.setAdapter(new MonitorAdapter(getContext(), listSmartResult.getData()));
-                            monitorMessages.setAdapter(new MonitorAdapter(getContext(), list));
                             LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
                             LastId lastId;
                             if (listSmartResult.getData().size() != 0) {
@@ -193,74 +182,113 @@ public class MonitorFragment extends Fragment {
                 });
     }
 
-    public class MonitorAdapter extends ArrayAdapter {
+    public void initAdapter(final boolean isCheckBoxOn, final boolean isAllselected, final boolean isNoneSelected) {
+        monitorMessages.setAdapter(new MonitorAdapter(getContext(), list, isCheckBoxOn, isAllselected, isNoneSelected));
+    }
 
+    public class MonitorAdapter extends ArrayAdapter {
         private Context context;
         private LayoutInflater inflater;
-
+        Boolean isCheckBoxOn;
+        Boolean isAllSelected;
+        Boolean isNoneSelected;
         private List<AlarmVo> alarmVos;
 
-        public MonitorAdapter(Context context, List<AlarmVo> alarmVos) {
+        MonitorAdapter(Context context, List<AlarmVo> alarmVos, Boolean isCheckBoxOn, Boolean isAllSelected, Boolean isNoneSelected) {
             super(context, R.layout.adapter_monitor, alarmVos);
             this.context = context;
             this.alarmVos = alarmVos;
+            this.isCheckBoxOn = isCheckBoxOn;
+            this.isAllSelected = isAllSelected;
+            this.isNoneSelected = isNoneSelected;
             inflater = LayoutInflater.from(context);
         }
 
         @NonNull
         @Override
         public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
-            if (null == convertView) {
-                convertView = inflater.inflate(R.layout.adapter_monitor, parent, false);
+            ViewHolder viewHolder = null;
+            if (viewHolder == null) {
+                viewHolder = new ViewHolder();
+                if (null == convertView) {
+                    convertView = inflater.inflate(R.layout.adapter_monitor, parent, false);
+                }
+                viewHolder.alarmText = (TextView) convertView.findViewById(R.id.warning_text);
+                viewHolder.warningImg1 = (ImageView) convertView.findViewById(R.id.warning_img1);
+                viewHolder.warningImg2 = (ImageView) convertView.findViewById(R.id.warning_img2);
+                viewHolder.warningImg3 = (ImageView) convertView.findViewById(R.id.warning_img3);
+                viewHolder.warningImg4 = (ImageView) convertView.findViewById(R.id.warning_img4);
+                viewHolder.alarmTime = (TextView) convertView.findViewById(R.id.warning_time);
+                viewHolder.relativeLayout = (RelativeLayout) convertView.findViewById(R.id.chosen_layout);
+                viewHolder.isMessageChoosen = (CheckBox) convertView.findViewById(R.id.is_message_choosen);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
+
+
             String urls = alarmVos.get(position).getUrls();
             String[] urlArray = convertUrlsToFourUrl(urls);
-            ImageView warningImg1 = (ImageView) convertView.findViewById(R.id.warning_img1);
-            ImageView warningImg2 = (ImageView) convertView.findViewById(R.id.warning_img2);
-            ImageView warningImg3 = (ImageView) convertView.findViewById(R.id.warning_img3);
-            ImageView warningImg4 = (ImageView) convertView.findViewById(R.id.warning_img4);
+            ImageView warningImg1 = viewHolder.warningImg1;
+            ImageView warningImg2 = viewHolder.warningImg2;
+            ImageView warningImg3 = viewHolder.warningImg3;
+            ImageView warningImg4 = viewHolder.warningImg4;
             Glide
                     .with(context)
                     .load(urlArray[0])
                     .error(R.drawable.monitor_error)
                     .into(warningImg1);
+
             Glide
                     .with(context)
                     .load(urlArray[1])
                     .error(R.drawable.monitor_error)
                     .into(warningImg2);
+
             Glide
                     .with(context)
                     .load(urlArray[2])
                     .error(R.drawable.monitor_error)
                     .into(warningImg3);
+
             Glide
                     .with(context)
                     .load(urlArray[3])
                     .error(R.drawable.monitor_error)
                     .into(warningImg4);
 
-            TextView alarmText = (TextView) convertView.findViewById(R.id.warning_text);
-            alarmText.setText(alarmVos.get(position).getMachineName());
+            TextView alarmText = viewHolder.alarmText;
+            alarmText.setText(alarmVos.get(position).getMachineName()
+            );
 
-            RelativeLayout relativeLayout = (RelativeLayout) convertView.findViewById(R.id.chosen_layout);
-            relativeLayout.setVisibility(View.INVISIBLE);
-            relativeLayout.setEnabled(false);
+            RelativeLayout relativeLayout = viewHolder.relativeLayout;
+            if (!isCheckBoxOn) {
+                relativeLayout.setVisibility(View.INVISIBLE);
+                relativeLayout.setEnabled(false);
+            }
 
-            CheckBox isMessageChoosen = (CheckBox) convertView.findViewById(R.id.is_message_choosen);
+
+            CheckBox isMessageChoosen = viewHolder.isMessageChoosen;
+            if (isAllSelected) {
+                isMessageChoosen.setChecked(true);
+            }
+            if (isNoneSelected) {
+                isMessageChoosen.setChecked(false);
+            }
             isMessageChoosen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        chosenList.add(alarmVos.get(position));
-                    } else {
-                        chosenList.remove(alarmVos.get(position));
-                    }
-                }
-            });
+                                                            @Override
+                                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                                if (isChecked) {
+                                                                    chosenList.add(alarmVos.get(position));
+                                                                } else {
+                                                                    chosenList.remove(alarmVos.get(position));
+                                                                }
+                                                            }
+                                                        }
+            );
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy年mm月dd日   hh:mm:ss");
-            TextView alarmTime = (TextView) convertView.findViewById(R.id.warning_time);
+            TextView alarmTime = viewHolder.alarmTime;
             alarmTime.setText(format.format(alarmVos.get(position).getAlarmTime()));
 
             return convertView;
@@ -274,6 +302,17 @@ public class MonitorFragment extends Fragment {
                 urlArray[i++] = st.nextToken();//返回此 string tokenizer 的下一个标记。
             }
             return urlArray;
+        }
+
+        class ViewHolder {
+            ImageView warningImg1;
+            ImageView warningImg2;
+            ImageView warningImg3;
+            ImageView warningImg4;
+            TextView alarmTime;
+            RelativeLayout relativeLayout;
+            TextView alarmText;
+            CheckBox isMessageChoosen;
         }
     }
 
