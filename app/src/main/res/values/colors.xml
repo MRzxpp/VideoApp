@@ -14,4 +14,5 @@
     <color name="backgroundColor">#EEEEF3</color>
     <color name="light_gray">#fff5f5f5</color>
     <color name="light_black">#EF333333</color>
+    <color name="red">#ff0000</color>
 </resources>

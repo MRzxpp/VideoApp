@@ -15,120 +15,128 @@
             android:id="@+id/fragment_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
-        <LinearLayout
-            android:id="@+id/buttom_buttons"
+        <!--<LinearLayout-->
+            <!--android:id="@+id/buttom_buttons"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:background="#ffffff"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/to_boat_fragment"-->
+                <!--android:layout_width="90dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1">-->
+
+                <!--<ImageView-->
+                    <!--android:id="@+id/boat_img"-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="22dp"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginTop="6dp"-->
+                    <!--android:src="@drawable/boat_pick" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/boat"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginBottom="7dp"-->
+                    <!--android:text="@string/boats"-->
+                    <!--android:textColor="@color/textBlue"-->
+                    <!--android:textSize="10sp" />-->
+
+            <!--</RelativeLayout>-->
+
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/to_photos_fragment"-->
+                <!--android:layout_width="90dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1">-->
+
+                <!--<ImageView-->
+                    <!--android:id="@+id/photos_img"-->
+                    <!--android:layout_width="22dp"-->
+                    <!--android:layout_height="18dp"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:src="@drawable/photos_unpick" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/photos"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginBottom="7dp"-->
+                    <!--android:text="@string/photos"-->
+                    <!--android:textColor="@color/textGrey"-->
+                    <!--android:textSize="10sp" />-->
+            <!--</RelativeLayout>-->
+
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/to_monitor_fragment"-->
+                <!--android:layout_width="90dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1">-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/monitor"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginBottom="7dp"-->
+                    <!--android:text="@string/monitoring"-->
+                    <!--android:textColor="@color/textGrey"-->
+                    <!--android:textSize="10sp" />-->
+
+                <!--<ImageView-->
+                    <!--android:id="@+id/monitor_img"-->
+                    <!--android:layout_width="21dp"-->
+                    <!--android:layout_height="21dp"-->
+                    <!--android:layout_above="@+id/monitor"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:src="@drawable/monitor_unpick" />-->
+            <!--</RelativeLayout>-->
+
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/to_my_fragment"-->
+                <!--android:layout_width="90dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1">-->
+
+                <!--<ImageView-->
+                    <!--android:id="@+id/myApp_img"-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="21dp"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginTop="7dp"-->
+                    <!--android:src="@drawable/my_unpick" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/myApp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginBottom="7dp"-->
+                    <!--android:text="@string/myApp"-->
+                    <!--android:textColor="@color/textGrey"-->
+                    <!--android:textSize="10sp" />-->
+            <!--</RelativeLayout>-->
+        <!--</LinearLayout>-->
+
+        <com.ashokvarma.bottomnavigation.BottomNavigationBar
+            android:layout_gravity="bottom"
+            android:id="@+id/bottom_navigation_bar_mainactivity"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="#ffffff"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:id="@+id/to_boat_fragment"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/boat_img"
-                    android:layout_width="20dp"
-                    android:layout_height="22dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="6dp"
-                    android:src="@drawable/boat_pick" />
-
-                <TextView
-                    android:id="@+id/boat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="7dp"
-                    android:text="@string/boats"
-                    android:textColor="@color/textBlue"
-                    android:textSize="10sp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/to_photos_fragment"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/photos_img"
-                    android:layout_width="22dp"
-                    android:layout_height="18dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/photos_unpick" />
-
-                <TextView
-                    android:id="@+id/photos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="7dp"
-                    android:text="@string/photos"
-                    android:textColor="@color/textGrey"
-                    android:textSize="10sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/to_monitor_fragment"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/monitor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="7dp"
-                    android:text="@string/monitoring"
-                    android:textColor="@color/textGrey"
-                    android:textSize="10sp" />
-
-                <ImageView
-                    android:id="@+id/monitor_img"
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:layout_above="@+id/monitor"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/monitor_unpick" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/to_my_fragment"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/myApp_img"
-                    android:layout_width="20dp"
-                    android:layout_height="21dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="7dp"
-                    android:src="@drawable/my_unpick" />
-
-                <TextView
-                    android:id="@+id/myApp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="7dp"
-                    android:text="@string/myApp"
-                    android:textColor="@color/textGrey"
-                    android:textSize="10sp" />
-            </RelativeLayout>
-        </LinearLayout>
+        </com.ashokvarma.bottomnavigation.BottomNavigationBar>
 
     </LinearLayout>
 

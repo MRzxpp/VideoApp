@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserBean;
@@ -28,6 +29,7 @@ import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
@@ -152,6 +154,14 @@ public class LoginActivity extends Activity {
                                             @Override
                                             public void onMessageReceived(List<EMMessage> messages) {
                                                 //收到消息
+                                                AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+                                                QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
+                                                AlarmNum alarmNum = queryBuilder.unique();
+                                                AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
+                                                alarmNumDao.deleteAll();
+                                                alarmNumDao.insert(newAlarnNum);
+                                                MainActivity mainActivity = (MainActivity) getParent();
+                                                mainActivity.refresh(2);
                                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
                                                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                                 notificationManager.notify(1, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
@@ -279,6 +289,14 @@ public class LoginActivity extends Activity {
                                 //收到消息
                                 //Todo bug fix can't notificate data
                                 Log.d("receive message", "success");
+                                AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+                                QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
+                                AlarmNum alarmNum = queryBuilder.unique();
+                                AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
+                                alarmNumDao.deleteAll();
+                                alarmNumDao.insert(newAlarnNum);
+                                MainActivity mainActivity = (MainActivity) getParent();
+                                mainActivity.refresh(2);
                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
                                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                 notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());

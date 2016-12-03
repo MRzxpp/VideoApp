@@ -55,8 +55,6 @@ public class PhotosAdapter extends ArrayAdapter {
         Glide
                 .with(context)
                 .load(imagePath[position])
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into((ImageView) convertView.findViewById(R.id.photo_adapter));
 
         convertView.setOnClickListener(new View.OnClickListener() {
@@ -74,12 +72,5 @@ public class PhotosAdapter extends ArrayAdapter {
         boatNameView.setText(boatName);
 
         return convertView;
-    }
-
-    public void removeItem(String singalPath) {
-        List<String> imagePaths = Arrays.asList(imagePath);
-        imagePaths.remove(singalPath);
-        notifyDataSetInvalidated();
-        notifyDataSetChanged();
     }
 }

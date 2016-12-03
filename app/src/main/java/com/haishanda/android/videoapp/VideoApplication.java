@@ -26,7 +26,6 @@ public class VideoApplication extends Application {
     private String Token;
     private int currentMachineId;
 
-
     public int getCurrentMachineId() {
         return currentMachineId;
     }

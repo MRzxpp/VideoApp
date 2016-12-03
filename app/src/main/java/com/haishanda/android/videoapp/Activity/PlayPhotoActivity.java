@@ -58,8 +58,6 @@ public class PlayPhotoActivity extends Activity {
         Glide
                 .with(this)
                 .load(imagePath)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(photoMain);
 
     }

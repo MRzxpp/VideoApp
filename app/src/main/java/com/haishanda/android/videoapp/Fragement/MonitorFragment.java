@@ -21,13 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Activity.MonitorConfigActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Bean.AlarmVo;
 import com.haishanda.android.videoapp.Bean.LastId;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 
 import org.greenrobot.greendao.DaoException;
@@ -141,8 +144,17 @@ public class MonitorFragment extends Fragment {
         super.onResume();
         initAlarms();
         initAdapter(false, false, false);
+        resetMessagesUnreadNum();
     }
 
+    private void resetMessagesUnreadNum() {
+        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+        alarmNumDao.deleteAll();
+        AlarmNum alarmNum = new AlarmNum(0);
+        alarmNumDao.insert(alarmNum);
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.refresh(2);
+    }
 
     private void initAlarms() {
         ApiManage.getInstence().getMonitorApiService().queryAlarms(last)
