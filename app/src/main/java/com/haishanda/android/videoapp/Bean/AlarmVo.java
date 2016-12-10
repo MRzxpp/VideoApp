@@ -12,6 +12,9 @@ public class AlarmVo {
     private String urls;
     private Date alarmTime;
 
+    public AlarmVo() {
+    }
+
     public AlarmVo(int id, String machineName, String urls, Date alarmTime) {
         this.id = id;
         this.machineName = machineName;

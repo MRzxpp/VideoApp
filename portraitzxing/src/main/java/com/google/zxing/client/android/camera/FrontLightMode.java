@@ -16,8 +16,6 @@
 
 package com.google.zxing.client.android.camera;
 
-import android.content.SharedPreferences;
-
 /**
  * Enumerates settings of the preference controlling the front light.
  */

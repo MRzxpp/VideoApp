@@ -1,20 +1,14 @@
 package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.haishanda.android.videoapp.Activity.PlayVideoActivity;
 import com.haishanda.android.videoapp.Bean.PackageVo;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ExpandableLayout;

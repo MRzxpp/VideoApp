@@ -12,12 +12,9 @@ import android.widget.Toast;
 
 import com.google.zxing.client.android.CaptureActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -25,7 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observer;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -48,12 +44,14 @@ public class AddBoatActivity extends Activity {
     Drawable greyBtn;
 
     private final String Tag = "添加船舶";
+    private AddBoatActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_boat);
         ButterKnife.bind(this);
+        instance = this;
         confirmAddBoatBtn.setEnabled(false);
         boatPassword.addTextChangedListener(new LoginListener(boatNumber, boatPassword, confirmAddBoatBtn, blueBtn, greyBtn, white, white));
     }
@@ -108,6 +106,7 @@ public class AddBoatActivity extends Activity {
                             if (smartResult.getCode() == 1) {
                                 Log.i(Tag, "add successfully");
                                 Toast.makeText(getApplicationContext(), "添加船舶成功", Toast.LENGTH_LONG).show();
+                                instance.finish();
                             } else {
                                 Log.i(Tag, "add failed!");
                                 Toast.makeText(getApplicationContext(), smartResult.getMsg(), Toast.LENGTH_LONG).show();

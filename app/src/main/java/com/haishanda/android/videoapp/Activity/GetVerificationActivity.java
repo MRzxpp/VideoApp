@@ -20,7 +20,6 @@ import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observer;

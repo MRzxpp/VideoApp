@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/both_stroke_white">
+
+        <RelativeLayout
+            android:id="@+id/monitor_open"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bottom_stroke">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+
+                <TextView
+                    android:id="@+id/monitor_boatname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/textBlue"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/monitor_boatname"
+                    android:text=" 远程实时监控"
+                    android:textColor="#333333"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="1dp">
+
+                <com.kyleduo.switchbutton.SwitchButton
+                    android:id="@+id/is_monitor_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    app:kswAnimationDuration="300"
+                    app:kswBackDrawable="@drawable/switch_back_drawable"
+                    app:kswThumbDrawable="@drawable/knob"
+                    app:kswThumbMarginTop="3dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/monitor_time"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/monitor_open"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bottom_stroke">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="监控时间段"
+                android:textColor="#333333"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/monitor_time_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="37dp"
+                android:textColor="@color/textGrey"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/to_monitor_time_fragment"
+                android:layout_width="12dp"
+                android:layout_height="22dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/arrow_right" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/monitor_voice"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@id/monitor_time"
+            android:layout_marginLeft="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="监控报警音选择"
+                android:textColor="#333333"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/monitor_voice_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="37dp"
+                android:textColor="@color/textGrey"
+                android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/to_monitor_voice_fragment"
+                android:layout_width="12dp"
+                android:layout_height="22dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/arrow_right" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -21,26 +21,30 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
+        AlarmNumDao.createTable(db, ifNotExists);
         BoatMessageDao.createTable(db, ifNotExists);
+        FirstLoginDao.createTable(db, ifNotExists);
         ImageMessageDao.createTable(db, ifNotExists);
+        LastIdDao.createTable(db, ifNotExists);
         LoginMessageDao.createTable(db, ifNotExists);
+        MonitorConfigBeanDao.createTable(db, ifNotExists);
+        MonitorWarningBeanDao.createTable(db, ifNotExists);
         TimeBeanDao.createTable(db, ifNotExists);
         UserMessageBeanDao.createTable(db, ifNotExists);
-        FirstLoginDao.createTable(db, ifNotExists);
-        LastIdDao.createTable(db, ifNotExists);
-        AlarmNumDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
+        AlarmNumDao.dropTable(db, ifExists);
         BoatMessageDao.dropTable(db, ifExists);
+        FirstLoginDao.dropTable(db, ifExists);
         ImageMessageDao.dropTable(db, ifExists);
+        LastIdDao.dropTable(db, ifExists);
         LoginMessageDao.dropTable(db, ifExists);
+        MonitorConfigBeanDao.dropTable(db, ifExists);
+        MonitorWarningBeanDao.dropTable(db, ifExists);
         TimeBeanDao.dropTable(db, ifExists);
         UserMessageBeanDao.dropTable(db, ifExists);
-        FirstLoginDao.dropTable(db, ifExists);
-        LastIdDao.dropTable(db, ifExists);
-        AlarmNumDao.dropTable(db, ifExists);
     }
 
     /**
@@ -59,14 +63,16 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(AlarmNumDao.class);
         registerDaoClass(BoatMessageDao.class);
+        registerDaoClass(FirstLoginDao.class);
         registerDaoClass(ImageMessageDao.class);
+        registerDaoClass(LastIdDao.class);
         registerDaoClass(LoginMessageDao.class);
+        registerDaoClass(MonitorConfigBeanDao.class);
+        registerDaoClass(MonitorWarningBeanDao.class);
         registerDaoClass(TimeBeanDao.class);
         registerDaoClass(UserMessageBeanDao.class);
-        registerDaoClass(FirstLoginDao.class);
-        registerDaoClass(LastIdDao.class);
-        registerDaoClass(AlarmNumDao.class);
     }
 
     public DaoSession newSession() {

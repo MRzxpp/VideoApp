@@ -31,10 +31,9 @@
             android:textColor="@color/textGrey"
             android:textSize="14sp" />
 
-        <GridView
-            android:id="@+id/photos_gridview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numColumns="3" />
+        <ListView
+            android:id="@+id/timeline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 </LinearLayout>

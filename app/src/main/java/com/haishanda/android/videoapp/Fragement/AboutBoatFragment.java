@@ -1,6 +1,5 @@
 package com.haishanda.android.videoapp.Fragement;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.BindView;

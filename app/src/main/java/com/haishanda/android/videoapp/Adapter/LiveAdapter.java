@@ -2,13 +2,7 @@ package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +15,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.haishanda.android.videoapp.Activity.PlayVideoActivity;
 import com.haishanda.android.videoapp.R;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**

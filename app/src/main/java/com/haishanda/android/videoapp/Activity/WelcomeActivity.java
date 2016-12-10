@@ -1,31 +1,22 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.haishanda.android.videoapp.Bean.FirstLogin;
-import com.haishanda.android.videoapp.Bean.TimeBean;
-import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
-import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
-import com.hyphenate.chat.EMChatConfig;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

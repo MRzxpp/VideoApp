@@ -1,8 +1,5 @@
 package com.haishanda.android.videoapp.Fragement;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,9 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
 import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
@@ -43,7 +38,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observer;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 

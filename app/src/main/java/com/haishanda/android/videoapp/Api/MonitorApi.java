@@ -9,7 +9,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
 
@@ -21,13 +20,13 @@ public interface MonitorApi {
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMonitorTime")
-    Observable<SmartResult> editMonitorTime(@Field("machineId") int machineId,
+    Observable<SmartResult> editMonitorTime(@Field("machineId") long machineId,
                                             @Field("span") int span,
                                             @Field("begin") int begin);
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMonitorSwitch")
-    Observable<SmartResult> editMonitorSwitch(@Field("machineId") int machineId,
+    Observable<SmartResult> editMonitorSwitch(@Field("machineId") long machineId,
                                               @Field("isSwitch") boolean isSwitch);
 
     @GET("/monitor-platform-web/rest/user/queryAlarms")

@@ -5,15 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
+import com.haishanda.android.videoapp.Adapter.TimeLineAdapter;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -32,25 +28,17 @@ import butterknife.ButterKnife;
  */
 
 public class PhotosFragment extends Fragment {
-    @BindView(R.id.photos_gridview)
-    GridView photosGridView;
     @BindView(R.id.photos_background)
     ImageView photosBackground;
     @BindView(R.id.photos_background_text)
     TextView photosBackgroundText;
+    @BindView(R.id.timeline)
+    ListView timeLine;
 
-    String[] imagePaths = {};
+    String[] dates = {};
     ImageMessageDao imageMessageDao;
-    PhotosAdapter adapter;
+    TimeLineAdapter adapter;
     String boatName;
-
-    public PhotosAdapter getAdapter() {
-        return adapter;
-    }
-
-    public void setAdapter(PhotosAdapter adapter) {
-        this.adapter = adapter;
-    }
 
 
     @Override
@@ -65,28 +53,39 @@ public class PhotosFragment extends Fragment {
     public void onResume() {
         super.onResume();
         boatName = VideoApplication.getApplication().getCurrentBoatName();
-        imagePaths = loadBoatImagePaths(boatName);
-        adapter = new PhotosAdapter(getContext(), imagePaths, boatName);
+        dates = removeRepeatedDate(loadDatesPaths(boatName));
+        adapter = new TimeLineAdapter(getContext(), dates, boatName);
         adapter.notifyDataSetInvalidated();
         adapter.notifyDataSetChanged();
-        photosGridView.setAdapter(adapter);
+        timeLine.setAdapter(adapter);
     }
 
-    public String[] loadBoatImagePaths(String boatName) {
-        this.boatName = boatName;
+    public String[] loadDatesPaths(String boatName) {
+//        this.boatName = boatName;
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
         List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
-        String[] imageUrls;
-        List<String> imageUrlsCopy = new ArrayList<>();
+        String[] dates;
+        List<String> datesCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {
-            imageUrlsCopy.add(i, "/sdcard/VideoApp/" + boatName + "/" + imagePaths.get(i).getImgPath());
+            datesCopy.add(i, imagePaths.get(i).getAddTime());
         }
-        imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
-        if (imageUrls.length != 0) {
+        dates = datesCopy.toArray(new String[datesCopy.size()]);
+        if (dates.length != 0) {
             photosBackground.setVisibility(View.INVISIBLE);
             photosBackgroundText.setVisibility(View.INVISIBLE);
         }
-        return imageUrls;
+        return dates;
+    }
+
+    public String[] removeRepeatedDate(String[] dates) {
+        String[] datesCorrect;
+        ArrayList<String> datesList = new ArrayList<String>();
+        for (int i = 0; i < dates.length; i++) {
+            if (!datesList.contains(dates[i]))
+                datesList.add(dates[i]);
+        }
+        datesCorrect = datesList.toArray(new String[datesList.size()]);
+        return datesCorrect;
     }
 }

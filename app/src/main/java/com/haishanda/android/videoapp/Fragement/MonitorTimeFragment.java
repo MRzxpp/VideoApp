@@ -1,6 +1,5 @@
 package com.haishanda.android.videoapp.Fragement;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,14 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.MonitorConfigActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.NextDayListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.PickerView;
@@ -55,7 +52,7 @@ public class MonitorTimeFragment extends Fragment {
     int begin = 0;
     int endPerform = 0;
 
-    private int machineId;
+    private long machineId;
     private final String TAG = "保存监控时间";
     private TimeBean timeBean;
 
@@ -65,7 +62,7 @@ public class MonitorTimeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_monitor_time, container, false);
         ButterKnife.bind(this, view);
         Bundle data = getArguments();
-        machineId = data.getInt("machineId");
+        machineId = data.getLong("machineId");
 //        begin1.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
 //        begin2.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
 //        end1.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
@@ -102,6 +99,9 @@ public class MonitorTimeFragment extends Fragment {
         try {
             timeBean = queryBuilder.where(TimeBeanDao.Properties.MachineId.eq(machineId)).uniqueOrThrow() != null ?
                     queryBuilder.where(TimeBeanDao.Properties.MachineId.eq(machineId)).uniqueOrThrow() : new TimeBean(12, 30, 12, 30, machineId);
+            if (timeBean.getBeginMinute() == -1 && timeBean.getEndMinute() == -2) {
+                timeBean = new TimeBean(12, 30, 12, 30, machineId);
+            }
 //            begin1.setText(timeBean.getBeginHour());
 //            begin2.setText(timeBean.getBeginMinute());
 //            end1.setText(timeBean.getEndHour());

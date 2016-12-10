@@ -3,7 +3,6 @@ package com.haishanda.android.videoapp.Bean;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
-import java.util.Date;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**

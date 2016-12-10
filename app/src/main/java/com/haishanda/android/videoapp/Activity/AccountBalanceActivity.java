@@ -32,6 +32,7 @@ public class AccountBalanceActivity extends Activity {
     ListView accountBalanceMain;
 
     private final String TAG = "获取套餐";
+    List<PackageVo> packageVoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,10 @@ public class AccountBalanceActivity extends Activity {
     }
 
     public void initViews() {
-        accountBalanceMain.setAdapter(new AccountBalanceAdapter(this, queryPackages()));
+        packageVoList = queryPackages();
+        if (packageVoList != null) {
+            accountBalanceMain.setAdapter(new AccountBalanceAdapter(this, packageVoList));
+        }
     }
 
     private List<PackageVo> queryPackages() {
@@ -66,6 +70,7 @@ public class AccountBalanceActivity extends Activity {
                     packageVoList = response.body().getData();
                     return packageVoList;
                 } else {
+                    Log.d(TAG, response.body().getMsg());
                     Toast.makeText(this, "获取套餐信息失败", Toast.LENGTH_LONG).show();
                     return null;
                 }
@@ -77,6 +82,5 @@ public class AccountBalanceActivity extends Activity {
             e.printStackTrace();
         }
         return packageVoList;
-
     }
 }

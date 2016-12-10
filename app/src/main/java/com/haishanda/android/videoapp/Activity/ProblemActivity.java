@@ -2,12 +2,9 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
 
 import com.haishanda.android.videoapp.R;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -40,15 +40,18 @@
             android:src="@drawable/fullscreen" />
     </RelativeLayout>
 
+
     <io.vov.vitamio.widget.VideoView
         android:id="@+id/test_play_video"
         android:layout_width="360dp"
-        android:layout_height="270dp" />
+        android:layout_height="270dp"
+        android:layout_marginTop="48dp" />
+
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="298"
+        android:layout_height="match_parent"
+        android:layout_below="@id/test_play_video"
         android:background="@color/backgroundColor">
 
         <ImageView
@@ -86,4 +89,4 @@
             android:src="@drawable/printscreen" />
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

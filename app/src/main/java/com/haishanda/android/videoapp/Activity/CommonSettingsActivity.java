@@ -1,21 +1,13 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.haishanda.android.videoapp.Adapter.ClearBufferAdapter;
-import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
 import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Fragement.ResetPasswordLoginedFragment;
 import com.haishanda.android.videoapp.R;
@@ -24,9 +16,6 @@ import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.hyphenate.chat.EMClient;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.OnItemClickListener;
-import com.orhanobut.dialogplus.ViewHolder;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

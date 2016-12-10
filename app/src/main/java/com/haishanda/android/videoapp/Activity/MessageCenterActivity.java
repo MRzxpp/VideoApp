@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.zxing.client.android.ViewfinderView;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.ButterKnife;

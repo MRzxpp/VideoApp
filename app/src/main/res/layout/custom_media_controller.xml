@@ -1,72 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/operation_volume_brightness"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:padding="0dip"
+        android:visibility="gone">
 
-        <RelativeLayout
-            android:id="@+id/operation_volume_brightness"
-            android:layout_width="150dp"
-            android:layout_height="75dp"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal"
-            android:padding="0dip"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/operation_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-            <TextView
-                android:id="@+id/operation_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/operation_bg"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:text="32:22/45:00"
-                android:textColor="#ffffff"
-                android:textSize="10sp"
-                android:visibility="gone" />
-        </RelativeLayout>
-
-        <TextView
-            android:background="@null"
-            android:id="@+id/support"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/operation_bg"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
 
-        <RelativeLayout
-            android:layout_width="340dp"
-            android:layout_height="48dp"
-            android:layout_below="@id/support"
+        <TextView
+            android:id="@+id/operation_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/operation_bg"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:background="@null">
-
-            <ImageView
-                android:id="@+id/mediacontroller_play_pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/play_video" />
-
-            <ImageView
-                android:id="@+id/toggle_volume"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/volumn_on" />
-        </RelativeLayout>
+            android:text="32:22/45:00"
+            android:textColor="#ffffff"
+            android:textSize="10sp"
+            android:visibility="gone" />
     </RelativeLayout>
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/support"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@null" />
+
+    <RelativeLayout
+        android:layout_width="340dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/support"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@null">
+
+        <ImageView
+            android:id="@+id/mediacontroller_play_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/play_video" />
+
+        <ImageView
+            android:id="@+id/toggle_volume"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/volumn_on" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -38,9 +38,6 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -75,6 +72,11 @@ public class MonitorFragment extends Fragment {
         ButterKnife.bind(this, view);
         editBtns.setVisibility(View.INVISIBLE);
         editBtns.setEnabled(false);
+        initLastId();
+        return view;
+    }
+
+    private void initLastId() {
         LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
         QueryBuilder<LastId> queryBuilder = lastIdDao.queryBuilder();
         try {
@@ -89,8 +91,6 @@ public class MonitorFragment extends Fragment {
             LastId lastId = new LastId(0);
             lastIdDao.insertOrReplace(lastId);
         }
-
-        return view;
     }
 
     @OnClick(R.id.edit_monitor_message)
@@ -148,12 +148,13 @@ public class MonitorFragment extends Fragment {
     }
 
     private void resetMessagesUnreadNum() {
+
         AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
         alarmNumDao.deleteAll();
         AlarmNum alarmNum = new AlarmNum(0);
         alarmNumDao.insert(alarmNum);
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.refresh(2);
+        mainActivity.refresh();
     }
 
     private void initAlarms() {
@@ -192,6 +193,7 @@ public class MonitorFragment extends Fragment {
                         }
                     }
                 });
+
     }
 
     public void initAdapter(final boolean isCheckBoxOn, final boolean isAllselected, final boolean isNoneSelected) {
@@ -237,7 +239,6 @@ public class MonitorFragment extends Fragment {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-
 
             String urls = alarmVos.get(position).getUrls();
             String[] urlArray = convertUrlsToFourUrl(urls);

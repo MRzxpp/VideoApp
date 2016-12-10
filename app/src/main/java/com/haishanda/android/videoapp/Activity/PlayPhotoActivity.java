@@ -1,24 +1,18 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.haishanda.android.videoapp.Adapter.ImageInfoAdapter;
-import com.haishanda.android.videoapp.Adapter.PhotosAdapter;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
-import com.haishanda.android.videoapp.Fragement.PhotosFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.FileSizeUtil;
-import com.haishanda.android.videoapp.Utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
@@ -69,7 +63,7 @@ public class PlayPhotoActivity extends Activity {
 
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
-        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 1, imagePath.length());
+        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
         imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
@@ -119,7 +113,7 @@ public class PlayPhotoActivity extends Activity {
     private void deleteAction(View view) {
         String imagePath = extra.getString("imagePath");
         String boatName = extra.getString("boatName");
-        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 1, imagePath.length());
+        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
         File file = new File(imagePath);
         file.delete();
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
@@ -128,7 +122,6 @@ public class PlayPhotoActivity extends Activity {
         ImageMessage im = imageMessage.get(0);
         imageMessageDao.delete(im);
         Log.d("PhotoAction", "删除成功");
-
         backToPhotos(view);
     }
 }

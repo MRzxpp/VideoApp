@@ -1,15 +1,12 @@
 package com.haishanda.android.videoapp.Utils;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Zhongsz on 2016/11/24.

@@ -1,11 +1,9 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +15,6 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
-import com.haishanda.android.videoapp.Listener.EditChangedListener;
 import com.haishanda.android.videoapp.Listener.FetchCodeListener;
 import com.haishanda.android.videoapp.Listener.SignUpListener;
 import com.haishanda.android.videoapp.R;

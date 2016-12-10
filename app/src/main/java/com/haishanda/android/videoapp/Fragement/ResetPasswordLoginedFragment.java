@@ -20,7 +20,6 @@ import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
-import com.haishanda.android.videoapp.Listener.SignUpListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 import com.haishanda.android.videoapp.VideoApplication;

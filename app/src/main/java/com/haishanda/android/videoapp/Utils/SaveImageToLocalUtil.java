@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.RequiresApi;
-import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
@@ -36,9 +35,14 @@ public class SaveImageToLocalUtil {
         if (!boatDir.exists()) {
             boatDir.mkdir();
         }
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒");
-        String imgName = boatName + "_" + format.format(System.currentTimeMillis()) + ".jpg";
-        File file = new File(boatDir, imgName);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
+        if (!dateDir.exists()) {
+            dateDir.mkdir();
+        }
+        SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒");
+        String imgName = boatName + "_" + timeFormat.format(System.currentTimeMillis()) + ".jpg";
+        File file = new File(dateDir, imgName);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             img.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
@@ -48,7 +52,7 @@ public class SaveImageToLocalUtil {
             e.printStackTrace();
         }
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
-        ImageMessage imageMessage = new ImageMessage(null, boatName, imgName, format.format(System.currentTimeMillis()), null);
+        ImageMessage imageMessage = new ImageMessage(null, boatName, imgName, dateFormat.format(System.currentTimeMillis()), null);
         imageMessageDao.insert(imageMessage);
     }
 
@@ -81,8 +85,5 @@ public class SaveImageToLocalUtil {
         boatMessage = builder.where(BoatMessageDao.Properties.CameraId.eq(cameraId)).unique();
         boatMessage.setCameraImagePath(boatDir + "/" + imgName);
         boatMessageDao.insertOrReplace(boatMessage);
-//        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
-//        ImageMessage imageMessage = new ImageMessage(null, boatName + "/CameraIcons", imgName, null, null);
-//        imageMessageDao.insert(imageMessage);
     }
 }

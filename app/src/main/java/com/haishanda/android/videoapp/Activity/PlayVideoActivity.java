@@ -3,18 +3,20 @@ package com.haishanda.android.videoapp.Activity;
 import android.app.Activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.CameraLive;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
 import com.haishanda.android.videoapp.Utils.DownloadUtil;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
@@ -38,12 +41,9 @@ import java.util.UUID;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTouch;
 import io.vov.vitamio.MediaPlayer;
 
 import io.vov.vitamio.Vitamio;
-import io.vov.vitamio.utils.Log;
-import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -75,6 +75,7 @@ public class PlayVideoActivity extends Activity {
     private long cameraId;
     private String path;
     private DownloadUtil l;
+    private long position = 0;
 
     private MediaRecorder mRecorder;
     private String mFileName;
@@ -85,6 +86,7 @@ public class PlayVideoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
+        Log.d(TAG, "create");
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
         Glide.with(this)
@@ -100,28 +102,76 @@ public class PlayVideoActivity extends Activity {
         path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
     }
 
+
+    @OnClick(R.id.toggle_fullscreen)
+    public void toggleScreenOrientation() {
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d(TAG, "orientation changed");
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mCustomMediaController = new CustomMediaController(this, videoView, this);
+            mCustomMediaController.show(5000);
+            videoView.setMediaController(mCustomMediaController);
+            // land donothing is ok
+        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                        RelativeLayout.LayoutParams layoutParams =
+//                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
+//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//            videoView.setLayoutParams(layoutParams);
+            CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+            landMediaController.show(5000);//控制器显示5s后自动隐藏
+            videoView.setMediaController(landMediaController);
+        }
+        super.onConfigurationChanged(newConfig);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         if (!videoView.isPlaying()) {
             if (path != null) {
-//        String path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
                 videoView.setVideoPath(path);//设置播放地址
-                MediaController mMediaController = new MediaController(this);
-                mCustomMediaController = new CustomMediaController(this, videoView, this);
-                mMediaController.show(5000);//控制器显示5s后自动隐藏
-                videoView.setMediaController(mCustomMediaController);//绑定控制器
+                if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    mCustomMediaController = new CustomMediaController(this, videoView, this);
+                    mCustomMediaController.show(5000);
+                    videoView.setMediaController(mCustomMediaController);//绑定控制器
+                } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+                    landMediaController.show(5000);//控制器显示5s后自动隐藏
+                    videoView.setMediaController(landMediaController);
+                }
+                videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);//设定缩放参数
                 videoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
                 videoView.requestFocus();//取得焦点
+                videoView.start();
             } else {
                 path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
                 videoView.setVideoPath(path);//设置播放地址
-                MediaController mMediaController = new MediaController(this);
-                mCustomMediaController = new CustomMediaController(this, videoView, this);
-                mMediaController.show(5000);//控制器显示5s后自动隐藏
-                videoView.setMediaController(mCustomMediaController);//绑定控制器
+                if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    mCustomMediaController = new CustomMediaController(this, videoView, this);
+                    mCustomMediaController.show(5000);
+                    videoView.setMediaController(mCustomMediaController);//绑定控制器
+                } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+                    landMediaController.show(5000);//控制器显示5s后自动隐藏
+                    videoView.setMediaController(landMediaController);
+                }
+                videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);//设定缩放参数
                 videoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
                 videoView.requestFocus();//取得焦点
+                videoView.start();
             }
         } else {
             videoView.start();
@@ -130,8 +180,40 @@ public class PlayVideoActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        videoView.seekTo(position);
+        videoView.start();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        videoView.stopPlayback();
+        ApiManage.getInstence().getLiveApiService().stopLiveStream(liveId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SmartResult>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "error");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(SmartResult smartResult) {
+                        if (smartResult.getCode() == 1) {
+                            Log.d(TAG, "停止播放，退出成功");
+                        } else {
+                            Log.d(TAG, smartResult.getMsg());
+                        }
+                    }
+                });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -143,35 +225,13 @@ public class PlayVideoActivity extends Activity {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        videoView.pause();
+//        videoView.pause();
+        position = videoView.getCurrentPosition();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ApiManage.getInstence().getLiveApiService().stopLiveStream(liveId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SmartResult>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(SmartResult smartResult) {
-                        if (smartResult.getCode() == 1) {
-                            Log.i(TAG, "停止播放，退出成功");
-                        } else {
-                            Log.i(TAG, smartResult.getMsg());
-                        }
-                    }
-                });
     }
 
 
@@ -361,6 +421,33 @@ public class PlayVideoActivity extends Activity {
         }
         this.liveId = liveIdCopy[0];
         return liveUrlCopy[0];
+    }
+
+    public int getHeightPixel(Activity activity) {
+        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(localDisplayMetrics);
+        return localDisplayMetrics.heightPixels;
+    }
+
+    public int getWidthPixel(Activity activity) {
+        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(localDisplayMetrics);
+        return localDisplayMetrics.widthPixels;
+    }
+
+    public int getStatusBarHeight(Activity activity) {
+        Rect frame = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+
+        int statusBarHeight = frame.top;
+        return statusBarHeight;
+    }
+
+
+    public int getTitleHeight(Activity activity) {
+        View v = getWindow().findViewById(Window.ID_ANDROID_CONTENT);///获得根视图
+        int titleHeight = v.getTop() - getStatusBarHeight(activity);//v.getTop():状态栏标题栏的总高度 ,   所以标题栏的高度为v.getTop()-getStatusBarHeight()
+        return titleHeight;
     }
 
 

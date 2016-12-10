@@ -2,10 +2,10 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +28,6 @@ import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
@@ -39,6 +38,7 @@ import com.hyphenate.EMError;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.NetUtils;
 
 import org.greenrobot.greendao.DaoException;
@@ -79,10 +79,12 @@ public class LoginActivity extends Activity {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         clear3.setVisibility(View.INVISIBLE);
@@ -154,18 +156,24 @@ public class LoginActivity extends Activity {
                                             @Override
                                             public void onMessageReceived(List<EMMessage> messages) {
                                                 //收到消息
-                                                AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-                                                QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
-                                                AlarmNum alarmNum = queryBuilder.unique();
-                                                AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
-                                                alarmNumDao.deleteAll();
-                                                alarmNumDao.insert(newAlarnNum);
-                                                MainActivity mainActivity = (MainActivity) getParent();
-                                                mainActivity.refresh(2);
-                                                NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
-                                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                                notificationManager.notify(1, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
-
+                                                Log.d("receive message", "success");
+                                                try {
+                                                    if (messages.get(0).getStringAttribute("type").equals("alarm")) {
+                                                        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+                                                        QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
+                                                        AlarmNum alarmNum = queryBuilder.unique();
+                                                        AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
+                                                        alarmNumDao.deleteAll();
+                                                        alarmNumDao.insert(newAlarnNum);
+                                                        MainActivity mainActivity = MainActivity.instance;
+                                                        mainActivity.refresh();
+                                                        NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
+                                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                                        notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+                                                    }
+                                                } catch (HyphenateException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
 
                                             @Override
@@ -287,24 +295,30 @@ public class LoginActivity extends Activity {
                             @Override
                             public void onMessageReceived(List<EMMessage> messages) {
                                 //收到消息
-                                //Todo bug fix can't notificate data
                                 Log.d("receive message", "success");
+//                                try {
+//                                    if (messages.get(0).getStringAttribute("type").equals("alarm")) {
                                 AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
                                 QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
                                 AlarmNum alarmNum = queryBuilder.unique();
                                 AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
                                 alarmNumDao.deleteAll();
                                 alarmNumDao.insert(newAlarnNum);
-                                MainActivity mainActivity = (MainActivity) getParent();
-                                mainActivity.refresh(2);
+                                MainActivity mainActivity = MainActivity.instance;
+                                mainActivity.refresh();
                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
                                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                 notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+//                                    }
+//                                } catch (HyphenateException e) {
+//                                    e.printStackTrace();
+//                                }
                             }
 
                             @Override
                             public void onCmdMessageReceived(List<EMMessage> messages) {
                                 //收到透传消息
+                                Log.d("receive message", "success");
                             }
 
                             @Override

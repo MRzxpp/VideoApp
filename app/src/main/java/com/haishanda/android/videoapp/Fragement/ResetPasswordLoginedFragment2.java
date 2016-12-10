@@ -13,11 +13,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.LoginActivity;
-import com.haishanda.android.videoapp.Activity.SignupActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
-import com.haishanda.android.videoapp.Listener.SignUpListener;
 import com.haishanda.android.videoapp.R;
 
 import java.util.regex.Matcher;

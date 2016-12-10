@@ -4,13 +4,10 @@ package com.haishanda.android.videoapp.Utils;
  * Created by Zhongsz on 2016/10/11.
  */
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.widget.Button;
 
 /**

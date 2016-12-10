@@ -14,6 +14,14 @@ public class SmartResult<T> implements Serializable {
     private String msg;
     private T data;
 
+    public SmartResult(int code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+
+    public SmartResult(){}
+
     public int getCode() {
         return code;
     }

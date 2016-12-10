@@ -4,11 +4,9 @@ import com.haishanda.android.videoapp.Config.Config;
 import com.haishanda.android.videoapp.Utils.NullOnEmptyConverterFactory;
 import com.haishanda.android.videoapp.VideoApplication;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -16,6 +14,7 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by Zhongsz on 2016/10/10.
@@ -119,6 +118,7 @@ public class ApiManage {
                     monitorApi = new Retrofit.Builder()
                             .baseUrl(Config.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .addConverterFactory(JacksonConverterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(genericClient())
                             .build()

@@ -1,8 +1,6 @@
 package com.haishanda.android.videoapp.Bean;
 
 
-import com.google.gson.annotations.Expose;
-
 import java.math.BigDecimal;
 
 /**

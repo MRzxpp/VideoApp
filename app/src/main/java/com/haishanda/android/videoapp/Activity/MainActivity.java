@@ -1,15 +1,12 @@
 package com.haishanda.android.videoapp.Activity;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
@@ -18,7 +15,6 @@ import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Fragement.BoatFragment;
 import com.haishanda.android.videoapp.Fragement.MonitorFragment;
 import com.haishanda.android.videoapp.Fragement.MyFragment;
-import com.haishanda.android.videoapp.Fragement.PhotosFragment;
 import com.haishanda.android.videoapp.Fragement.PhotosIndexFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -33,7 +29,6 @@ import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends FragmentActivity implements BottomNavigationBar.OnTabSelectedListener {
     @BindColor(R.color.textGrey)
@@ -42,22 +37,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     int textBlue;
     @BindView(R.id.bottom_navigation_bar_mainactivity)
     BottomNavigationBar navigationBar;
-    //    @BindView(R.id.boat)
-//    TextView boatText;
-//    @BindView(R.id.photos)
-//    TextView photosText;
-//    @BindView(R.id.monitor)
-//    TextView monitorText;
-//    @BindView(R.id.myApp)
-//    TextView myAppText;
-//    @BindView(R.id.boat_img)
-//    ImageView boatImg;
-//    @BindView(R.id.photos_img)
-//    ImageView photoImg;
-//    @BindView(R.id.monitor_img)
-//    ImageView monitorImg;
-//    @BindView(R.id.myApp_img)
-//    ImageView myAppImg;
     @BindDrawable(R.drawable.boat_pick)
     Drawable boatPick;
     @BindDrawable(R.drawable.boat_unpick)
@@ -76,15 +55,20 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     Drawable myUnPick;
 
     private ArrayList<Fragment> fragments;
+    public static MainActivity instance;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
+        handler = new Handler();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         fragments = getFragments();
         setDefaultFragment();
-        navigationBar.setMode(BottomNavigationBar.MODE_SHIFTING);
+        navigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         navigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
         AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
         QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
@@ -94,29 +78,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         } catch (DaoException e) {
             alarmNum = new AlarmNum(0);
         }
-        BadgeItem numberBadgeItem = new BadgeItem()
-                .setBorderWidth(5)
-                .setBackgroundColorResource(R.color.red)
-//                .setText(String.valueOf(alarmNum.getAlarmNum()))
-                .setText(String.valueOf(alarmNum.getAlarmNum()))
-                .setHideOnSelect(true);
-        navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
-                .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
-                .addItem(new BottomNavigationItem(monitorPick, "监控").setActiveColorResource(R.color.textBlue).setBadgeItem(numberBadgeItem))
-                .addItem(new BottomNavigationItem(myPick, "我的").setActiveColorResource(R.color.textBlue))
-                .setFirstSelectedPosition(0)
-                .initialise();
-        navigationBar.setTabSelectedListener(this);
-    }
-
-    public void refresh(int position) {
-        navigationBar.clearAll();
-        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-        QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
-        AlarmNum alarmNum;
-        try {
-            alarmNum = queryBuilder.unique();
-        } catch (DaoException e) {
+        if (alarmNum == null) {
             alarmNum = new AlarmNum(0);
         }
         if (alarmNum.getAlarmNum() != 0) {
@@ -130,7 +92,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
                     .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
                     .addItem(new BottomNavigationItem(monitorPick, "监控").setActiveColorResource(R.color.textBlue).setBadgeItem(numberBadgeItem))
                     .addItem(new BottomNavigationItem(myPick, "我的").setActiveColorResource(R.color.textBlue))
-                    .setFirstSelectedPosition(position)
+                    .setFirstSelectedPosition(0)
                     .initialise();
             navigationBar.setTabSelectedListener(this);
         } else {
@@ -138,12 +100,62 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
                     .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
                     .addItem(new BottomNavigationItem(monitorPick, "监控").setActiveColorResource(R.color.textBlue))
                     .addItem(new BottomNavigationItem(myPick, "我的").setActiveColorResource(R.color.textBlue))
-                    .setFirstSelectedPosition(position)
+                    .setFirstSelectedPosition(0)
                     .initialise();
             navigationBar.setTabSelectedListener(this);
         }
+    }
+
+    public void refresh() {
+        new Thread() {
+            public void run() {
+                handler.post(updateUI);
+            }
+        }.start();
 
     }
+
+    Runnable updateUI = new Runnable() {
+        @Override
+        public void run() {
+            navigationBar.clearAll();
+            AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+            QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
+            AlarmNum alarmNum;
+            try {
+                alarmNum = queryBuilder.unique();
+            } catch (DaoException e) {
+                alarmNum = new AlarmNum(0);
+            }
+            if (alarmNum == null) {
+                alarmNum = new AlarmNum(0);
+            }
+            if (alarmNum.getAlarmNum() != 0) {
+                BadgeItem numberBadgeItem = new BadgeItem()
+                        .setBorderWidth(5)
+                        .setBackgroundColorResource(R.color.red)
+//                .setText(String.valueOf(alarmNum.getAlarmNum()))
+                        .setText(String.valueOf(alarmNum.getAlarmNum()))
+                        .setHideOnSelect(true);
+                navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
+                        .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
+                        .addItem(new BottomNavigationItem(monitorPick, "监控").setActiveColorResource(R.color.textBlue).setBadgeItem(numberBadgeItem))
+                        .addItem(new BottomNavigationItem(myPick, "我的").setActiveColorResource(R.color.textBlue))
+                        .setFirstSelectedPosition(0)
+                        .initialise();
+                navigationBar.setTabSelectedListener(MainActivity.instance);
+                return;
+            } else {
+                navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
+                        .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
+                        .addItem(new BottomNavigationItem(monitorPick, "监控").setActiveColorResource(R.color.textBlue))
+                        .addItem(new BottomNavigationItem(myPick, "我的").setActiveColorResource(R.color.textBlue))
+                        .setFirstSelectedPosition(2)
+                        .initialise();
+                navigationBar.setTabSelectedListener(MainActivity.instance);
+            }
+        }
+    };
 
 
     private void setDefaultFragment() {

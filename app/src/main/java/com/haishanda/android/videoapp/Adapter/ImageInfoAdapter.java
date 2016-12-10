@@ -8,11 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.haishanda.android.videoapp.R;
-import com.orhanobut.dialogplus.DialogPlus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Zhongsz on 2016/11/19.

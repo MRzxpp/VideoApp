@@ -1,19 +1,14 @@
 package com.haishanda.android.videoapp.Listener;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import butterknife.ButterKnife;
-
-import static android.content.ContentValues.TAG;
-import static com.haishanda.android.videoapp.BuildConfig.DEBUG;
 
 /**
  * Created by Zhongsz on 2016/10/11.

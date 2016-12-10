@@ -1,17 +1,12 @@
 package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.R;
 
 import butterknife.ButterKnife;
