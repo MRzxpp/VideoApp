@@ -15,6 +15,7 @@ import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
 
 import butterknife.ButterKnife;
@@ -92,6 +93,8 @@ public class CommonSettingsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
+                monitorConfigBeanDao.deleteAll();
                 FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
                 FirstLogin firstLogin = new FirstLogin(1);
                 firstLoginDao.deleteAll();

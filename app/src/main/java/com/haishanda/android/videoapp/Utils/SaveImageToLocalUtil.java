@@ -76,14 +76,15 @@ public class SaveImageToLocalUtil {
             img.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
             fileOutputStream.flush();
             fileOutputStream.close();
-        } catch (IOException e) {
+            BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
+            BoatMessage boatMessage;
+            QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();
+            boatMessage = builder.where(BoatMessageDao.Properties.CameraId.eq(cameraId)).unique();
+            boatMessage.setCameraImagePath(boatDir + "/" + imgName);
+            boatMessageDao.insertOrReplace(boatMessage);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-        BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
-        BoatMessage boatMessage;
-        QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();
-        boatMessage = builder.where(BoatMessageDao.Properties.CameraId.eq(cameraId)).unique();
-        boatMessage.setCameraImagePath(boatDir + "/" + imgName);
-        boatMessageDao.insertOrReplace(boatMessage);
+
     }
 }

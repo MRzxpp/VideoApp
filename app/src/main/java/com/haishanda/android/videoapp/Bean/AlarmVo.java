@@ -5,7 +5,6 @@ import java.util.Date;
 /**
  * Created by Zhongsz on 2016/12/1.
  */
-
 public class AlarmVo {
     private int id;
     private String machineName;

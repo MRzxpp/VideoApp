@@ -101,7 +101,7 @@ public class SignupActivity extends Activity {
                 .subscribe(new Observer<SmartResult>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("info", "发送成功");
+                        Log.i("获取验证码", "发送成功");
                     }
 
                     @Override
@@ -111,10 +111,16 @@ public class SignupActivity extends Activity {
 
                     @Override
                     public void onNext(SmartResult smartResult) {
-                        Log.i("info", "正在发送");
-                        Log.i("info", String.valueOf(smartResult.getCode()));
-                    }
+                        if (smartResult.getCode() == 1) {
+                            Toast.makeText(getApplicationContext(), "已发送", Toast.LENGTH_LONG).show();
+                            Log.d("获取验证码", "正在发送");
+                        } else {
+                            Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "发送失败", Toast.LENGTH_LONG).show();
+                            Log.d("获取验证码", "发送失败");
+                            Log.d("获取验证码", String.valueOf(smartResult.getCode()));
+                        }
 
+                    }
                 });
 
     }

@@ -65,6 +65,8 @@ public class PlayVideoActivity extends Activity {
     ImageView vocalGif;
     @BindView(R.id.voice_start)
     ImageView voiceStart;
+    @BindView(R.id.toggle_fullscreen)
+    ImageView toggleFullscreen;
 
     private static final String TAG = "PlayVideoActivity";
     private ImageMessageDao imageMessageDao;
@@ -89,6 +91,9 @@ public class PlayVideoActivity extends Activity {
         Log.d(TAG, "create");
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
+        //全屏键不可用
+        toggleFullscreen.setVisibility(View.INVISIBLE);
+        toggleFullscreen.setEnabled(false);
         Glide.with(this)
                 .load(R.drawable.voice_is_in)
                 .asGif()
@@ -98,8 +103,9 @@ public class PlayVideoActivity extends Activity {
         cameraId = extra.getLong("cameraId");
         boatName = extra.getString("boatName");
         initTalkService();
-//        String path = getLiveUrl(cameraId);
+//        path = getLiveUrl((int) cameraId);
         path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+
     }
 
 
@@ -221,7 +227,9 @@ public class PlayVideoActivity extends Activity {
     protected void onPause() {
         super.onPause();
         try {
-            SaveImageToLocalUtil.saveCameraIconAction(videoView.getCurrentFrame(), boatName, this.cameraId);
+            //若视频地址有误时，点击退出或者截屏均会爆栈，因此通过判断videoview是否能加载来判断视频地址是否正确
+            if (videoView.isBuffering())
+                SaveImageToLocalUtil.saveCameraIconAction(videoView.getCurrentFrame(), boatName, this.cameraId);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -240,17 +248,22 @@ public class PlayVideoActivity extends Activity {
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
         try {
-            SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), boatName);
-            final MaterialDialog dialog = new MaterialDialog(this);
-            dialog.setMessage("截图成功！");
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
+            if (videoView.isBuffering()) {
+                SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), boatName);
+                final MaterialDialog dialog = new MaterialDialog(this);
+                dialog.setMessage("截图成功！");
+                Log.i("PlayVideo", " 截图成功");
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+            } else {
+                Toast.makeText(this, "请勿在视频有错误的情况下截图", Toast.LENGTH_LONG).show();
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
             Toast.makeText(this, "视频还未加载完成！暂时无法截图", Toast.LENGTH_LONG).show();
         }
 
-        Log.i("PlayVideo", " 截图成功");
+
     }
 
     @OnClick(R.id.record_btn)
@@ -360,7 +373,7 @@ public class PlayVideoActivity extends Activity {
             mRecorder.release();
             mRecorder = null;
         }
-        Toast.makeText(getApplicationContext(), "录音完成，正在发送至渔船", Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), "录音完成，正在发送至渔船", Toast.LENGTH_LONG).show();
         File voiceFile = new File(mFileNameFull);
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
         // MultipartBody.Part is used to send also the actual filename
@@ -392,7 +405,7 @@ public class PlayVideoActivity extends Activity {
                     }
                 });
 
-        Toast.makeText(getApplicationContext(), "保存录音" + mFileName, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), "保存录音" + mFileName, Toast.LENGTH_LONG).show();
     }
 
     @OnClick(R.id.back_to_boat_btn)
@@ -407,8 +420,16 @@ public class PlayVideoActivity extends Activity {
         try {
             Response<SmartResult<CameraLive>> response = call.execute();
             CameraLive cameraLive = response.body().getData();
-            String liveUrl = cameraLive.getLiveUrl();
-            int liveId = cameraLive.getLiveId();
+            String liveUrl = "default";
+            int liveId = -1;
+            if (cameraLive != null) {
+                if (cameraLive.getLiveUrl() != null) {
+                    liveUrl = cameraLive.getLiveUrl();
+                }
+                if (cameraLive.getLiveId() != 0) {
+                    liveId = cameraLive.getLiveId();
+                }
+            }
             liveUrlCopy[0] = liveUrl;
             liveIdCopy[0] = liveId;
         } catch (IOException e) {

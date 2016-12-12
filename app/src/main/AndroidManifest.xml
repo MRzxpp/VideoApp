@@ -88,7 +88,7 @@
             android:name=".Activity.PlayVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="sensor"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".Activity.AddBoatActivity"

@@ -27,11 +27,13 @@ import com.haishanda.android.videoapp.Activity.PlayMonitorPhotoActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Bean.AlarmVo;
+import com.haishanda.android.videoapp.Bean.AlarmVoBean;
 import com.haishanda.android.videoapp.Bean.LastId;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
+import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 
 import org.greenrobot.greendao.DaoException;
@@ -63,8 +65,9 @@ public class MonitorFragment extends Fragment {
 
     private int last;
     private final String TAG = "获取报警信息";
-    public List<AlarmVo> list = new ArrayList<AlarmVo>();
-    private List<AlarmVo> chosenList = new ArrayList<AlarmVo>();
+    public List<AlarmVoBean> list = new ArrayList<AlarmVoBean>();
+    private List<AlarmVoBean> chosenList = new ArrayList<AlarmVoBean>();
+    private AlarmVoBeanDao alarmVoBeanDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +76,9 @@ public class MonitorFragment extends Fragment {
         ButterKnife.bind(this, view);
         editBtns.setVisibility(View.INVISIBLE);
         editBtns.setEnabled(false);
+        alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
+        QueryBuilder<AlarmVoBean> queryBuilder = alarmVoBeanDao.queryBuilder();
+        list = queryBuilder.list();
         return view;
     }
 
@@ -117,6 +123,10 @@ public class MonitorFragment extends Fragment {
     @OnClick(R.id.delete_selected_messages)
     public void deleteChosenMessages() {
         list.removeAll(chosenList);
+        for (AlarmVoBean a : chosenList
+                ) {
+            alarmVoBeanDao.delete(a);
+        }
         chosenList.clear();
         initAdapter(true, false, false);
     }
@@ -178,7 +188,12 @@ public class MonitorFragment extends Fragment {
                     public void onNext(SmartResult<List<AlarmVo>> listSmartResult) {
                         if (listSmartResult.getCode() == 1) {
                             Log.d(TAG, "success");
-                            list.addAll(listSmartResult.getData());
+                            for (AlarmVo a : listSmartResult.getData()
+                                    ) {
+                                AlarmVoBean alarmVoBean = new AlarmVoBean((long) a.getId(), a.getMachineName(), a.getUrls(), a.getAlarmTime());
+                                alarmVoBeanDao.insertOrReplace(alarmVoBean);
+                            }
+//                            list.addAll(listSmartResult.getData());
                             LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
                             QueryBuilder<LastId> queryBuilder = lastIdDao.queryBuilder();
                             LastId lastId = queryBuilder.unique();
@@ -206,9 +221,9 @@ public class MonitorFragment extends Fragment {
         Boolean isCheckBoxOn;
         Boolean isAllSelected;
         Boolean isNoneSelected;
-        private List<AlarmVo> alarmVos;
+        private List<AlarmVoBean> alarmVos;
 
-        MonitorAdapter(Context context, List<AlarmVo> alarmVos, Boolean isCheckBoxOn, Boolean isAllSelected, Boolean isNoneSelected) {
+        MonitorAdapter(Context context, List<AlarmVoBean> alarmVos, Boolean isCheckBoxOn, Boolean isAllSelected, Boolean isNoneSelected) {
             super(context, R.layout.adapter_monitor, alarmVos);
             this.context = context;
             this.alarmVos = alarmVos;

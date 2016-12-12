@@ -103,7 +103,7 @@ public class ResetPasswordLoginedFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
-                            Toast.makeText(getContext(), "发送成功", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "已发送", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "发送失败，请稍后重试", Toast.LENGTH_LONG).show();
                         }
