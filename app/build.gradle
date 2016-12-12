@@ -25,10 +25,18 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            debuggable false
+            jniDebuggable false
+            zipAlignEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             debuggable true
+            jniDebuggable true
+            zipAlignEnabled true
+            minifyEnabled false
+            shrinkResources false
         }
     }
     sourceSets {
@@ -90,4 +98,5 @@ dependencies {
     compile project(':portraitzxing')
     compile files('libs/libammsdk.jar')
     compile files('libs/juv-rtmp-client-1.9.2e.jar')
+    compile files('libs/google-play-services.jar')
 }

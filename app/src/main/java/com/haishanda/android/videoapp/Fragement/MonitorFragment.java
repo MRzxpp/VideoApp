@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Activity.MonitorConfigActivity;
+import com.haishanda.android.videoapp.Activity.PlayMonitorPhotoActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Bean.AlarmVo;
@@ -72,7 +73,6 @@ public class MonitorFragment extends Fragment {
         ButterKnife.bind(this, view);
         editBtns.setVisibility(View.INVISIBLE);
         editBtns.setEnabled(false);
-        initLastId();
         return view;
     }
 
@@ -87,6 +87,7 @@ public class MonitorFragment extends Fragment {
                 last = 0;
             }
         } catch (DaoException e) {
+            e.printStackTrace();
             last = 0;
             LastId lastId = new LastId(0);
             lastIdDao.insertOrReplace(lastId);
@@ -148,7 +149,6 @@ public class MonitorFragment extends Fragment {
     }
 
     private void resetMessagesUnreadNum() {
-
         AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
         alarmNumDao.deleteAll();
         AlarmNum alarmNum = new AlarmNum(0);
@@ -158,6 +158,7 @@ public class MonitorFragment extends Fragment {
     }
 
     private void initAlarms() {
+        initLastId();
         ApiManage.getInstence().getMonitorApiService().queryAlarms(last)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -179,11 +180,10 @@ public class MonitorFragment extends Fragment {
                             Log.d(TAG, "success");
                             list.addAll(listSmartResult.getData());
                             LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-                            LastId lastId;
+                            QueryBuilder<LastId> queryBuilder = lastIdDao.queryBuilder();
+                            LastId lastId = queryBuilder.unique();
                             if (listSmartResult.getData().size() != 0) {
                                 lastId = new LastId(listSmartResult.getData().get(listSmartResult.getData().size() - 1).getId());
-                            } else {
-                                lastId = new LastId(0);
                             }
                             lastIdDao.deleteAll();
                             lastIdDao.insertOrReplace(lastId);
@@ -241,38 +241,78 @@ public class MonitorFragment extends Fragment {
             }
 
             String urls = alarmVos.get(position).getUrls();
-            String[] urlArray = convertUrlsToFourUrl(urls);
+            final String[] urlArray = convertUrlsToFourUrl(urls);
             ImageView warningImg1 = viewHolder.warningImg1;
             ImageView warningImg2 = viewHolder.warningImg2;
             ImageView warningImg3 = viewHolder.warningImg3;
             ImageView warningImg4 = viewHolder.warningImg4;
-            Glide
-                    .with(context)
-                    .load(urlArray[0])
-                    .error(R.drawable.monitor_error)
-                    .into(warningImg1);
 
-            Glide
-                    .with(context)
-                    .load(urlArray[1])
-                    .error(R.drawable.monitor_error)
-                    .into(warningImg2);
 
-            Glide
-                    .with(context)
-                    .load(urlArray[2])
-                    .error(R.drawable.monitor_error)
-                    .into(warningImg3);
+            if (urlArray.length > 0) {
+                if (urlArray[0] != null) {
+                    Glide
+                            .with(context)
+                            .load(urlArray[0])
+                            .error(R.drawable.monitor_error)
+                            .into(warningImg1);
+                    warningImg1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            playMonitorPhoto(position, urlArray[0]);
+                        }
+                    });
+                }
+                if (urlArray.length > 1) {
+                    if (urlArray[1] != null) {
+                        Glide
+                                .with(context)
+                                .load(urlArray[1])
+                                .error(R.drawable.monitor_error)
+                                .into(warningImg2);
+                        warningImg2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                playMonitorPhoto(position, urlArray[1]);
+                            }
+                        });
+                    }
+                    if (urlArray.length > 2) {
+                        if (urlArray[2] != null) {
+                            Glide
+                                    .with(context)
+                                    .load(urlArray[2])
+                                    .error(R.drawable.monitor_error)
+                                    .into(warningImg3);
+                            warningImg3.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    playMonitorPhoto(position, urlArray[2]);
+                                }
+                            });
+                        }
+                        if (urlArray.length > 3) {
+                            if (urlArray[3] != null) {
+                                Glide
+                                        .with(context)
+                                        .load(urlArray[3])
+                                        .error(R.drawable.monitor_error)
+                                        .into(warningImg4);
+                                warningImg4.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        playMonitorPhoto(position, urlArray[3]);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
 
-            Glide
-                    .with(context)
-                    .load(urlArray[3])
-                    .error(R.drawable.monitor_error)
-                    .into(warningImg4);
 
             TextView alarmText = viewHolder.alarmText;
-            alarmText.setText(alarmVos.get(position).getMachineName()
-            );
+            String alarmMessage = "您的船舶(" + alarmVos.get(position).getMachineName() + ")监测到可疑人员上船，请注意！";
+            alarmText.setText(alarmMessage);
 
             RelativeLayout relativeLayout = viewHolder.relativeLayout;
             if (!isCheckBoxOn) {
@@ -300,7 +340,7 @@ public class MonitorFragment extends Fragment {
                                                         }
             );
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy年mm月dd日   hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss");
             TextView alarmTime = viewHolder.alarmTime;
             alarmTime.setText(format.format(alarmVos.get(position).getAlarmTime()));
 
@@ -326,6 +366,17 @@ public class MonitorFragment extends Fragment {
             RelativeLayout relativeLayout;
             TextView alarmText;
             CheckBox isMessageChoosen;
+        }
+
+        public void playMonitorPhoto(int position, String imagePath) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss");
+            Intent intent = new Intent(getActivity(), PlayMonitorPhotoActivity.class);
+            Bundle extra = new Bundle();
+            extra.putString("imagePath", imagePath);
+            extra.putString("boatName", alarmVos.get(position).getMachineName());
+            extra.putString("monitorTime", format.format(alarmVos.get(position).getAlarmTime()));
+            intent.putExtras(extra);
+            startActivity(intent);
         }
     }
 
