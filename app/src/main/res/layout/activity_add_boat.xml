@@ -21,23 +21,14 @@
             android:textSize="18dp" />
 
         <ImageView
-            android:layout_centerVertical="true"
             android:id="@+id/back_to_boat_fragment_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
             android:layout_marginBottom="13dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="12dp"
             android:src="@drawable/back" />
-
-        <ImageView
-            android:id="@+id/add_boat_scan_qrcode_btn"
-            android:layout_width="22dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:src="@drawable/scan_tdcode" />
     </RelativeLayout>
 
     <TextView
@@ -60,7 +51,7 @@
             android:id="@+id/layout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/both_stroke_white">
+            android:background="@drawable/no_bottom_stroke_white">
 
             <EditText
                 android:id="@+id/boat_number"
@@ -68,12 +59,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="14dp"
+                android:layout_marginRight="50dp"
                 android:background="@null"
                 android:hint="请输入船舶设备编号"
                 android:inputType="text"
                 android:textColor="#333333"
                 android:textColorHint="@color/textGrey"
                 android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/add_boat_scan_qrcode_btn"
+                android:layout_width="22dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/scan_qrcode_black" />
         </RelativeLayout>
 
         <RelativeLayout

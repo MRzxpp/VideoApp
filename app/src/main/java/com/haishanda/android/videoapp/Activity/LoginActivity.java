@@ -29,8 +29,11 @@ import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
+import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
+import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
@@ -155,8 +158,12 @@ public class LoginActivity extends Activity {
 
                                             @Override
                                             public void onMessageReceived(List<EMMessage> messages) {
+                                                int i = (int) (1 + Math.random() * 65535);
                                                 //收到消息
                                                 Log.d("receive message", "success");
+                                                NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
+                                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                                notificationManager.notify(i, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
                                                 try {
                                                     if (messages.get(0).getStringAttribute("type").equals("alarm")) {
                                                         AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
@@ -167,9 +174,9 @@ public class LoginActivity extends Activity {
                                                         alarmNumDao.insert(newAlarnNum);
                                                         MainActivity mainActivity = MainActivity.instance;
                                                         mainActivity.refresh();
-                                                        NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
-                                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                                        notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+//                                        NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
+//                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                                        notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
                                                     }
                                                 } catch (HyphenateException e) {
                                                     e.printStackTrace();
@@ -294,25 +301,26 @@ public class LoginActivity extends Activity {
 
                             @Override
                             public void onMessageReceived(List<EMMessage> messages) {
+                                int i = (int) (1 + Math.random() * 65535);
                                 //收到消息
                                 Log.d("receive message", "success");
-//                                try {
-//                                    if (messages.get(0).getStringAttribute("type").equals("alarm")) {
-                                AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-                                QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
-                                AlarmNum alarmNum = queryBuilder.unique();
-                                AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
-                                alarmNumDao.deleteAll();
-                                alarmNumDao.insert(newAlarnNum);
-                                MainActivity mainActivity = MainActivity.instance;
-                                mainActivity.refresh();
                                 NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
                                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
-//                                    }
-//                                } catch (HyphenateException e) {
-//                                    e.printStackTrace();
-//                                }
+                                notificationManager.notify(i, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+                                try {
+                                    if (messages.get(0).getStringAttribute("type").equals("alarm")) {
+                                        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+                                        QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
+                                        AlarmNum alarmNum = queryBuilder.unique();
+                                        AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
+                                        alarmNumDao.deleteAll();
+                                        alarmNumDao.insert(newAlarnNum);
+                                        MainActivity mainActivity = MainActivity.instance;
+                                        mainActivity.refresh();
+                                    }
+                                } catch (HyphenateException e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                             @Override
@@ -390,12 +398,16 @@ public class LoginActivity extends Activity {
                     } else {
                         if (NetUtils.hasNetwork(LoginActivity.this)) {
                             Toast.makeText(getApplicationContext(), "连接环信服务器失败", Toast.LENGTH_LONG).show();
-                            logoutAndDeleteLoginMessage();
+                            EMClient.getInstance().logout(true);
+                            Intent intent = new Intent(LoginActivity.this, WelcomeActivity.class);
+                            startActivity(intent);
                         }
                         //连接不到聊天服务器
                         else {
                             Toast.makeText(getApplicationContext(), "当前网络不可用", Toast.LENGTH_LONG).show();
-                            logoutAndDeleteLoginMessage();
+                            EMClient.getInstance().logout(true);
+                            Intent intent = new Intent(LoginActivity.this, WelcomeActivity.class);
+                            startActivity(intent);
                         }
                         //当前网络不可用，请检查网络设置
                     }
@@ -405,8 +417,25 @@ public class LoginActivity extends Activity {
     }
 
     private void logoutAndDeleteLoginMessage() {
+        //监控数目重置
+        AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
+        alarmVoBeanDao.deleteAll();
+        LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
+        lastIdDao.deleteAll();
+        //清除监控配置信息
+        MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
+        monitorConfigBeanDao.deleteAll();
+        //报警数目归零
+        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+        alarmNumDao.deleteAll();
+        //清除登录信息
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         loginMessageDao.deleteAll();
+        //重置是否第一次登录
+        FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+        FirstLogin firstLogin = new FirstLogin(1);
+        firstLoginDao.deleteAll();
+        firstLoginDao.insertOrReplace(firstLogin);
         EMClient.getInstance().logout(true);
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);

@@ -21,11 +21,11 @@
 
         <ImageView
             android:id="@+id/back_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
             android:layout_marginBottom="13dp"
-            android:layout_marginLeft="15dp"
             android:layout_marginTop="12dp"
             android:src="@drawable/back" />
     </RelativeLayout>
@@ -51,7 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="当您无法收到校验码短信时，请逐一排查一下原因：
-
 1.手机话费不足或其他原因停机；
 2.短信收件箱已满；
 3.被手机安全软件误判拦截。" />

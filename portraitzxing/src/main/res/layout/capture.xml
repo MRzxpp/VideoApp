@@ -43,11 +43,11 @@
 
     <ImageView
         android:layout_centerVertical="true"
-        android:id="@+id/back_to_index_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/back_to_add_boat_btn"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
         android:layout_marginBottom="13dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="12dp"
         android:src="@drawable/back" />
   </RelativeLayout>

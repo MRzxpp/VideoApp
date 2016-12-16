@@ -25,10 +25,6 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            debuggable false
-            jniDebuggable false
-            zipAlignEnabled true
-            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -93,6 +89,7 @@ dependencies {
     compile 'com.github.traex.expandablelayout:library:1.2.2'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.bigkoo:alertview:1.0.3'
+    compile 'com.pgyersdk:sdk:2.4.0'
     compile files('libs/hyphenatechat_3.1.5.jar')
     compile project(':vitamio')
     compile project(':portraitzxing')

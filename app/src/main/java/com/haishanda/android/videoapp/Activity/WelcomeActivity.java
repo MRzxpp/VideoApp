@@ -84,11 +84,13 @@ public class WelcomeActivity extends Activity {
             case (R.id.welcome_to_login): {
                 intent.setClass(WelcomeActivity.this, LoginActivity.class);
                 startActivity(intent);
+                this.finish();
                 break;
             }
             case (R.id.welcome_to_signup): {
                 intent.setClass(WelcomeActivity.this, SignupActivity.class);
                 startActivity(intent);
+                this.finish();
                 break;
             }
             default:

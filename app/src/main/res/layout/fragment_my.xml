@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/to_my_center"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@drawable/my_background">
@@ -44,7 +45,6 @@
             android:textSize="13sp" />
 
         <ImageView
-            android:id="@+id/to_my_center"
             android:layout_width="12dp"
             android:layout_height="22dp"
             android:layout_alignParentBottom="true"

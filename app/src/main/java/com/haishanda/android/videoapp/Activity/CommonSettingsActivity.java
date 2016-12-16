@@ -13,7 +13,10 @@ import com.haishanda.android.videoapp.Fragement.ResetPasswordLoginedFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
+import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
+import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
@@ -81,7 +84,8 @@ public class CommonSettingsActivity extends FragmentActivity {
 
     @OnClick(R.id.help_and_feedback_layout)
     public void skipToHelpAndFeedbackLayout() {
-
+        Intent intent = new Intent(CommonSettingsActivity.this, HelpActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.logout_btn)
@@ -93,15 +97,28 @@ public class CommonSettingsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                //监控数目重置
+                AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
+                alarmVoBeanDao.deleteAll();
+                LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
+                lastIdDao.deleteAll();
+                //清除监控配置信息
                 MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
                 monitorConfigBeanDao.deleteAll();
+                //报警数目归零
+                AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+                alarmNumDao.deleteAll();
+                //重置是否第一次登录
                 FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
                 FirstLogin firstLogin = new FirstLogin(1);
                 firstLoginDao.deleteAll();
                 firstLoginDao.insertOrReplace(firstLogin);
+                //清除登录信息
                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
                 loginMessageDao.deleteAll();
+                //退出环信
                 EMClient.getInstance().logout(true);
+                //返回欢迎页
                 Intent intent = new Intent(getCommonSettingsActivity(), WelcomeActivity.class);
                 startActivity(intent);
                 getCommonSettingsActivity().finish();

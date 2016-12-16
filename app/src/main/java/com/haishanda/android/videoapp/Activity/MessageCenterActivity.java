@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.haishanda.android.videoapp.R;
+import com.pgyersdk.update.PgyUpdateManager;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -19,6 +20,7 @@ public class MessageCenterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_center);
         ButterKnife.bind(this);
+        PgyUpdateManager.register(this);
     }
 
     @OnClick(R.id.back_to_my_btn)

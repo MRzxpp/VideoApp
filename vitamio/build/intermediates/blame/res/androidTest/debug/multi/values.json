@@ -104,8 +104,8 @@
                     "startLine": 9,
                     "startColumn": 4,
                     "startOffset": 427,
-                    "endColumn": 92,
-                    "endOffset": 515
+                    "endColumn": 66,
+                    "endOffset": 489
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
@@ -113,8 +113,8 @@
                         "startLine": 9,
                         "startColumn": 4,
                         "startOffset": 427,
-                        "endColumn": 92,
-                        "endOffset": 515
+                        "endColumn": 66,
+                        "endOffset": 489
                     }
                 }
             },
@@ -122,18 +122,18 @@
                 "to": {
                     "startLine": 10,
                     "startColumn": 4,
-                    "startOffset": 520,
-                    "endColumn": 67,
-                    "endOffset": 583
+                    "startOffset": 494,
+                    "endColumn": 56,
+                    "endOffset": 546
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 10,
                         "startColumn": 4,
-                        "startOffset": 520,
-                        "endColumn": 67,
-                        "endOffset": 583
+                        "startOffset": 494,
+                        "endColumn": 56,
+                        "endOffset": 546
                     }
                 }
             },
@@ -141,18 +141,18 @@
                 "to": {
                     "startLine": 11,
                     "startColumn": 4,
-                    "startOffset": 588,
+                    "startOffset": 551,
                     "endColumn": 65,
-                    "endOffset": 649
+                    "endOffset": 612
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 11,
                         "startColumn": 4,
-                        "startOffset": 588,
+                        "startOffset": 551,
                         "endColumn": 65,
-                        "endOffset": 649
+                        "endOffset": 612
                     }
                 }
             },
@@ -160,18 +160,18 @@
                 "to": {
                     "startLine": 12,
                     "startColumn": 4,
-                    "startOffset": 654,
+                    "startOffset": 617,
                     "endColumn": 100,
-                    "endOffset": 750
+                    "endOffset": 713
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 12,
                         "startColumn": 4,
-                        "startOffset": 654,
+                        "startOffset": 617,
                         "endColumn": 100,
-                        "endOffset": 750
+                        "endOffset": 713
                     }
                 }
             },
@@ -179,18 +179,18 @@
                 "to": {
                     "startLine": 13,
                     "startColumn": 4,
-                    "startOffset": 755,
+                    "startOffset": 718,
                     "endColumn": 70,
-                    "endOffset": 821
+                    "endOffset": 784
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 13,
                         "startColumn": 4,
-                        "startOffset": 755,
+                        "startOffset": 718,
                         "endColumn": 70,
-                        "endOffset": 821
+                        "endOffset": 784
                     }
                 }
             },
@@ -198,18 +198,18 @@
                 "to": {
                     "startLine": 14,
                     "startColumn": 4,
-                    "startOffset": 826,
+                    "startOffset": 789,
                     "endColumn": 112,
-                    "endOffset": 934
+                    "endOffset": 897
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 14,
                         "startColumn": 4,
-                        "startOffset": 826,
+                        "startOffset": 789,
                         "endColumn": 112,
-                        "endOffset": 934
+                        "endOffset": 897
                     }
                 }
             },
@@ -217,18 +217,18 @@
                 "to": {
                     "startLine": 15,
                     "startColumn": 4,
-                    "startOffset": 939,
+                    "startOffset": 902,
                     "endColumn": 86,
-                    "endOffset": 1021
+                    "endOffset": 984
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 15,
                         "startColumn": 4,
-                        "startOffset": 939,
+                        "startOffset": 902,
                         "endColumn": 86,
-                        "endOffset": 1021
+                        "endOffset": 984
                     }
                 }
             },
@@ -236,20 +236,20 @@
                 "to": {
                     "startLine": 16,
                     "startColumn": 4,
-                    "startOffset": 1026,
+                    "startOffset": 989,
                     "endLine": 17,
                     "endColumn": 13,
-                    "endOffset": 1150
+                    "endOffset": 1113
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 16,
                         "startColumn": 4,
-                        "startOffset": 1026,
+                        "startOffset": 989,
                         "endLine": 17,
                         "endColumn": 13,
-                        "endOffset": 1150
+                        "endOffset": 1113
                     }
                 }
             },
@@ -257,18 +257,18 @@
                 "to": {
                     "startLine": 18,
                     "startColumn": 4,
-                    "startOffset": 1155,
+                    "startOffset": 1118,
                     "endColumn": 84,
-                    "endOffset": 1235
+                    "endOffset": 1198
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 18,
                         "startColumn": 4,
-                        "startOffset": 1155,
+                        "startOffset": 1118,
                         "endColumn": 84,
-                        "endOffset": 1235
+                        "endOffset": 1198
                     }
                 }
             },
@@ -276,18 +276,18 @@
                 "to": {
                     "startLine": 19,
                     "startColumn": 4,
-                    "startOffset": 1240,
+                    "startOffset": 1203,
                     "endColumn": 72,
-                    "endOffset": 1308
+                    "endOffset": 1271
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 19,
                         "startColumn": 4,
-                        "startOffset": 1240,
+                        "startOffset": 1203,
                         "endColumn": 72,
-                        "endOffset": 1308
+                        "endOffset": 1271
                     }
                 }
             },
@@ -295,18 +295,18 @@
                 "to": {
                     "startLine": 20,
                     "startColumn": 4,
-                    "startOffset": 1313,
+                    "startOffset": 1276,
                     "endColumn": 67,
-                    "endOffset": 1376
+                    "endOffset": 1339
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 20,
                         "startColumn": 4,
-                        "startOffset": 1313,
+                        "startOffset": 1276,
                         "endColumn": 67,
-                        "endOffset": 1376
+                        "endOffset": 1339
                     }
                 }
             },
@@ -314,20 +314,20 @@
                 "to": {
                     "startLine": 21,
                     "startColumn": 4,
-                    "startOffset": 1381,
+                    "startOffset": 1344,
                     "endLine": 30,
                     "endColumn": 12,
-                    "endOffset": 2023
+                    "endOffset": 1986
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 21,
                         "startColumn": 4,
-                        "startOffset": 1381,
+                        "startOffset": 1344,
                         "endLine": 30,
                         "endColumn": 12,
-                        "endOffset": 2023
+                        "endOffset": 1986
                     }
                 }
             },
@@ -335,20 +335,20 @@
                 "to": {
                     "startLine": 31,
                     "startColumn": 4,
-                    "startOffset": 2028,
+                    "startOffset": 1991,
                     "endLine": 35,
                     "endColumn": 12,
-                    "endOffset": 2233
+                    "endOffset": 2196
                 },
                 "from": {
                     "file": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
                     "position": {
                         "startLine": 31,
                         "startColumn": 4,
-                        "startOffset": 2028,
+                        "startOffset": 1991,
                         "endLine": 35,
                         "endColumn": 12,
-                        "endOffset": 2233
+                        "endOffset": 2196
                     }
                 }
             }

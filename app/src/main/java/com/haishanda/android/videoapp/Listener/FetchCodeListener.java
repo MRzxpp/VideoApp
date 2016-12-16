@@ -20,15 +20,15 @@ import butterknife.ButterKnife;
 public class FetchCodeListener implements TextWatcher {
     private CharSequence temp;//监听前的文本
 
-    private EditText editText;
+    private EditText phonenum;
     private Button button;
     private Drawable blue;
     private Drawable gray;
     private int textGray;
     private int white;
 
-    public FetchCodeListener(EditText editText, Button button, Drawable blue, Drawable gray, int textGray, int white) {
-        this.editText = editText;
+    public FetchCodeListener(EditText phonenum, Button button, Drawable blue, Drawable gray, int textGray, int white) {
+        this.phonenum = phonenum;
         this.button = button;
         this.blue = blue;
         this.gray = gray;
@@ -44,7 +44,7 @@ public class FetchCodeListener implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         Pattern phoneNumPattern = Pattern.compile("^[1][358][0-9]{9}$");
-        Matcher phoneNumMatcher = phoneNumPattern.matcher(editText.getText().toString());
+        Matcher phoneNumMatcher = phoneNumPattern.matcher(phonenum.getText().toString());
         if (phoneNumMatcher.matches()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 button.setBackground(blue);

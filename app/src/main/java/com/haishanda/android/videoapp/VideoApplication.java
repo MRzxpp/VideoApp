@@ -7,6 +7,7 @@ import android.support.multidex.MultiDex;
 
 import com.haishanda.android.videoapp.greendao.gen.DaoMaster;
 import com.haishanda.android.videoapp.greendao.gen.DaoSession;
+import com.pgyersdk.crash.PgyCrashManager;
 
 /**
  * Created by Zhongsz on 2016/10/12.
@@ -67,6 +68,7 @@ public class VideoApplication extends Application {
         super.onCreate();
         application = this;
         setDatabase();
+        PgyCrashManager.register(this);
     }
 
     @Override

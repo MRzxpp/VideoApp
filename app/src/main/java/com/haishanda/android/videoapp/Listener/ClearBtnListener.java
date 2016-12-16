@@ -16,6 +16,7 @@ public class ClearBtnListener implements TextWatcher {
     private ImageView clearBtn;
     private EditText editText;
 
+
     public ClearBtnListener(ImageView clearBtn, EditText editText) {
         this.clearBtn = clearBtn;
         this.editText = editText;
@@ -30,8 +31,10 @@ public class ClearBtnListener implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (!editText.getText().toString().equals("")) {
             clearBtn.setVisibility(View.VISIBLE);
+            clearBtn.setEnabled(true);
         } else {
             clearBtn.setVisibility(View.INVISIBLE);
+            clearBtn.setEnabled(false);
         }
     }
 

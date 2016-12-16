@@ -103,9 +103,9 @@ public class PlayVideoActivity extends Activity {
         cameraId = extra.getLong("cameraId");
         boatName = extra.getString("boatName");
         initTalkService();
-//        path = getLiveUrl((int) cameraId);
+//        path = getLiveUrl((int)  cameraId);
         path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-
+//        path = "rtmp://live.haishanda.com/shipCamera/test";
     }
 
 

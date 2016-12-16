@@ -14,6 +14,7 @@ import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.EditChangedListener;
 import com.haishanda.android.videoapp.Listener.FetchCodeListener;
+import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 
@@ -59,10 +60,8 @@ public class GetVerificationActivity extends Activity {
         ButterKnife.bind(this);
         toResetPwdPage.setEnabled(false);
         getCodeBtn.setEnabled(false);
-        fetchCode.addTextChangedListener(new EditChangedListener(fetchCode, toResetPwdPage, blueBtn, greyBtn, white, white));
-        phoneNum.addTextChangedListener(new FetchCodeListener(phoneNum, getCodeBtn, blueBtn, greyBtn, white, white));
-
-
+        fetchCode.addTextChangedListener(new LoginListener(fetchCode, phoneNum, toResetPwdPage, blueBtn, greyBtn, white, white));
+        phoneNum.addTextChangedListener(new EditChangedListener(phoneNum, getCodeBtn, blueBtn, greyBtn, white, white));
     }
 
     @OnClick(R.id.reset_password_btn)

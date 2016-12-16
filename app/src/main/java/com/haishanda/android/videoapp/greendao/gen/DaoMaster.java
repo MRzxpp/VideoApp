@@ -22,6 +22,7 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
         AlarmNumDao.createTable(db, ifNotExists);
+        AlarmVoBeanDao.createTable(db, ifNotExists);
         BoatMessageDao.createTable(db, ifNotExists);
         FirstLoginDao.createTable(db, ifNotExists);
         ImageMessageDao.createTable(db, ifNotExists);
@@ -31,12 +32,12 @@ public class DaoMaster extends AbstractDaoMaster {
         MonitorWarningBeanDao.createTable(db, ifNotExists);
         TimeBeanDao.createTable(db, ifNotExists);
         UserMessageBeanDao.createTable(db, ifNotExists);
-        AlarmVoBeanDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         AlarmNumDao.dropTable(db, ifExists);
+        AlarmVoBeanDao.dropTable(db, ifExists);
         BoatMessageDao.dropTable(db, ifExists);
         FirstLoginDao.dropTable(db, ifExists);
         ImageMessageDao.dropTable(db, ifExists);
@@ -46,7 +47,6 @@ public class DaoMaster extends AbstractDaoMaster {
         MonitorWarningBeanDao.dropTable(db, ifExists);
         TimeBeanDao.dropTable(db, ifExists);
         UserMessageBeanDao.dropTable(db, ifExists);
-        AlarmVoBeanDao.dropTable(db, ifExists);
     }
 
     /**
@@ -66,6 +66,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(AlarmNumDao.class);
+        registerDaoClass(AlarmVoBeanDao.class);
         registerDaoClass(BoatMessageDao.class);
         registerDaoClass(FirstLoginDao.class);
         registerDaoClass(ImageMessageDao.class);
@@ -75,7 +76,6 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(MonitorWarningBeanDao.class);
         registerDaoClass(TimeBeanDao.class);
         registerDaoClass(UserMessageBeanDao.class);
-        registerDaoClass(AlarmVoBeanDao.class);
     }
 
     public DaoSession newSession() {
