@@ -89,6 +89,7 @@ public class GetVerificationActivity extends Activity {
                             Intent intent = new Intent(GetVerificationActivity.this, ResetPasswordActivity.class);
                             intent.putExtra("mobileNo", GetVerificationActivity.this.mobileNo);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                         } else {
                             Log.i(TAG, "validate failed");
                             Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "验证码输入错误", Toast.LENGTH_LONG)
@@ -102,6 +103,7 @@ public class GetVerificationActivity extends Activity {
     @OnClick(R.id.back_to_login_btn2)
     public void returnLastPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.get_code_btn)
@@ -137,5 +139,6 @@ public class GetVerificationActivity extends Activity {
     public void skipToProblemPage(View view) {
         Intent intent = new Intent(GetVerificationActivity.this, ProblemActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 }

@@ -65,18 +65,21 @@ public class MyFragment extends Fragment {
     public void skipToMessageCenter(View view) {
         Intent intent = new Intent(getActivity(), MessageCenterActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.common_settings)
     public void skipToCommonSettings(View view) {
         Intent intent = new Intent(getActivity(), CommonSettingsActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.account_balance)
     public void skipToAccountBalance(View view) {
         Intent intent = new Intent(getActivity(), AccountBalanceActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     private String confusePhoneNum(String phoneNum) {
@@ -87,6 +90,8 @@ public class MyFragment extends Fragment {
     public void skipToMyCenter() {
         Intent intent = new Intent(getActivity(), MyCenterActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+
     }
 
     private void initViews() {

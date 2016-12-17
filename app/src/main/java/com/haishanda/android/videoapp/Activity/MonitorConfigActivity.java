@@ -127,6 +127,7 @@ public class MonitorConfigActivity extends FragmentActivity {
     @OnClick(R.id.exit_monitor_config)
     public void backToLastPage() {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.monitor_warning)
@@ -134,6 +135,7 @@ public class MonitorConfigActivity extends FragmentActivity {
         MonitorWarningFragment monitorWarningFragment = new MonitorWarningFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.monitor_config_layout, monitorWarningFragment);
         fragmentTransaction.commit();
     }
@@ -181,6 +183,7 @@ public class MonitorConfigActivity extends FragmentActivity {
                     monitorTimeFragment.setArguments(data);
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
                     fragmentTransaction.replace(R.id.monitor_config_layout, monitorTimeFragment);
                     fragmentTransaction.commit();
                 }

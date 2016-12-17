@@ -50,5 +50,6 @@ public class HelpActivity extends Activity {
     @OnClick(R.id.back_to_my_btn)
     public void backToLastPage() {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 }

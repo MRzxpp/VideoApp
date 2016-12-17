@@ -86,6 +86,7 @@ public class SignupActivity extends Activity {
     @OnClick(R.id.back_to_login_btn)
     public void returnLastPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.get_fetch_code)
@@ -207,6 +208,7 @@ public class SignupActivity extends Activity {
                                         .show();
                                 Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
                                 startActivity(intent);
+                                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                                 SignupActivity.this.finish();
                             }
                         }

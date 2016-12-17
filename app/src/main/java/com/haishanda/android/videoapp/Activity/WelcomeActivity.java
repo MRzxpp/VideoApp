@@ -84,13 +84,13 @@ public class WelcomeActivity extends Activity {
             case (R.id.welcome_to_login): {
                 intent.setClass(WelcomeActivity.this, LoginActivity.class);
                 startActivity(intent);
-                this.finish();
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
             }
             case (R.id.welcome_to_signup): {
                 intent.setClass(WelcomeActivity.this, SignupActivity.class);
                 startActivity(intent);
-                this.finish();
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 break;
             }
             default:

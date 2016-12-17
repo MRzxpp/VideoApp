@@ -66,6 +66,7 @@ public class ResetPasswordActivity extends Activity {
     @OnClick(R.id.back_to_get_veri_btn)
     public void backToGetVeriPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.eye3)
@@ -110,6 +111,7 @@ public class ResetPasswordActivity extends Activity {
                                 Toast.makeText(getApplicationContext(), "修改成功，请重新登录！", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(ResetPasswordActivity.this, LoginActivity.class);
                                 startActivity(intent);
+                                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                                 ResetPasswordActivity.this.finish();
                             } else {
                                 Log.i(TAG, "reset failed");

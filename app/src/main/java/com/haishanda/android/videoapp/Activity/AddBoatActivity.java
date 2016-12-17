@@ -59,12 +59,15 @@ public class AddBoatActivity extends Activity {
     @OnClick(R.id.back_to_boat_fragment_btn)
     public void backToLastPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.add_boat_scan_qrcode_btn)
     public void scanBoatQRCode() {
         Intent intent = new Intent(AddBoatActivity.this, CaptureActivity.class);
         startActivityForResult(intent, 0);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+
     }
 
     @Override

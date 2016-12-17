@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.VideoApplication;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +42,13 @@ public class AboutBoatFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        boatName = VideoApplication.getApplication().getCurrentBoatName();
+        aboutBoatName.setText(boatName);
+    }
+
     @OnClick(R.id.gateway_qrcode_layout)
     public void skipToGatewayQRCodeFragment() {
         Bundle dataQRcode = new Bundle();
@@ -49,6 +57,7 @@ public class AboutBoatFragment extends Fragment {
         qrCodeFragment.setArguments(dataQRcode);
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
         fragmentTransaction.replace(R.id.about_boat_page, qrCodeFragment);
         fragmentTransaction.commit();
     }
@@ -57,6 +66,7 @@ public class AboutBoatFragment extends Fragment {
     public void backToConfigPage() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         fragmentTransaction.remove(this);
         fragmentTransaction.commit();
     }

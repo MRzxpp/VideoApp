@@ -45,6 +45,7 @@ public class CommonSettingsActivity extends FragmentActivity {
     @OnClick(R.id.back_to_my_btn)
     public void backToMyPage() {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.modify_password_layout)
@@ -52,6 +53,7 @@ public class CommonSettingsActivity extends FragmentActivity {
         ResetPasswordLoginedFragment resetPasswordLoginedFragment = new ResetPasswordLoginedFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.common_settings_layout, resetPasswordLoginedFragment);
         fragmentTransaction.commit();
 
@@ -86,6 +88,7 @@ public class CommonSettingsActivity extends FragmentActivity {
     public void skipToHelpAndFeedbackLayout() {
         Intent intent = new Intent(CommonSettingsActivity.this, HelpActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.logout_btn)
@@ -121,6 +124,7 @@ public class CommonSettingsActivity extends FragmentActivity {
                 //返回欢迎页
                 Intent intent = new Intent(getCommonSettingsActivity(), WelcomeActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 getCommonSettingsActivity().finish();
             }
         });

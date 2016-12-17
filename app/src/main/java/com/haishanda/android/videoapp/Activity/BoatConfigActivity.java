@@ -5,13 +5,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.widget.TextView;
 
 import com.haishanda.android.videoapp.Fragement.AboutBoatFragment;
 import com.haishanda.android.videoapp.Fragement.DeleteBoatFragment;
 import com.haishanda.android.videoapp.Fragement.RenameBoatFragment;
 import com.haishanda.android.videoapp.Fragement.ResetBoatPasswordFragment;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.VideoApplication;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -25,22 +28,39 @@ public class BoatConfigActivity extends FragmentActivity {
     private int machineId;
     private String globalId;
 
+    @BindView(R.id.current_boatname)
+    TextView currentBoatname;
+
+    public BoatConfigActivity instance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boat_config);
         ButterKnife.bind(this);
+        instance = this;
         extra = getIntent().getExtras();
         boatName = extra.getString("boatName");
         machineId = extra.getInt("machineId");
         globalId = extra.getString("globalId");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boatName = VideoApplication.getApplication().getCurrentBoatName();
+        currentBoatname.setText(boatName);
+    }
+
+    public void refresh() {
+        onResume();
     }
 
     @OnClick(R.id.back_to_boat_fragment_btn)
     public void backToLastPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.about_boat_layout)
@@ -52,6 +72,7 @@ public class BoatConfigActivity extends FragmentActivity {
         aboutBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.boat_config_layout, aboutBoatFragment);
         fragmentTransaction.commit();
     }
@@ -65,6 +86,7 @@ public class BoatConfigActivity extends FragmentActivity {
         renameBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.boat_config_layout, renameBoatFragment);
         fragmentTransaction.commit();
     }
@@ -77,6 +99,7 @@ public class BoatConfigActivity extends FragmentActivity {
         resetBoatPasswordFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.boat_config_layout, resetBoatPasswordFragment);
         fragmentTransaction.commit();
 
@@ -91,6 +114,7 @@ public class BoatConfigActivity extends FragmentActivity {
         deleteBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.boat_config_layout, deleteBoatFragment);
         fragmentTransaction.commit();
     }

@@ -76,6 +76,7 @@ public class ResetPasswordLoginedFragment extends Fragment {
     public void backToLastPage() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         fragmentTransaction.remove(this);
         fragmentTransaction.commit();
     }
@@ -134,6 +135,7 @@ public class ResetPasswordLoginedFragment extends Fragment {
                             ResetPasswordLoginedFragment2 resetPasswordLoginedFragment2 = new ResetPasswordLoginedFragment2();
                             FragmentManager fragmentManager = getFragmentManager();
                             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
                             fragmentTransaction.replace(R.id.reset_password_with_token_layout, resetPasswordLoginedFragment2);
                             fragmentTransaction.commit();
                         } else {

@@ -25,8 +25,9 @@
             android:layout_width="50dp"
             android:layout_height="3dp"
             android:layout_below="@id/photos_fragment_title_photos"
+            android:layout_marginBottom="2dp"
             android:layout_marginLeft="101.5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:src="@color/white" />
 
         <TextView
@@ -46,8 +47,9 @@
             android:layout_height="3dp"
             android:layout_alignParentRight="true"
             android:layout_below="@id/photos_fragment_title_videos"
+            android:layout_marginBottom="2dp"
             android:layout_marginRight="101dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:src="@color/white"
             android:visibility="invisible" />
 

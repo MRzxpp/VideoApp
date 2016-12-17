@@ -88,6 +88,7 @@ public class SetPortraitFragment extends Fragment {
     public void backToLastPage() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         fragmentTransaction.remove(this);
         fragmentTransaction.commit();
     }

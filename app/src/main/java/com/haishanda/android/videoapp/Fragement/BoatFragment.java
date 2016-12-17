@@ -167,7 +167,7 @@ public class BoatFragment extends Fragment {
             globalId = boatGlobalIds.get(mySpinner.getText().toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "未获取到船舶列表，请检查", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getContext(), "未获取到船舶列表，请检查", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -175,6 +175,7 @@ public class BoatFragment extends Fragment {
     public void addBoat() {
         Intent intent = new Intent(getActivity(), AddBoatActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.boat_config_btn)
@@ -184,6 +185,7 @@ public class BoatFragment extends Fragment {
         intent.putExtra("boatName", mySpinner.getText().toString());
         intent.putExtra("globalId", globalId);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     private Map<String, Integer> getBoatInfos() {

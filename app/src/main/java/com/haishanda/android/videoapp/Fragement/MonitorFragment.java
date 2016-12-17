@@ -148,6 +148,7 @@ public class MonitorFragment extends Fragment {
     public void skipToMonitorConfigFragment() {
         Intent intent = new Intent(getActivity(), MonitorConfigActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @Override
@@ -392,6 +393,7 @@ public class MonitorFragment extends Fragment {
             extra.putString("monitorTime", format.format(alarmVos.get(position).getAlarmTime()));
             intent.putExtras(extra);
             startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         }
     }
 

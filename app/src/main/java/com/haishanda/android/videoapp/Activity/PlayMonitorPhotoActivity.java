@@ -65,6 +65,7 @@ public class PlayMonitorPhotoActivity extends Activity {
     @OnClick(R.id.back_to_photos_btn)
     public void backToLastPage() {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.download_monitor_photo)

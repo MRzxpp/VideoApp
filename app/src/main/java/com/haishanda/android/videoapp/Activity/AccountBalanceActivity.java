@@ -44,6 +44,7 @@ public class AccountBalanceActivity extends Activity {
     @OnClick(R.id.back_to_my_btn)
     public void backToLastPafe() {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class AccountBalanceActivity extends Activity {
 
     private List<PackageVo> queryPackages() {
         List<PackageVo> packageVoList = new ArrayList<>();
-        Call<SmartResult<List<PackageVo>>> call = ApiManage.getInstence().getUserApiService().queryPackage(VideoApplication.getApplication().getToken());
+        Call<SmartResult<List<PackageVo>>> call = ApiManage.getInstence().getUserApiService().queryPackages(VideoApplication.getApplication().getToken());
         try {
             Response<SmartResult<List<PackageVo>>> response = call.execute();
             if (response.body() != null) {

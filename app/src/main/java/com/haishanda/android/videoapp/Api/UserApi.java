@@ -80,6 +80,6 @@ public interface UserApi {
     Observable<SmartResult> editPortrait(@Header("token") String token, @Field("portrait") String portrait);
 
     @GET("/monitor-platform-web/rest/user/queryPackages")
-    Call<SmartResult<List<PackageVo>>> queryPackage(@Header("token") String token);
+    Call<SmartResult<List<PackageVo>>> queryPackages(@Header("token") String token);
 
 }

@@ -85,6 +85,16 @@
                     android:textColor="#333333"
                     android:textSize="15sp" />
 
+                <TextView
+                    android:id="@+id/current_boatname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="45dp"
+                    android:textColor="@color/textGrey"
+                    android:textSize="15sp" />
+
                 <ImageView
                     android:id="@+id/to_rename_boat_fragment"
                     android:layout_width="12dp"

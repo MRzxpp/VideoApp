@@ -59,6 +59,7 @@ public class PlayPhotoActivity extends Activity {
     @OnClick(R.id.back_to_photos_btn)
     public void backToPhotos(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.show_image_info)

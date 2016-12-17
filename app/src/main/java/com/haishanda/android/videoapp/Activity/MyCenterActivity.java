@@ -56,6 +56,7 @@ public class MyCenterActivity extends FragmentActivity {
     @OnClick(R.id.back_to_my_btn)
     public void backToLastPage() {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.my_portrait_field)
@@ -63,6 +64,7 @@ public class MyCenterActivity extends FragmentActivity {
         SetPortraitFragment setPortraitFragment = new SetPortraitFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.my_center_layout, setPortraitFragment);
         fragmentTransaction.commit();
     }
@@ -75,6 +77,7 @@ public class MyCenterActivity extends FragmentActivity {
         setNicknameFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.my_center_layout, setNicknameFragment);
         fragmentTransaction.commit();
     }

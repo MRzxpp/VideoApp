@@ -92,6 +92,8 @@ public class ResetPasswordLoginedFragment2 extends Fragment {
                                 Toast.makeText(getContext(), "修改成功，请重新登录！", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                                 startActivity(intent);
+                                getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+
                             } else {
                                 Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "修改未成功！", Toast.LENGTH_LONG).show();
                             }

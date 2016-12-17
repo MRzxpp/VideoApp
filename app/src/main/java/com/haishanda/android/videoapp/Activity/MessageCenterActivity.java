@@ -26,5 +26,6 @@ public class MessageCenterActivity extends Activity {
     @OnClick(R.id.back_to_my_btn)
     public void backToLastPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 }

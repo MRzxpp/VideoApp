@@ -73,6 +73,11 @@ public class MonitorWarningFragment extends Fragment {
         return view;
     }
 
+    @OnClick(R.id.monitor_time_span)
+    public void setMonitorTimeSpan() {
+
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -188,6 +193,7 @@ public class MonitorWarningFragment extends Fragment {
     public void backToMonitorConfigPage() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         fragmentTransaction.remove(this);
         fragmentTransaction.commit();
     }

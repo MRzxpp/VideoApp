@@ -103,6 +103,7 @@ public class LoginActivity extends Activity {
         Intent intent = new Intent();
         intent.setClass(LoginActivity.this, SignupActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in,R.anim.slide_left_out);
     }
 
     @OnClick(R.id.login_btn)
@@ -209,6 +210,7 @@ public class LoginActivity extends Activity {
                                         Intent intent = new Intent();
                                         intent.setClass(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
+                                        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                                         LoginActivity.this.finish();
                                     }
 
@@ -232,12 +234,10 @@ public class LoginActivity extends Activity {
         }
     }
 
-
-//    }
-
     @OnClick(R.id.back_to_index_btn)
     public void returnLastPage(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     @OnClick(R.id.forget_password_btn)
@@ -245,6 +245,7 @@ public class LoginActivity extends Activity {
         Intent intent = new Intent();
         intent.setClass(LoginActivity.this, GetVerificationActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_right_in,R.anim.slide_left_out);
     }
 
     @OnClick(R.id.eye)
@@ -350,6 +351,7 @@ public class LoginActivity extends Activity {
                         Intent intent = new Intent();
                         intent.setClass(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
+                        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                         LoginActivity.this.finish();
                     }
 

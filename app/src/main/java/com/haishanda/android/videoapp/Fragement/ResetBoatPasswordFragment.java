@@ -43,6 +43,7 @@ public class ResetBoatPasswordFragment extends Fragment {
     public void backToAboutBoatFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         fragmentTransaction.remove(this);
         fragmentTransaction.commit();
     }

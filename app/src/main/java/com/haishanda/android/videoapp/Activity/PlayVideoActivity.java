@@ -411,6 +411,7 @@ public class PlayVideoActivity extends Activity {
     @OnClick(R.id.back_to_boat_btn)
     public void backToBoat(View view) {
         this.finish();
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
     public String getLiveUrl(int cameraId) {

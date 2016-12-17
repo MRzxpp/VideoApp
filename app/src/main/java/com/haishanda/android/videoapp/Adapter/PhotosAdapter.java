@@ -55,6 +55,7 @@ public class PhotosAdapter extends ArrayAdapter {
                 intent.putExtra("boatName", boatName);
                 intent.setClass(context, PlayPhotoActivity.class);
                 context.startActivity(intent);
+
             }
         });
 

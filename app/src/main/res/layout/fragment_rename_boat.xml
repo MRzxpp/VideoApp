@@ -71,4 +71,14 @@
             android:src="@drawable/clearpwd" />
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="15dp"
+        android:text="船舶名称最长为8个汉字，或16个数字、字母。"
+        android:textColor="@color/textGrey"
+        android:textSize="12sp" />
+
 </LinearLayout>
