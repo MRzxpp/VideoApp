@@ -27,8 +27,12 @@ public interface MonitorApi {
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMonitorSwitch")
     Observable<SmartResult> editMonitorSwitch(@Field("machineId") long machineId,
-                                              @Field("isSwitch") boolean isSwitch);
+                                              @Field("isSwitchOn") boolean isSwitchOn);
 
     @GET("/monitor-platform-web/rest/user/queryAlarms")
     Observable<SmartResult<List<AlarmVo>>> queryAlarms(@Query("lastId") int lastId);
+
+    @FormUrlEncoded
+    @POST("/monitor-platform-web/rest/user/editMonitorSms")
+    Observable<SmartResult> editMonitorSms(@Field("isSwitchOn") boolean isSwitchOn);
 }

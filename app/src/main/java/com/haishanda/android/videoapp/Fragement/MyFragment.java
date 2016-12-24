@@ -91,7 +91,6 @@ public class MyFragment extends Fragment {
         Intent intent = new Intent(getActivity(), MyCenterActivity.class);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-
     }
 
     private void initViews() {

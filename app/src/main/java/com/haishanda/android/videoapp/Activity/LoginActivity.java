@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
@@ -48,6 +49,8 @@ import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import butterknife.BindColor;
@@ -94,7 +97,9 @@ public class LoginActivity extends Activity {
         loginBtn.setEnabled(false);
         password.addTextChangedListener(new ClearBtnListener(clear3, password));
         password.addTextChangedListener(new LoginListener(username, password, loginBtn, blueBtn, greyBtn, white, white));
-        loginWithExistMessage();
+        Thread thread = new Thread(new LoginThread());
+        thread.start();
+//        loginWithExistMessage();
 
     }
 
@@ -103,7 +108,7 @@ public class LoginActivity extends Activity {
         Intent intent = new Intent();
         intent.setClass(LoginActivity.this, SignupActivity.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_right_in,R.anim.slide_left_out);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.login_btn)
@@ -126,6 +131,7 @@ public class LoginActivity extends Activity {
 
                         @Override
                         public void onError(Throwable e) {
+                            Toast.makeText(getApplicationContext(), "连接服务器失败", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
 
@@ -175,9 +181,6 @@ public class LoginActivity extends Activity {
                                                         alarmNumDao.insert(newAlarnNum);
                                                         MainActivity mainActivity = MainActivity.instance;
                                                         mainActivity.refresh();
-//                                        NotificationUtil notificationUtil = new NotificationUtil(LoginActivity.this);
-//                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//                                        notificationManager.notify(2, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
                                                     }
                                                 } catch (HyphenateException e) {
                                                     e.printStackTrace();
@@ -245,7 +248,7 @@ public class LoginActivity extends Activity {
         Intent intent = new Intent();
         intent.setClass(LoginActivity.this, GetVerificationActivity.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_right_in,R.anim.slide_left_out);
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.eye)
@@ -258,21 +261,32 @@ public class LoginActivity extends Activity {
         password.setText("");
     }
 
+    class LoginThread implements Runnable {
+
+        @Override
+        public void run() {
+            Looper.prepare();
+            loginWithExistMessage();
+        }
+    }
+
     public boolean loginWithExistMessage() {
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskWrites()
-                .detectNetwork()
-                .penaltyLog()
-                .build());
+//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                .detectDiskWrites()
+//                .detectNetwork()
+//                .penaltyLog()
+//                .build());
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        LoginMessage loginMessage = new LoginMessage("1", "1", -1);
+        LoginMessage loginMessage;
         try {
             loginMessage = queryBuilder.uniqueOrThrow();
         } catch (DaoException e) {
             return false;
         }
-
+        if (loginMessage == null) {
+            loginMessage = new LoginMessage("1", "1", -1);
+        }
         String username = loginMessage.getUsername();
         String password = loginMessage.getPassword();
         final boolean[] isLogined = {false};
@@ -291,7 +305,7 @@ public class LoginActivity extends Activity {
                 //token inject
                 VideoApplication.getApplication().setToken(response.body().getData().getToken());
                 //emclient login
-                EMClient.getInstance().login("appmonitor_" + String.valueOf(response.body().getData().getId()), loginMessage.getUsername(), new EMCallBack() {//回调
+                EMClient.getInstance().login("appmonitor_" + String.valueOf(response.body().getData().getId()), username, new EMCallBack() {//回调
                     @Override
                     public void onSuccess() {
                         EMClient.getInstance().groupManager().loadAllGroups();
@@ -370,8 +384,15 @@ public class LoginActivity extends Activity {
             if (response.body().getMsg() != null) {
                 Log.i("info", response.body().getMsg());
             }
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "连接服务器超时", Toast.LENGTH_LONG).show();
+        } catch (ConnectException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "连接服务器失败", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "系统错误", Toast.LENGTH_LONG).show();
         }
         return isLogined[0];
     }
@@ -438,9 +459,17 @@ public class LoginActivity extends Activity {
         FirstLogin firstLogin = new FirstLogin(1);
         firstLoginDao.deleteAll();
         firstLoginDao.insertOrReplace(firstLogin);
-        EMClient.getInstance().logout(true);
+        Thread emThread = new Thread(new EMThread());
+        emThread.start();
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
+    }
+
+    class EMThread implements Runnable {
+        @Override
+        public void run() {
+            EMClient.getInstance().logout(true);
+        }
     }
 
 }

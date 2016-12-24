@@ -26,7 +26,7 @@ public class MonitorConfigBeanDao extends AbstractDao<MonitorConfigBean, Long> {
     public static class Properties {
         public final static Property MachineId = new Property(0, long.class, "machineId", true, "_id");
         public final static Property BoatName = new Property(1, String.class, "boatName", false, "BOAT_NAME");
-        public final static Property IsSwitchOn = new Property(2, boolean.class, "isSwitchOn", false, "IS_SWITCH_ON");
+        public final static Property IsSwitchOn = new Property(2, int.class, "isSwitchOn", false, "IS_SWITCH_ON");
     }
 
 
@@ -62,7 +62,7 @@ public class MonitorConfigBeanDao extends AbstractDao<MonitorConfigBean, Long> {
         if (boatName != null) {
             stmt.bindString(2, boatName);
         }
-        stmt.bindLong(3, entity.getIsSwitchOn() ? 1L: 0L);
+        stmt.bindLong(3, entity.getIsSwitchOn());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MonitorConfigBeanDao extends AbstractDao<MonitorConfigBean, Long> {
         if (boatName != null) {
             stmt.bindString(2, boatName);
         }
-        stmt.bindLong(3, entity.getIsSwitchOn() ? 1L: 0L);
+        stmt.bindLong(3, entity.getIsSwitchOn());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class MonitorConfigBeanDao extends AbstractDao<MonitorConfigBean, Long> {
         MonitorConfigBean entity = new MonitorConfigBean( //
             cursor.getLong(offset + 0), // machineId
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // boatName
-            cursor.getShort(offset + 2) != 0 // isSwitchOn
+            cursor.getInt(offset + 2) // isSwitchOn
         );
         return entity;
     }
@@ -96,7 +96,7 @@ public class MonitorConfigBeanDao extends AbstractDao<MonitorConfigBean, Long> {
     public void readEntity(Cursor cursor, MonitorConfigBean entity, int offset) {
         entity.setMachineId(cursor.getLong(offset + 0));
         entity.setBoatName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setIsSwitchOn(cursor.getShort(offset + 2) != 0);
+        entity.setIsSwitchOn(cursor.getInt(offset + 2));
      }
     
     @Override

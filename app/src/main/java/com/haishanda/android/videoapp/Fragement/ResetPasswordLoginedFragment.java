@@ -150,6 +150,7 @@ public class ResetPasswordLoginedFragment extends Fragment {
     public void toProblemPage() {
         Intent intent = new Intent(getActivity(), ProblemActivity.class);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     private String confusePhoneNum(String phoneNum) {

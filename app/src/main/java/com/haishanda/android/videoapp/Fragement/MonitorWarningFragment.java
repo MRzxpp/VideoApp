@@ -7,12 +7,16 @@ import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
+import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.MonitorWarningBean;
+import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ExpandableLayout;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -25,6 +29,9 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
@@ -158,6 +165,11 @@ public class MonitorWarningFragment extends Fragment {
     }
 
     private void setIsNotificationOpenListener() {
+        if (monitorWarningBean.getIsSendingEmail()) {
+            isSendEmail.setChecked(true);
+        } else {
+            isSendEmail.setChecked(false);
+        }
         isNotificationOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -180,10 +192,58 @@ public class MonitorWarningFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     monitorWarningBean.setIsSendingEmail(true);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    ApiManage.getInstence().getMonitorApiService().editMonitorSms(true)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<SmartResult>() {
+                                @Override
+                                public void onCompleted() {
+                                    Log.d("是否接受短信", "completed");
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.d("是否接受短信", "error");
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onNext(SmartResult smartResult) {
+                                    if (smartResult.getCode() == 1) {
+                                        Log.d("是否接受短信", "success");
+                                    } else {
+                                        Log.d("是否接受短信", "failed");
+                                        Toast.makeText(getContext(), "修改失败", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                 } else {
                     monitorWarningBean.setIsSendingEmail(false);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    ApiManage.getInstence().getMonitorApiService().editMonitorSms(false)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<SmartResult>() {
+                                @Override
+                                public void onCompleted() {
+                                    Log.d("是否接受短信", "completed");
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.d("是否接受短信", "error");
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onNext(SmartResult smartResult) {
+                                    if (smartResult.getCode() == 1) {
+                                        Log.d("是否接受短信", "success");
+                                    } else {
+                                        Log.d("是否接受短信", "failed");
+                                        Toast.makeText(getContext(), "修改失败", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                 }
             }
         });

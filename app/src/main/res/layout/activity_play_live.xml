@@ -42,7 +42,7 @@
 
 
     <io.vov.vitamio.widget.VideoView
-        android:id="@+id/test_play_video"
+        android:id="@+id/play_live"
         android:layout_width="360dp"
         android:layout_height="270dp"
         android:layout_marginTop="48dp" />
@@ -51,7 +51,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/test_play_video"
+        android:layout_below="@id/play_live"
         android:background="@color/backgroundColor">
 
         <ImageView
@@ -77,6 +77,14 @@
             android:layout_marginTop="114dp"
             android:layout_toLeftOf="@id/voice_start"
             android:src="@drawable/record" />
+
+        <ImageView
+            android:id="@+id/stop_record_btn"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="114dp"
+            android:layout_toLeftOf="@id/voice_start"
+            android:src="@drawable/terminate_record" />
 
 
         <ImageView

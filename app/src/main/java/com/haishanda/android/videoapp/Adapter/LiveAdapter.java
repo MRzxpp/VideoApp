@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.haishanda.android.videoapp.Activity.PlayVideoActivity;
+import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class LiveAdapter extends ArrayAdapter {
                 Intent intent = new Intent();
                 intent.putExtra("cameraId", cameraId.get(position));
                 intent.putExtra("boatName", boatName);
-                intent.setClass(context, PlayVideoActivity.class);
+                intent.setClass(context, PlayLiveActivity.class);
                 context.startActivity(intent);
             }
         });

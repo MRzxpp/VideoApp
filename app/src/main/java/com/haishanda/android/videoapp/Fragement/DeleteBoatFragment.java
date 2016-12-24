@@ -115,8 +115,8 @@ public class DeleteBoatFragment extends Fragment {
 
     private void deleteThisBoat(int machineId, String password) {
         ApiManage.getInstence().getBoatApiService().removeBoat(machineId, password)
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SmartResult>() {
                     @Override
                     public void onCompleted() {

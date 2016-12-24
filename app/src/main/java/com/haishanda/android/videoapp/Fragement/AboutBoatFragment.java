@@ -57,7 +57,7 @@ public class AboutBoatFragment extends Fragment {
         qrCodeFragment.setArguments(dataQRcode);
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
         fragmentTransaction.replace(R.id.about_boat_page, qrCodeFragment);
         fragmentTransaction.commit();
     }

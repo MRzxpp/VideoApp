@@ -21,22 +21,31 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.CameraLive;
+import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
-import com.haishanda.android.videoapp.Utils.DownloadUtil;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,8 +67,8 @@ import rx.schedulers.Schedulers;
  * Created by Zhongsz on 2016/10/19.
  */
 
-public class PlayVideoActivity extends Activity {
-    @BindView(R.id.test_play_video)
+public class PlayLiveActivity extends Activity {
+    @BindView(R.id.play_live)
     VideoView videoView;
     @BindView(R.id.vocal_is_in)
     ImageView vocalGif;
@@ -67,8 +76,12 @@ public class PlayVideoActivity extends Activity {
     ImageView voiceStart;
     @BindView(R.id.toggle_fullscreen)
     ImageView toggleFullscreen;
+    @BindView(R.id.stop_record_btn)
+    ImageView stopRecordBtn;
+    @BindView(R.id.record_btn)
+    ImageView recordBtn;
 
-    private static final String TAG = "PlayVideoActivity";
+    private static final String TAG = "PlayLiveActivity";
     private ImageMessageDao imageMessageDao;
     private CustomMediaController mCustomMediaController;
     private Bundle extra;
@@ -76,21 +89,52 @@ public class PlayVideoActivity extends Activity {
     private String boatName;
     private long cameraId;
     private String path;
-    private DownloadUtil l;
-    private long position = 0;
 
     private MediaRecorder mRecorder;
     private String mFileName;
     private String mFileNameFull;
+    private FFmpeg ffmpeg;
+    private String time;
+    private String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play_video);
+        setContentView(R.layout.activity_play_live);
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         Log.d(TAG, "create");
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
+        ffmpeg = FFmpeg.getInstance(this);
+        stopRecordBtn.setVisibility(View.INVISIBLE);
+        stopRecordBtn.setEnabled(false);
+        try {
+            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
+
+                @Override
+                public void onStart() {
+                    Log.d("load ffmpeg", "start");
+                }
+
+                @Override
+                public void onFailure() {
+                    Log.d("load ffmpeg", "failed");
+                }
+
+                @Override
+                public void onSuccess() {
+                    Log.d("load ffmpeg", "success");
+                }
+
+                @Override
+                public void onFinish() {
+                    Log.d("load ffmpeg", "finish");
+                }
+            });
+        } catch (FFmpegNotSupportedException e) {
+            // Handle if FFmpeg is not supported by device
+            e.printStackTrace();
+        }
         //全屏键不可用
         toggleFullscreen.setVisibility(View.INVISIBLE);
         toggleFullscreen.setEnabled(false);
@@ -103,9 +147,22 @@ public class PlayVideoActivity extends Activity {
         cameraId = extra.getLong("cameraId");
         boatName = extra.getString("boatName");
         initTalkService();
-//        path = getLiveUrl((int)  cameraId);
+        Thread getUrlThread = new Thread(new NetThread());
+        getUrlThread.start();
+        try {
+            getUrlThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-//        path = "rtmp://live.haishanda.com/shipCamera/test";
+//        path = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8";
+    }
+
+    class NetThread implements Runnable {
+        @Override
+        public void run() {
+            path = getLiveUrl((int) cameraId);
+        }
     }
 
 
@@ -188,8 +245,8 @@ public class PlayVideoActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        videoView.seekTo(position);
-        videoView.start();
+//        videoView.seekTo(position);
+//        videoView.start();
     }
 
     @Override
@@ -234,7 +291,7 @@ public class PlayVideoActivity extends Activity {
             e.printStackTrace();
         }
 //        videoView.pause();
-        position = videoView.getCurrentPosition();
+//        position = videoView.getCurrentPosition();
     }
 
     @Override
@@ -262,44 +319,89 @@ public class PlayVideoActivity extends Activity {
             e.printStackTrace();
             Toast.makeText(this, "视频还未加载完成！暂时无法截图", Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     @OnClick(R.id.record_btn)
     public void recordVideo(View view) {
-//        Log.i(TAG, "recordVideo");
-//        final Handler handler = new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-//                //这里就一条消息
-//            }
-//        };
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                //另起线程执行下载，安卓最新sdk规范，网络操作不能再主线程。
-//                l = new DownloadUtil(path);
-//
-//                /**
-//                 * 下载文件到sd卡，虚拟设备必须要开始设置sd卡容量
-//                 * downhandler是Download的内部类，作为回调接口实时显示下载数据
-//                 */
-//                int status = l.down2sd("downtemp/", "test.flv", l.new downhandler() {
-//                    @Override
-//                    public void setSize(int size) {
-//                        Message msg = handler.obtainMessage();
-//                        msg.arg1 = size;
-//                        msg.sendToTarget();
-//                        Log.d("log", Integer.toString(size));
-//                    }
-//                });
-//                //log输出
-//                Log.d("log", Integer.toString(status));
-//
-//            }
-//        }).start();
+        File sdcardDir = Environment.getExternalStorageDirectory();
+        String path = sdcardDir.getPath() + "/VideoApp";
+        File appDir = new File(path);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        File boatDir = new File(appDir + "/" + boatName);
+        if (!boatDir.exists()) {
+            boatDir.mkdir();
+        }
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        final String date = dateFormat.format(System.currentTimeMillis());
+        this.date = date;
+        File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
+        if (!dateDir.exists()) {
+            dateDir.mkdir();
+        }
+        File videoDir = new File(dateDir + "/Videos");
+        if (!videoDir.exists()) {
+            videoDir.mkdir();
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日hh:mm:ss");
+        final String time = format.format(System.currentTimeMillis());
+        this.time = time;
+        String cmd = "-i " + this.path + " -c copy " + videoDir.getPath() + "/" + boatName + "_" + time + ".flv";
+        final String[] command = cmd.split(" ");
+        try {
+            // to execute "ffmpeg -version" command you just need to pass "-version"
+            ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
+
+                @Override
+                public void onStart() {
+                    recordBtn.setVisibility(View.INVISIBLE);
+                    recordBtn.setEnabled(false);
+                    stopRecordBtn.setVisibility(View.VISIBLE);
+                    stopRecordBtn.setEnabled(true);
+                    VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
+                    VideoMessage videoMessage = new VideoMessage(null, boatName, boatName + "_" + time + ".flv", date, null);
+                    videoMessageDao.insertOrReplace(videoMessage);
+                    Log.d(TAG, "Started command : ffmpeg " + command);
+                }
+
+                @Override
+                public void onProgress(String message) {
+                    Log.d(TAG, "Progress command : ffmpeg " + command);
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d(TAG, "ffmpeg failure" + message);
+                }
+
+                @Override
+                public void onSuccess(String message) {
+                    Log.d(TAG, "ffmpeg success" + message);
+                }
+
+                @Override
+                public void onFinish() {
+                    Log.d(TAG, "ffmpeg finish");
+                }
+            });
+        } catch (FFmpegCommandAlreadyRunningException e) {
+            // Handle if FFmpeg is already running
+        }
+    }
+
+    @OnClick(R.id.stop_record_btn)
+    public void terminateRecord() {
+        stopRecordBtn.setVisibility(View.INVISIBLE);
+        stopRecordBtn.setEnabled(false);
+        recordBtn.setVisibility(View.VISIBLE);
+        recordBtn.setEnabled(true);
+        SaveImageToLocalUtil.saveVideoIconAction(videoView.getCurrentFrame(), boatName, date);
+        if (ffmpeg.isFFmpegCommandRunning()) {
+            ffmpeg.killRunningProcesses();
+            Log.d(TAG, "record success");
+        }
+        Log.d(TAG, "record finish");
     }
 
     public void initTalkService() {
@@ -438,7 +540,7 @@ public class PlayVideoActivity extends Activity {
         } catch (NullPointerException e) {
             e.printStackTrace();
             Toast.makeText(this, "请重新登录", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(PlayVideoActivity.this, LoginActivity.class);
+            Intent intent = new Intent(PlayLiveActivity.this, LoginActivity.class);
             startActivity(intent);
         }
         this.liveId = liveIdCopy[0];

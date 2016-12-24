@@ -10,6 +10,15 @@ public class UserBean {
     private String name;
     private String token;
     private String portrait;
+    private int isAlarmSms;
+
+    public int getIsAlarmSms() {
+        return isAlarmSms;
+    }
+
+    public void setIsAlarmSms(int isAlarmSms) {
+        this.isAlarmSms = isAlarmSms;
+    }
 
     public String getPortrait() {
         return portrait;

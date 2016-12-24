@@ -54,9 +54,22 @@ public class AccountBalanceActivity extends Activity {
     }
 
     public void initViews() {
-        packageVoList = queryPackages();
+        Thread netThread=new Thread(new NetThread());
+        netThread.start();
+        try {
+            netThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (packageVoList != null) {
             accountBalanceMain.setAdapter(new AccountBalanceAdapter(this, packageVoList));
+        }
+    }
+
+    class NetThread implements Runnable {
+        @Override
+        public void run() {
+            packageVoList = queryPackages();
         }
     }
 

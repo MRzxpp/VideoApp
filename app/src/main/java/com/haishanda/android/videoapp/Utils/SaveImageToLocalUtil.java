@@ -7,9 +7,11 @@ import android.support.annotation.RequiresApi;
 
 import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
+import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -85,6 +87,42 @@ public class SaveImageToLocalUtil {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
 
+    public static void saveVideoIconAction(Bitmap img, String boatName, String time) {
+        File sdcardDir = Environment.getExternalStorageDirectory();
+        String path = sdcardDir.getPath() + "/VideoApp";
+        File appDir = new File(path);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        File boatDir = new File(appDir + "/" + boatName);
+        if (!boatDir.exists()) {
+            boatDir.mkdir();
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
+        if (!dateDir.exists()) {
+            dateDir.mkdir();
+        }
+        File iconDir = new File(dateDir + "/Videos");
+        if (!iconDir.exists()) {
+            iconDir.mkdir();
+        }
+        String imgName = "videoicon_" + boatName + "_" + time + ".jpg";
+        File file = new File(iconDir, imgName);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            img.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
+        QueryBuilder<VideoMessage> queryBuilder = videoMessageDao.queryBuilder();
+        VideoMessage videoMessage = queryBuilder.where(VideoMessageDao.Properties.AddTime.eq(time)).uniqueOrThrow();
+        videoMessage.setIconPath(iconDir + "/" + imgName);
+        videoMessageDao.update(videoMessage);
     }
 }

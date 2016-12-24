@@ -48,6 +48,8 @@
 }
 -keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 -keepattributes EnclosingMethod
+-keepattributes InnerClasses
+-dontoptimize
 
 # 蒲公英
 -libraryjars libs/pgyer_sdk_x.x.jar

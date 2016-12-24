@@ -14,9 +14,9 @@ public class MonitorConfigBean {
     @Id(autoincrement = false)
     private long machineId;
     private String boatName;
-    private boolean isSwitchOn;
-    @Generated(hash = 312048154)
-    public MonitorConfigBean(long machineId, String boatName, boolean isSwitchOn) {
+    private int isSwitchOn;
+    @Generated(hash = 44471405)
+    public MonitorConfigBean(long machineId, String boatName, int isSwitchOn) {
         this.machineId = machineId;
         this.boatName = boatName;
         this.isSwitchOn = isSwitchOn;
@@ -36,11 +36,12 @@ public class MonitorConfigBean {
     public void setBoatName(String boatName) {
         this.boatName = boatName;
     }
-    public boolean getIsSwitchOn() {
+    public int getIsSwitchOn() {
         return this.isSwitchOn;
     }
-    public void setIsSwitchOn(boolean isSwitchOn) {
+    public void setIsSwitchOn(int isSwitchOn) {
         this.isSwitchOn = isSwitchOn;
     }
+
 
 }

@@ -3,6 +3,7 @@ package com.haishanda.android.videoapp.Fragement;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -94,9 +95,23 @@ public class BoatFragment extends Fragment {
         setLiveAdapter();
     }
 
+    class BoatThread extends Thread {
+        @Override
+        public void run() {
+            Looper.prepare();
+            boatInfos = getBoatInfos();
+        }
+    }
+
 
     private void dealSpinner() {
-        boatInfos = getBoatInfos();
+        BoatThread boatThread = new BoatThread();
+        boatThread.start();
+        try {
+            boatThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<String> list = new ArrayList<String>();
         for (Map.Entry<String, Integer> entry : boatInfos.entrySet()
                 ) {
@@ -175,33 +190,33 @@ public class BoatFragment extends Fragment {
     public void addBoat() {
         Intent intent = new Intent(getActivity(), AddBoatActivity.class);
         startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.boat_config_btn)
     public void skipToBoatConfigActivity() {
         Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
         intent.putExtra("machineId", machineId);
-        intent.putExtra("boatName", mySpinner.getText().toString());
+        intent.putExtra("boatName", VideoApplication.getApplication().getCurrentBoatName());
         intent.putExtra("globalId", globalId);
         startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     private Map<String, Integer> getBoatInfos() {
         Map<String, Integer> boatInfos = new HashMap<String, Integer>();
         Map<String, String> boatGlobalIds = new HashMap<>();
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskWrites()
-                .detectNetwork()
-                .penaltyLog()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
+//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                .detectDiskWrites()
+//                .detectNetwork()
+//                .penaltyLog()
+//                .build());
+//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                .detectLeakedSqlLiteObjects()
+//                .detectLeakedClosableObjects()
+//                .penaltyLog()
+//                .penaltyDeath()
+//                .build());
         Call<SmartResult<List<QueryMachines>>> call = ApiManage.getInstence().getBoatApiService().queryMachinesCopy();
         try {
             TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
@@ -216,7 +231,12 @@ public class BoatFragment extends Fragment {
                         ) {
                     //配置监控设置页面的数据
                     MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
-                    MonitorConfigBean monitorConfigBean = new MonitorConfigBean(queryMachines.getId(), queryMachines.getName(), queryMachines.isSwitchOn());
+                    MonitorConfigBean monitorConfigBean;
+                    if (queryMachines.isSwitchOn()) {
+                        monitorConfigBean = new MonitorConfigBean(queryMachines.getId(), queryMachines.getName(), 1);
+                    } else {
+                        monitorConfigBean = new MonitorConfigBean(queryMachines.getId(), queryMachines.getName(), 0);
+                    }
                     monitorConfigBeanDao.insertOrReplace(monitorConfigBean);
                     //计算监控时间段
                     int begin = (Integer.valueOf(queryMachines.getBegin()));
@@ -296,13 +316,32 @@ public class BoatFragment extends Fragment {
         return cameraIds;
     }
 
+    private List<Long> cameraList;
+    private String[] cameraIconsPaths;
+
     public void setLiveAdapter() {
-        List<Long> cameraList = getCamenraList();
-        String[] cameraIconsPaths = getCameraImagePaths();
+//        List<Long> cameraList = getCamenraList();
+//        String[] cameraIconsPaths = getCameraImagePaths();
+        AdapterThread adapterThread = new AdapterThread();
+        adapterThread.start();
+        try {
+            adapterThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         adapter = new LiveAdapter(getContext(), cameraIconsPaths, cameraList, VideoApplication.getApplication().getCurrentBoatName());
         adapter.notifyDataSetInvalidated();
         adapter.notifyDataSetChanged();
         liveAdapterFields.setAdapter(adapter);
+    }
+
+    class AdapterThread extends Thread {
+        @Override
+        public void run() {
+            Looper.prepare();
+            cameraList = getCamenraList();
+            cameraIconsPaths = getCameraImagePaths();
+        }
     }
 
     private String[] getCameraImagePaths() {

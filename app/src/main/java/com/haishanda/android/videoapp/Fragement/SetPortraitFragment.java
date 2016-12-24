@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bigkoo.alertview.AlertView;
 import com.bigkoo.alertview.OnItemClickListener;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.haishanda.android.videoapp.Activity.MyCenterActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
@@ -113,8 +114,11 @@ public class SetPortraitFragment extends Fragment {
                     intent.setType("image/*");//相片类型
                     startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
                 } else if (position == 2) {
-                    Log.d("test", String.valueOf(position));
-                    saveImageToGallery(getContext(), ((BitmapDrawable) portraitView.getDrawable()).getBitmap());
+                    try {
+                        saveImageToGallery(getContext(), ((BitmapDrawable) portraitView.getDrawable()).getBitmap());
+                    } catch (ClassCastException e) {
+                        saveImageToGallery(getContext(), ((GlideBitmapDrawable) portraitView.getDrawable()).getBitmap());
+                    }
                 }
                 Log.d("test", String.valueOf(position));
             }

@@ -1,0 +1,50 @@
+[
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_control_focused_holo.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_control_focused_holo.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\mediacontroller_play.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\mediacontroller_play.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\mediacontroller_pause1.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\mediacontroller_pause1.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\mediacontroller_pause.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\mediacontroller_pause.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_primary_holo.9.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_primary_holo.9.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\ic_launcher.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_control_disabled_holo.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_control_disabled_holo.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_track_holo_dark.9.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_track_holo_dark.9.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\mediacontroller_play2.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\mediacontroller_play2.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_control_normal_holo.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_control_normal_holo.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_control_pressed_holo.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_control_pressed_holo.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_secondary_holo.9.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_secondary_holo.9.png"
+    }
+]

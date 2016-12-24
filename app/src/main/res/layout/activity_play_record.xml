@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#333333"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp">
+
+            <RelativeLayout
+                android:id="@+id/back_to_photos_btn"
+                android:layout_width="40dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/back_to_videos"
+                    android:layout_width="12dp"
+                    android:layout_height="22dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/back" />
+
+
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/video_name"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+
+        <io.vov.vitamio.widget.VideoView
+            android:layout_centerVertical="true"
+            android:id="@+id/play_record"
+            android:layout_width="360dp"
+            android:layout_height="270dp"
+            android:layout_marginTop="48dp" />
+
+
+        <ImageView
+            android:id="@+id/delete_video"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="13dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/delete_photo" />
+    </RelativeLayout>
+</LinearLayout>

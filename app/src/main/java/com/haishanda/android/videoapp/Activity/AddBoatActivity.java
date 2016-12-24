@@ -67,7 +67,6 @@ public class AddBoatActivity extends Activity {
         Intent intent = new Intent(AddBoatActivity.this, CaptureActivity.class);
         startActivityForResult(intent, 0);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-
     }
 
     @Override

@@ -120,7 +120,8 @@ public class CommonSettingsActivity extends FragmentActivity {
                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
                 loginMessageDao.deleteAll();
                 //退出环信
-                EMClient.getInstance().logout(true);
+                Thread emThread = new Thread(new EMThread());
+                emThread.start();
                 //返回欢迎页
                 Intent intent = new Intent(getCommonSettingsActivity(), WelcomeActivity.class);
                 startActivity(intent);
@@ -135,5 +136,12 @@ public class CommonSettingsActivity extends FragmentActivity {
             }
         });
         dialog.show();
+    }
+
+    class EMThread implements Runnable {
+        @Override
+        public void run() {
+            EMClient.getInstance().logout(true);
+        }
     }
 }

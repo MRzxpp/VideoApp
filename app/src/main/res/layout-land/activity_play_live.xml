@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <io.vov.vitamio.widget.VideoView
-        android:id="@+id/test_play_video"
+        android:id="@+id/play_live"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"

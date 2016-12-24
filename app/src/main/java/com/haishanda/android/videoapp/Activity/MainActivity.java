@@ -134,7 +134,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
                 BadgeItem numberBadgeItem = new BadgeItem()
                         .setBorderWidth(5)
                         .setBackgroundColorResource(R.color.red)
-//                .setText(String.valueOf(alarmNum.getAlarmNum()))
                         .setText(String.valueOf(alarmNum.getAlarmNum()))
                         .setHideOnSelect(true);
                 navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))

@@ -53,7 +53,7 @@ public class MonitorConfigActivity extends FragmentActivity {
     private int machineId;
     private long[] machineIds;
     private String[] boatNames;
-    private boolean[] isSwitchOns;
+    private int[] isSwitchOns;
 
     private String[] times = new String[4];
 
@@ -75,7 +75,7 @@ public class MonitorConfigActivity extends FragmentActivity {
         List<MonitorConfigBean> monitorConfigBeanList = queryBuilder.list();
         machineIds = new long[monitorConfigBeanList.size()];
         boatNames = new String[monitorConfigBeanList.size()];
-        isSwitchOns = new boolean[monitorConfigBeanList.size()];
+        isSwitchOns = new int[monitorConfigBeanList.size()];
         for (int i = 0; i < monitorConfigBeanList.size(); i++) {
             MonitorConfigBean m = monitorConfigBeanList.get(i);
             machineIds[i] = m.getMachineId();
@@ -87,7 +87,6 @@ public class MonitorConfigActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -149,9 +148,9 @@ public class MonitorConfigActivity extends FragmentActivity {
         private LayoutInflater inflater;
         private String[] boatNames;
         private long[] machineIds;
-        private boolean[] isSwitchOpens;
+        private int[] isSwitchOpens;
 
-        public MonitorConfigAdapter(Context context, String[] boatNames, long[] machineIds, boolean isSwitchOpens[]) {
+        MonitorConfigAdapter(Context context, String[] boatNames, long[] machineIds, int isSwitchOpens[]) {
             super(context, R.layout.adapter_monitor_config, boatNames);
             this.context = context;
             this.boatNames = boatNames;
@@ -188,7 +187,7 @@ public class MonitorConfigActivity extends FragmentActivity {
                     fragmentTransaction.commit();
                 }
             });
-            if (isSwitchOpens[position]) {
+            if (isSwitchOpens[position] == 1) {
                 monitorOpen.setChecked(true);
             } else {
                 monitorOpen.setChecked(false);
@@ -197,8 +196,8 @@ public class MonitorConfigActivity extends FragmentActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        isSwitchOpens[position] = true;
-                        ApiManage.getInstence().getMonitorApiService().editMonitorSwitch(machineIds[position], isSwitchOpens[position])
+                        isSwitchOpens[position] = 1;
+                        ApiManage.getInstence().getMonitorApiService().editMonitorSwitch(machineIds[position], true)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(new Observer<SmartResult>() {
@@ -216,6 +215,10 @@ public class MonitorConfigActivity extends FragmentActivity {
                                     public void onNext(SmartResult smartResult) {
                                         if (smartResult.getCode() == 1) {
                                             Toast.makeText(MonitorConfigActivity.this, "监控功能已开启", Toast.LENGTH_LONG).show();
+                                            QueryBuilder<MonitorConfigBean> queryBuilder = monitorConfigBeanDao.queryBuilder();
+                                            MonitorConfigBean monitorConfigBean = queryBuilder.where(MonitorConfigBeanDao.Properties.MachineId.eq(machineIds[position])).unique();
+                                            monitorConfigBean.setIsSwitchOn(1);
+                                            monitorConfigBeanDao.update(monitorConfigBean);
                                         } else {
                                             Toast.makeText(MonitorConfigActivity.this, smartResult.getMsg() != null ? smartResult.getMsg() : "开启失败", Toast.LENGTH_LONG).show();
                                         }
@@ -223,8 +226,8 @@ public class MonitorConfigActivity extends FragmentActivity {
                                 });
                         Log.i(Tag, "isChecked");
                     } else {
-                        isSwitchOpens[position] = false;
-                        ApiManage.getInstence().getMonitorApiService().editMonitorSwitch(machineIds[position], isSwitchOpens[position])
+                        isSwitchOpens[position] = 0;
+                        ApiManage.getInstence().getMonitorApiService().editMonitorSwitch(machineIds[position], false)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribeOn(Schedulers.io())
                                 .subscribe(new Observer<SmartResult>() {
@@ -242,6 +245,10 @@ public class MonitorConfigActivity extends FragmentActivity {
                                     public void onNext(SmartResult smartResult) {
                                         if (smartResult.getCode() == 1) {
                                             Toast.makeText(MonitorConfigActivity.this, "监控功能已关闭", Toast.LENGTH_LONG).show();
+                                            QueryBuilder<MonitorConfigBean> queryBuilder = monitorConfigBeanDao.queryBuilder();
+                                            MonitorConfigBean monitorConfigBean = queryBuilder.where(MonitorConfigBeanDao.Properties.MachineId.eq(machineIds[position])).unique();
+                                            monitorConfigBean.setIsSwitchOn(0);
+                                            monitorConfigBeanDao.update(monitorConfigBean);
                                         } else {
                                             Toast.makeText(MonitorConfigActivity.this, smartResult.getMsg() != null ? smartResult.getMsg() : "关闭失败", Toast.LENGTH_LONG).show();
                                         }

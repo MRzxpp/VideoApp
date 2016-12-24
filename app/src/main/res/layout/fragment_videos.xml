@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/video_body"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
+    android:layout_height="match_parent"
     android:clickable="true"
     android:orientation="vertical">
 
-</RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/photos_body"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/backgroundColor">
+
+        <ImageView
+            android:id="@+id/videos_background"
+            android:layout_width="165dp"
+            android:layout_height="165dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="105.5dp"
+            android:src="@drawable/boat_background" />
+
+        <TextView
+            android:id="@+id/videos_background_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/videos_background"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35.5dp"
+            android:text="暂无内容！"
+            android:textColor="@color/textGrey"
+            android:textSize="14sp" />
+
+        <ListView
+            android:id="@+id/timeline_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</LinearLayout>

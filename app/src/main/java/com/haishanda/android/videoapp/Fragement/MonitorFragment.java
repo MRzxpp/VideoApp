@@ -156,23 +156,41 @@ public class MonitorFragment extends Fragment {
         super.onResume();
         initAlarms();
         initAdapter(false, false, false);
-        resetMessagesUnreadNum();
+        try {
+            resetMessagesUnreadNum();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void resetMessagesUnreadNum() {
-        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-        alarmNumDao.deleteAll();
-        AlarmNum alarmNum = new AlarmNum(0);
-        alarmNumDao.insert(alarmNum);
+    private void resetMessagesUnreadNum() throws InterruptedException {
+//        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+//        alarmNumDao.deleteAll();
+//        AlarmNum alarmNum = new AlarmNum(0);
+//        alarmNumDao.insert(alarmNum);
+        SqlThread sqlThread = new SqlThread();
+        sqlThread.start();
+        sqlThread.join();
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.refresh();
+    }
+
+    class SqlThread extends Thread {
+        @Override
+        public void run() {
+            AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+            alarmNumDao.deleteAll();
+            AlarmNum alarmNum = new AlarmNum(0);
+            alarmNumDao.insert(alarmNum);
+        }
     }
 
     private void initAlarms() {
         initLastId();
         ApiManage.getInstence().getMonitorApiService().queryAlarms(last)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
                 .subscribe(new Observer<SmartResult<List<AlarmVo>>>() {
                     @Override
                     public void onCompleted() {
@@ -188,7 +206,6 @@ public class MonitorFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult<List<AlarmVo>> listSmartResult) {
                         if (listSmartResult.getCode() == 1) {
-                            Log.d(TAG, "success");
                             for (AlarmVo a : listSmartResult.getData()
                                     ) {
                                 AlarmVoBean alarmVoBean = new AlarmVoBean((long) a.getId(), a.getMachineName(), a.getUrls(), a.getAlarmTime());
@@ -198,11 +215,15 @@ public class MonitorFragment extends Fragment {
                             LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
                             QueryBuilder<LastId> queryBuilder = lastIdDao.queryBuilder();
                             LastId lastId = queryBuilder.unique();
+                            if (lastId == null) {
+                                lastId = new LastId(0);
+                            }
                             if (listSmartResult.getData().size() != 0) {
                                 lastId = new LastId(listSmartResult.getData().get(listSmartResult.getData().size() - 1).getId());
                             }
                             lastIdDao.deleteAll();
                             lastIdDao.insertOrReplace(lastId);
+                            Log.d(TAG, "success");
                         } else {
                             Log.d(TAG, "failed");
                             Toast.makeText(getContext(), listSmartResult.getMsg() != null ? listSmartResult.getMsg() : "获取报警信息失败", Toast.LENGTH_LONG).show();
@@ -384,7 +405,7 @@ public class MonitorFragment extends Fragment {
             CheckBox isMessageChoosen;
         }
 
-        public void playMonitorPhoto(int position, String imagePath) {
+        void playMonitorPhoto(int position, String imagePath) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss");
             Intent intent = new Intent(getActivity(), PlayMonitorPhotoActivity.class);
             Bundle extra = new Bundle();
