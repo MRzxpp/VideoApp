@@ -410,7 +410,14 @@ public class PlayLiveActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        startVoice();
+                        voiceStart.setImageResource(R.drawable.interphone_pick);
+                        vocalGif.setVisibility(View.VISIBLE);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                startVoice();
+                            }
+                        }).start();
                         break;
                     case MotionEvent.ACTION_UP:
                         stopVoice();
@@ -424,8 +431,8 @@ public class PlayLiveActivity extends Activity {
     }
 
     private void startVoice() {
-        voiceStart.setImageResource(R.drawable.interphone_pick);
-        vocalGif.setVisibility(View.VISIBLE);
+//        voiceStart.setImageResource(R.drawable.interphone_pick);
+//        vocalGif.setVisibility(View.VISIBLE);
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
             Log.i(TAG, "SD Card is not mounted,It is  " + state + ".");
@@ -476,38 +483,76 @@ public class PlayLiveActivity extends Activity {
             mRecorder = null;
         }
 //        Toast.makeText(getApplicationContext(), "录音完成，正在发送至渔船", Toast.LENGTH_LONG).show();
-        File voiceFile = new File(mFileNameFull);
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
-        // MultipartBody.Part is used to send also the actual filename
-        MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
-        MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
-        ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SmartResult>() {
-                    @Override
-                    public void onCompleted() {
-                        android.util.Log.d("上传录音", "completed");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        android.util.Log.d("上传录音", "error");
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(SmartResult smartResult) {
-                        if (smartResult.getCode() == 1) {
-                            android.util.Log.d("上传录音", "success");
-                        } else {
-                            android.util.Log.d("上传录音", "failed");
-                            Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "上传录音失败", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+//        File voiceFile = new File(mFileNameFull);
+//        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
+//        // MultipartBody.Part is used to send also the actual filename
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
+//        MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
+//        ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<SmartResult>() {
+//                    @Override
+//                    public void onCompleted() {
+//                        android.util.Log.d("上传录音", "completed");
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        android.util.Log.d("上传录音", "error");
+//                        e.printStackTrace();
+//                    }
+//
+//                    @Override
+//                    public void onNext(SmartResult smartResult) {
+//                        if (smartResult.getCode() == 1) {
+//                            android.util.Log.d("上传录音", "success");
+//                        } else {
+//                            android.util.Log.d("上传录音", "failed");
+//                            Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "上传录音失败", Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                });
+        Thread voiceThread = new SendVoiceThread();
+        voiceThread.start();
 
 //        Toast.makeText(getApplicationContext(), "保存录音" + mFileName, Toast.LENGTH_LONG).show();
+    }
+
+    class SendVoiceThread extends Thread {
+        @Override
+        public void run() {
+            File voiceFile = new File(mFileNameFull);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
+            // MultipartBody.Part is used to send also the actual filename
+            MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
+            MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
+            ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<SmartResult>() {
+                        @Override
+                        public void onCompleted() {
+                            android.util.Log.d("上传录音", "completed");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            android.util.Log.d("上传录音", "error");
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onNext(SmartResult smartResult) {
+                            if (smartResult.getCode() == 1) {
+                                android.util.Log.d("上传录音", "success");
+                            } else {
+                                android.util.Log.d("上传录音", "failed");
+                                Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "对讲失败", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+        }
     }
 
     @OnClick(R.id.back_to_boat_btn)

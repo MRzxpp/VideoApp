@@ -2,12 +2,15 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +44,7 @@ public class PlayRecordActivity extends Activity {
         super.onStart();
         if (!playRecordView.isPlaying()) {
             if (videoPath != null) {
-                playRecordView.setVideoPath(videoPath);//设置播放地址
+                playRecordView.setVideoURI(Uri.fromFile(new File(videoPath)));//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                     mCustomMediaController = new CustomMediaController(this, playRecordView, this);
                     mCustomMediaController.show(5000);
