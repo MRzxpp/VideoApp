@@ -27,6 +27,46 @@
     @butterknife.* <methods>;
 }
 
+-dontwarn javax.annotation.**
+-dontwarn javax.inject.**
+# OkHttp3
+-dontwarn okhttp3.logging.**
+-keep class okhttp3.internal.**{*;}
+-dontwarn okio.**
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+# RxJava RxAndroid
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+
+# Gson
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+# 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
+# 将下面替换成自己的实体类
+-keep class com.haishanda.android.videoapp.Bean.** { *; }
+
+
+# Jackson
+-dontwarn org.codehaus.jackson.**
+-dontwarn com.fasterxml.jackson.databind.**
+-keep class org.codehaus.jackson.** { *;}
+-keep class com.fasterxml.jackson.** { *; }
+
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
 -dontnote retrofit2.Platform
 # Platform used when running on RoboVM on iOS. Will not be used at runtime.
@@ -38,20 +78,39 @@
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
 
+### greenDAO 3
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties
+-keep class freemarker.**{*;}
+-dontwarn freemarker.**
+
+# huawei push
+-keep class com.huawei.android.pushagent.**{*;}
+-keep class com.huawei.android.pushselfshow.**{*;}
+-keep class com.huawei.android.microkernel.**{*;}
+-keep class com.baidu.mapapi.**{*;}
+-dontwarn com.huawei.**
+  
+
+# If you do not use SQLCipher:
+-dontwarn org.greenrobot.greendao.database.**
+
 -keep class com.hyphenate.** {*;}
--dontwarn  com.hyphenate.**
+-dontwarn com.hyphenate.**
 
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
   **[] $VALUES;
   public *;
 }
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 -keepattributes EnclosingMethod
 -keepattributes InnerClasses
 -dontoptimize
 
 # 蒲公英
--libraryjars libs/pgyer_sdk_x.x.jar
+#-libraryjars libs/pgyer_sdk_x.x.jar
 -dontwarn com.pgyersdk.**
 -keep class com.pgyersdk.** { *; }

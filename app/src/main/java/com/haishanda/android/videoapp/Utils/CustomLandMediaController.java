@@ -231,15 +231,15 @@ public class CustomLandMediaController extends MediaController {
             index = mMaxVolume;
         else if (index < 0)
             index = 0;
-//        if (index >= 10) {
-//            mOperationBg.setImageResource(R.drawable.volmn_100);
-//        } else if (index >= 5 && index < 10) {
-//            mOperationBg.setImageResource(R.drawable.volmn_60);
-//        } else if (index > 0 && index < 5) {
-//            mOperationBg.setImageResource(R.drawable.volmn_30);
-//        } else {
-//            mOperationBg.setImageResource(R.drawable.volmn_no);
-//        }
+        if (index >= 10) {
+            mOperationBg.setImageResource(R.drawable.volumn_3);
+        } else if (index >= 5 && index < 10) {
+            mOperationBg.setImageResource(R.drawable.volumn_2);
+        } else if (index > 0 && index < 5) {
+            mOperationBg.setImageResource(R.drawable.volumn_1);
+        } else {
+            mOperationBg.setImageResource(R.drawable.volumn_0);
+        }
         //DecimalFormat    df   = new DecimalFormat("######0.00");
         mOperationTv.setText((int) (((double) index / mMaxVolume) * 100) + "%");
         // 变更声音
@@ -276,25 +276,23 @@ public class CustomLandMediaController extends MediaController {
         activity.getWindow().setAttributes(lpa);
 
         mOperationTv.setText((int) (lpa.screenBrightness * 100) + "%");
-//        if (lpa.screenBrightness * 100 >= 90) {
-//            mOperationBg.setImageResource(R.drawable.light_100);
-//        } else if (lpa.screenBrightness * 100 >= 80 && lpa.screenBrightness * 100 < 90) {
-//            mOperationBg.setImageResource(R.drawable.light_90);
-//        } else if (lpa.screenBrightness * 100 >= 70 && lpa.screenBrightness * 100 < 80) {
-//            mOperationBg.setImageResource(R.drawable.light_80);
-//        } else if (lpa.screenBrightness * 100 >= 60 && lpa.screenBrightness * 100 < 70) {
-//            mOperationBg.setImageResource(R.drawable.light_70);
-//        } else if (lpa.screenBrightness * 100 >= 50 && lpa.screenBrightness * 100 < 60) {
-//            mOperationBg.setImageResource(R.drawable.light_60);
-//        } else if (lpa.screenBrightness * 100 >= 40 && lpa.screenBrightness * 100 < 50) {
-//            mOperationBg.setImageResource(R.drawable.light_50);
-//        } else if (lpa.screenBrightness * 100 >= 30 && lpa.screenBrightness * 100 < 40) {
-//            mOperationBg.setImageResource(R.drawable.light_40);
-//        } else if (lpa.screenBrightness * 100 >= 20 && lpa.screenBrightness * 100 < 20) {
-//            mOperationBg.setImageResource(R.drawable.light_30);
-//        } else if (lpa.screenBrightness * 100 >= 10 && lpa.screenBrightness * 100 < 20) {
-//            mOperationBg.setImageResource(R.drawable.light_20);
-//        }
+        if (lpa.screenBrightness * 100 >= 87.5) {
+            mOperationBg.setImageResource(R.drawable.bright_8);
+        } else if (lpa.screenBrightness * 100 >= 75 && lpa.screenBrightness * 100 < 87.5) {
+            mOperationBg.setImageResource(R.drawable.bright_7);
+        } else if (lpa.screenBrightness * 100 >= 62.5 && lpa.screenBrightness * 100 < 75) {
+            mOperationBg.setImageResource(R.drawable.bright_6);
+        } else if (lpa.screenBrightness * 100 >= 50 && lpa.screenBrightness * 100 < 62.5) {
+            mOperationBg.setImageResource(R.drawable.bright_5);
+        } else if (lpa.screenBrightness * 100 >= 37.5 && lpa.screenBrightness * 100 < 50) {
+            mOperationBg.setImageResource(R.drawable.bright_4);
+        } else if (lpa.screenBrightness * 100 >= 25 && lpa.screenBrightness * 100 < 37.5) {
+            mOperationBg.setImageResource(R.drawable.bright_3);
+        } else if (lpa.screenBrightness * 100 >= 12.5 && lpa.screenBrightness * 100 < 25) {
+            mOperationBg.setImageResource(R.drawable.bright_2);
+        } else if (lpa.screenBrightness * 100 >= 0 && lpa.screenBrightness * 100 < 12.5) {
+            mOperationBg.setImageResource(R.drawable.bright_1);
+        }
 
     }
 

@@ -25,6 +25,15 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="21dp"
             android:src="@drawable/balance_expand" />
+
+        <ImageView
+            android:id="@+id/balance_collapse"
+            android:layout_width="22dp"
+            android:layout_height="12dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/balance_collpse" />
     </RelativeLayout>
 
 </RelativeLayout>

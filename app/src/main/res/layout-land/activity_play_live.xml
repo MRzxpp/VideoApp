@@ -5,14 +5,38 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <io.vov.vitamio.widget.VideoView
-        android:id="@+id/play_live"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+    <FrameLayout
+        android:id="@+id/live_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <io.vov.vitamio.widget.VideoView
+                android:id="@+id/play_live"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent">
+
+            <ImageView
+                android:id="@+id/loading"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -72,6 +96,13 @@
             android:layout_height="45dp"
             android:layout_centerHorizontal="true"
             android:src="@drawable/fullscreen_record" />
+
+        <ImageView
+            android:id="@+id/stop_record_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/terminate_record_fullscreen" />
 
         <ImageView
             android:id="@+id/voice_start"

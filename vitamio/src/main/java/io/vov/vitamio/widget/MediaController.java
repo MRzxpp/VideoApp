@@ -244,7 +244,7 @@ public class MediaController extends FrameLayout {
     if (mPauseButton != null) {
       mPauseButton.requestFocus();
       mPauseButton.setOnClickListener(mPauseListener);
-    }
+  }
 
     mProgress = (SeekBar) v.findViewById(getResources().getIdentifier("mediacontroller_seekbar", "id", mContext.getPackageName()));
     if (mProgress != null) {

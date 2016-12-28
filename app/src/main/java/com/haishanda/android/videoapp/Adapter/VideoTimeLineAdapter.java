@@ -26,14 +26,16 @@ import java.util.List;
 public class VideoTimeLineAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
-    private String[] dates;
+    private String[] times;
     private String boatName;
+    private String[] dates;
 
-    public VideoTimeLineAdapter(Context context, String[] dates, String boatName) {
+    public VideoTimeLineAdapter(Context context, String[] dates, String boatName, String[] times) {
         super(context, R.layout.adapter_timeline, dates);
         this.context = context;
-        this.dates = dates;
+        this.times = times;
         this.boatName = boatName;
+        this.dates = dates;
         inflater = LayoutInflater.from(context);
     }
 
@@ -51,7 +53,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
         timelineGridView.setAdapter(adapter);
 
         TextView time = (TextView) convertView.findViewById(R.id.timeline_time);
-        time.setText(dates[position]);
+        time.setText(times[position]);
 
         return convertView;
     }
@@ -59,7 +61,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
     private String[] loadDateIconPaths(String date) {
         VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
         QueryBuilder queryBuilder = videoMessageDao.queryBuilder();
-        List<VideoMessage> videoMessages = queryBuilder.where(VideoMessageDao.Properties.AddTime.eq(date)).where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
+        List<VideoMessage> videoMessages = queryBuilder.where(VideoMessageDao.Properties.AddDate.eq(date)).where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
         String[] iconUrls;
         List<String> iconUrlsCopy = new ArrayList<>();
         for (int i = 0; i < videoMessages.size(); i++) {
@@ -73,7 +75,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
     private String[] loadDateVideoPaths(String date) {
         VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
         QueryBuilder queryBuilder = videoMessageDao.queryBuilder();
-        List<VideoMessage> videoMessages = queryBuilder.where(VideoMessageDao.Properties.AddTime.eq(date)).where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
+        List<VideoMessage> videoMessages = queryBuilder.where(VideoMessageDao.Properties.AddDate.eq(date)).where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
         String[] videoUrls;
         List<String> videoUrlsCopy = new ArrayList<>();
         for (int i = 0; i < videoMessages.size(); i++) {

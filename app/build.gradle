@@ -15,7 +15,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.2"
         ndk {
             abiFilters "arm64-v8a", "x86", "armeabi", "armeabi-v7a"
         }
@@ -25,7 +25,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -52,6 +53,7 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+
 }
 afterEvaluate {
     tasks.matching {
@@ -98,4 +100,5 @@ dependencies {
     compile files('libs/libammsdk.jar')
     compile files('libs/juv-rtmp-client-1.9.2e.jar')
     compile files('libs/google-play-services.jar')
+    compile files('libs/HwPush_SDK_V2705.jar')
 }

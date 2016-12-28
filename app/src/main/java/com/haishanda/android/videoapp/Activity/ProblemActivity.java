@@ -9,6 +9,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * to show problems and solves to users
  * Created by Zhongsz on 2016/11/12.
  */
 

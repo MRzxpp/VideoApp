@@ -271,11 +271,6 @@ public class LoginActivity extends Activity {
     }
 
     public boolean loginWithExistMessage() {
-//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                .detectDiskWrites()
-//                .detectNetwork()
-//                .penaltyLog()
-//                .build());
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
         LoginMessage loginMessage;
@@ -289,6 +284,8 @@ public class LoginActivity extends Activity {
         }
         String username = loginMessage.getUsername();
         String password = loginMessage.getPassword();
+        this.username.setText(username);
+        this.password.setText(password);
         final boolean[] isLogined = {false};
         Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().loginActionCopy(username, password);
         try {

@@ -109,7 +109,8 @@ public class SaveImageToLocalUtil {
         if (!iconDir.exists()) {
             iconDir.mkdir();
         }
-        String imgName = "videoicon_" + boatName + "_" + time + ".jpg";
+        SimpleDateFormat hourFormat = new SimpleDateFormat("hh:mm:ss");
+        String imgName = "videoicon_" + boatName + "_" + time + hourFormat.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(iconDir, imgName);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);

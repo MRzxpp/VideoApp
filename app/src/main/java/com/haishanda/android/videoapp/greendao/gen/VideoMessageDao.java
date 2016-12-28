@@ -28,7 +28,8 @@ public class VideoMessageDao extends AbstractDao<VideoMessage, Long> {
         public final static Property ParentDir = new Property(1, String.class, "parentDir", false, "PARENT_DIR");
         public final static Property VideoPath = new Property(2, String.class, "videoPath", false, "VIDEO_PATH");
         public final static Property AddTime = new Property(3, String.class, "addTime", false, "ADD_TIME");
-        public final static Property IconPath = new Property(4, String.class, "iconPath", false, "ICON_PATH");
+        public final static Property AddDate = new Property(4, String.class, "addDate", false, "ADD_DATE");
+        public final static Property IconPath = new Property(5, String.class, "iconPath", false, "ICON_PATH");
     }
 
 
@@ -48,7 +49,8 @@ public class VideoMessageDao extends AbstractDao<VideoMessage, Long> {
                 "\"PARENT_DIR\" TEXT," + // 1: parentDir
                 "\"VIDEO_PATH\" TEXT," + // 2: videoPath
                 "\"ADD_TIME\" TEXT," + // 3: addTime
-                "\"ICON_PATH\" TEXT);"); // 4: iconPath
+                "\"ADD_DATE\" TEXT," + // 4: addDate
+                "\"ICON_PATH\" TEXT);"); // 5: iconPath
     }
 
     /** Drops the underlying database table. */
@@ -81,9 +83,14 @@ public class VideoMessageDao extends AbstractDao<VideoMessage, Long> {
             stmt.bindString(4, addTime);
         }
  
+        String addDate = entity.getAddDate();
+        if (addDate != null) {
+            stmt.bindString(5, addDate);
+        }
+ 
         String iconPath = entity.getIconPath();
         if (iconPath != null) {
-            stmt.bindString(5, iconPath);
+            stmt.bindString(6, iconPath);
         }
     }
 
@@ -111,9 +118,14 @@ public class VideoMessageDao extends AbstractDao<VideoMessage, Long> {
             stmt.bindString(4, addTime);
         }
  
+        String addDate = entity.getAddDate();
+        if (addDate != null) {
+            stmt.bindString(5, addDate);
+        }
+ 
         String iconPath = entity.getIconPath();
         if (iconPath != null) {
-            stmt.bindString(5, iconPath);
+            stmt.bindString(6, iconPath);
         }
     }
 
@@ -129,7 +141,8 @@ public class VideoMessageDao extends AbstractDao<VideoMessage, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // parentDir
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // videoPath
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // addTime
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // iconPath
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // addDate
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // iconPath
         );
         return entity;
     }
@@ -140,7 +153,8 @@ public class VideoMessageDao extends AbstractDao<VideoMessage, Long> {
         entity.setParentDir(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setVideoPath(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setAddTime(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setIconPath(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setAddDate(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setIconPath(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
     
     @Override

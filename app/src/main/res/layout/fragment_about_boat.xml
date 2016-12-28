@@ -39,91 +39,103 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="97dp"
-            android:layout_marginTop="58dp"
-            android:background="@drawable/both_stroke_white">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:id="@+id/boat_name_layout"
+                android:id="@+id/boat_name_and_serial"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginLeft="15dp"
-                android:background="@drawable/bottom_stroke">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="船舶名称"
-                    android:textColor="#333333"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/about_boat_boatname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="37dp"
-                    android:textColor="@color/textGrey"
-                    android:textSize="15sp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/gateway_layout"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="48dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="上网设备序列号"
-                    android:textColor="#333333"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/about_boat_serial_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="37dp"
-                    android:textColor="@color/textGrey"
-                    android:textSize="15sp" />
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/gateway_qrcode_layout"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="170dp"
-            android:background="@drawable/both_stroke_white">
-
-            <ImageView
-                android:id="@+id/to_gateway_qrcode_fragment"
-                android:layout_width="12dp"
-                android:layout_height="22dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
-                android:src="@drawable/arrow_right" />
-
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginStart="16dp"
-                android:text="上网设备二维码"
-                android:textColor="#333333"
-                android:textSize="15sp" />
+                android:layout_marginTop="58dp"
+                android:background="@drawable/both_stroke_white">
+
+                <RelativeLayout
+                    android:id="@+id/boat_name_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/bottom_stroke">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="船舶名称"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/about_boat_boatname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="37dp"
+                        android:textColor="@color/textGrey"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/gateway_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="48dp">
+
+                    <TextView
+                        android:id="@+id/serial_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="上网设备序列号"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/about_boat_serial_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/serial_text"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/textGrey"
+                        android:textSize="15sp" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/gateway_qrcode_layout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/boat_name_and_serial"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/both_stroke_white">
+
+                <ImageView
+                    android:id="@+id/to_gateway_qrcode_fragment"
+                    android:layout_width="12dp"
+                    android:layout_height="22dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/arrow_right" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="16dp"
+                    android:text="上网设备二维码"
+                    android:textColor="#333333"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
         </RelativeLayout>
+
+
     </FrameLayout>
 
 </LinearLayout>

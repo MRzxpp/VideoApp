@@ -14,14 +14,16 @@ public class VideoMessage {
     private String parentDir;
     private String videoPath;
     private String addTime;
+    private String addDate;
     private String iconPath;
-    @Generated(hash = 394528003)
+    @Generated(hash = 337531302)
     public VideoMessage(Long id, String parentDir, String videoPath, String addTime,
-            String iconPath) {
+            String addDate, String iconPath) {
         this.id = id;
         this.parentDir = parentDir;
         this.videoPath = videoPath;
         this.addTime = addTime;
+        this.addDate = addDate;
         this.iconPath = iconPath;
     }
     @Generated(hash = 407375025)
@@ -50,6 +52,12 @@ public class VideoMessage {
     }
     public void setAddTime(String addTime) {
         this.addTime = addTime;
+    }
+    public String getAddDate() {
+        return this.addDate;
+    }
+    public void setAddDate(String addDate) {
+        this.addDate = addDate;
     }
     public String getIconPath() {
         return this.iconPath;

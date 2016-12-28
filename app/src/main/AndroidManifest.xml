@@ -18,14 +18,6 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络通信 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 获取设备信息 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取MAC地址 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
-
-
-    <!-- 可选 -->
-    <uses-permission android:name="android.permission.READ_LOGS" />
-
-    <!-- 获取logcat日志 -->
     <application
         android:name=".VideoApplication"
         android:allowBackup="true"
@@ -60,6 +52,35 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name="com.hyphenate.chat.EMHuaweiPushReceiver">
+            <intent-filter>
+                <!--必须,用于接收token-->
+                <action android:name="com.huawei.android.push.intent.REGISTRATION" />
+                <!--必须，用于接收消息-->
+                <action android:name="com.huawei.android.push.intent.RECEIVE" />
+            </intent-filter>
+            />
+            <meta-data
+                android:name="CS_cloud_ablitity"
+                android:value="successRateAnalytics" />
+        </receiver>
+
+        <!--PushSDK:PushSDK接收外部请求事件入口-->
+        <receiver
+            android:name="com.huawei.android.pushagent.PushEventReceiver"
+            android:process=":pushservice">
+            <intent-filter>
+                <action android:name="com.huawei.android.push.intent.REFRESH_PUSH_CHANNEL" />
+                <action android:name="com.huawei.intent.action.PUSH" />
+                <action android:name="com.huawei.intent.action.PUSH_ON" />
+                <action android:name="com.huawei.android.push.PLUGIN" />
+            </intent-filter>
+        </receiver>
+        <!-- PushSDK:Push服务 -->
+        <service
+            android:name="com.huawei.android.pushagent.PushService"
+            android:process=":pushservice"></service>
 
         <!-- 视频监控声明 -->
         <activity
@@ -101,11 +122,11 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <!--android:configChanges="orientation|keyboardHidden|screenSize"-->
         <activity
             android:name=".Activity.PlayLiveActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".Activity.AddBoatActivity"
@@ -159,10 +180,12 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".Activity.PlayRecordActivity"
+        <activity
+            android:name=".Activity.PlayRecordActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".Activity.WelcomeActivity"
             android:screenOrientation="portrait"
@@ -174,5 +197,13 @@
             </intent-filter>
         </activity>
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
+
+
+    <!-- 可选 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
+
+    <!-- 获取logcat日志 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
 </manifest>

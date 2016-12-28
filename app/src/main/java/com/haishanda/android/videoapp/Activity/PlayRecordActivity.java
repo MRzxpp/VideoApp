@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
@@ -16,9 +15,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
+ * play record
  * Created by Zhongsz on 2016/12/24.
  */
 
@@ -28,7 +29,6 @@ public class PlayRecordActivity extends Activity {
 
     Bundle extra;
     private String videoPath;
-    private CustomMediaController mCustomMediaController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,8 @@ public class PlayRecordActivity extends Activity {
             if (videoPath != null) {
                 playRecordView.setVideoURI(Uri.fromFile(new File(videoPath)));//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    mCustomMediaController = new CustomMediaController(this, playRecordView, this);
+                    CustomMediaController mCustomMediaController = new CustomMediaController(this, playRecordView, this);
+//                    MediaController mCustomMediaController = new MediaController(this);
                     mCustomMediaController.show(5000);
                     playRecordView.setMediaController(mCustomMediaController);//绑定控制器
                 } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -57,15 +58,21 @@ public class PlayRecordActivity extends Activity {
                 playRecordView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);//设定缩放参数
                 playRecordView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
                 playRecordView.requestFocus();//取得焦点
+                playRecordView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.seekTo(0);
+                        playRecordView.pause();
+                    }
+                });
                 playRecordView.start();
             }
-        } else {
-            playRecordView.start();
         }
     }
 
     @OnClick(R.id.back_to_videos)
     public void backToVideosPage() {
+        playRecordView.stopPlayback();
         this.finish();
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Environment;
+import android.os.Looper;
 import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -36,13 +37,12 @@ import com.haishanda.android.videoapp.Utils.CustomMediaController;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
-import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
@@ -64,6 +64,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * play live from cameras
  * Created by Zhongsz on 2016/10/19.
  */
 
@@ -80,28 +81,27 @@ public class PlayLiveActivity extends Activity {
     ImageView stopRecordBtn;
     @BindView(R.id.record_btn)
     ImageView recordBtn;
+    @BindView(R.id.loading)
+    ImageView loadingPic;
 
     private static final String TAG = "PlayLiveActivity";
-    private ImageMessageDao imageMessageDao;
     private CustomMediaController mCustomMediaController;
-    private Bundle extra;
     private int liveId = -1;
     private String boatName;
     private long cameraId;
     private String path;
 
     private MediaRecorder mRecorder;
-    private String mFileName;
     private String mFileNameFull;
     private FFmpeg ffmpeg;
     private String time;
-    private String date;
+    private long startTime;
+    private boolean needResume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_live);
-        imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         Log.d(TAG, "create");
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
@@ -135,15 +135,20 @@ public class PlayLiveActivity extends Activity {
             // Handle if FFmpeg is not supported by device
             e.printStackTrace();
         }
-        //全屏键不可用
-        toggleFullscreen.setVisibility(View.INVISIBLE);
-        toggleFullscreen.setEnabled(false);
+//        //全屏键不可用
+//        toggleFullscreen.setVisibility(View.INVISIBLE);
+//        toggleFullscreen.setEnabled(false);
         Glide.with(this)
                 .load(R.drawable.voice_is_in)
                 .asGif()
                 .into(vocalGif);
+        Glide.with(this)
+                .load(R.drawable.loading)
+                .asGif()
+                .into(loadingPic);
+        loadingPic.setVisibility(View.INVISIBLE);
         vocalGif.setVisibility(View.INVISIBLE);
-        extra = getIntent().getExtras();
+        Bundle extra = getIntent().getExtras();
         cameraId = extra.getLong("cameraId");
         boatName = extra.getString("boatName");
         initTalkService();
@@ -175,34 +180,30 @@ public class PlayLiveActivity extends Activity {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        Log.d(TAG, "orientation changed");
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            mCustomMediaController = new CustomMediaController(this, videoView, this);
-            mCustomMediaController.show(5000);
-            videoView.setMediaController(mCustomMediaController);
-            // land donothing is ok
-        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//                        RelativeLayout.LayoutParams layoutParams =
-//                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
-//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//            videoView.setLayoutParams(layoutParams);
-            CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
-            landMediaController.show(5000);//控制器显示5s后自动隐藏
-            videoView.setMediaController(landMediaController);
-        }
-        super.onConfigurationChanged(newConfig);
-    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        Log.d(TAG, "orientation changed");
+//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            mCustomMediaController = new CustomMediaController(this, videoView, this);
+//            mCustomMediaController.show(5000);
+//            videoView.setMediaController(mCustomMediaController);
+//            // land donothing is ok
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+//            landMediaController.show(5000);//控制器显示5s后自动隐藏
+//            videoView.setMediaController(landMediaController);
+//        }
+//        super.onConfigurationChanged(newConfig);
+//    }
 
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (!videoView.isPlaying()) {
             if (path != null) {
                 videoView.setVideoPath(path);//设置播放地址
@@ -218,41 +219,60 @@ public class PlayLiveActivity extends Activity {
                 videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);//设定缩放参数
                 videoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
                 videoView.requestFocus();//取得焦点
-                videoView.start();
-            } else {
-                path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-                videoView.setVideoPath(path);//设置播放地址
-                if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    mCustomMediaController = new CustomMediaController(this, videoView, this);
-                    mCustomMediaController.show(5000);
-                    videoView.setMediaController(mCustomMediaController);//绑定控制器
-                } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
-                    landMediaController.show(5000);//控制器显示5s后自动隐藏
-                    videoView.setMediaController(landMediaController);
-                }
-                videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);//设定缩放参数
-                videoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
-                videoView.requestFocus();//取得焦点
-                videoView.start();
+                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        mp.start();
+                    }
+                });
+                videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+                    @Override
+                    public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                        switch (what) {
+                            case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                                //开始缓存，暂停播放
+                                if (videoView.isPlaying()) {
+                                    videoView.pause();
+                                    needResume = true;
+                                }
+                                loadingPic.setVisibility(View.VISIBLE);
+                                break;
+                            case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                                //缓存完成，继续播放
+                                if (needResume)
+                                    videoView.start();
+                                loadingPic.setVisibility(View.GONE);
+                                break;
+                            case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
+                                //显示 下载速度
+//                                Logger.e("download rate:" + extra);
+//                                Log.d(TAG, "download rate:" + extra);
+                                break;
+                        }
+                        return true;
+                    }
+                });
             }
-        } else {
-            videoView.start();
         }
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        videoView.seekTo(position);
-//        videoView.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         videoView.stopPlayback();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            //若视频地址有误时，点击退出或者截屏均会爆栈，因此通过判断videoview是否能加载来判断视频地址是否正确
+            if (videoView.getCurrentFrame() != null)
+                SaveImageToLocalUtil.saveCameraIconAction(videoView.getCurrentFrame(), boatName, this.cameraId);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         ApiManage.getInstence().getLiveApiService().stopLiveStream(liveId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -279,21 +299,6 @@ public class PlayLiveActivity extends Activity {
                 });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
-    protected void onPause() {
-        super.onPause();
-        try {
-            //若视频地址有误时，点击退出或者截屏均会爆栈，因此通过判断videoview是否能加载来判断视频地址是否正确
-            if (videoView.isBuffering())
-                SaveImageToLocalUtil.saveCameraIconAction(videoView.getCurrentFrame(), boatName, this.cameraId);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-//        videoView.pause();
-//        position = videoView.getCurrentPosition();
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -305,7 +310,7 @@ public class PlayLiveActivity extends Activity {
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
         try {
-            if (videoView.isBuffering()) {
+            if (videoView.getCurrentFrame() != null) {
                 SaveImageToLocalUtil.saveAction(videoView.getCurrentFrame(), boatName);
                 final MaterialDialog dialog = new MaterialDialog(this);
                 dialog.setMessage("截图成功！");
@@ -323,70 +328,73 @@ public class PlayLiveActivity extends Activity {
 
     @OnClick(R.id.record_btn)
     public void recordVideo(View view) {
-        File sdcardDir = Environment.getExternalStorageDirectory();
-        String path = sdcardDir.getPath() + "/VideoApp";
-        File appDir = new File(path);
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        File boatDir = new File(appDir + "/" + boatName);
-        if (!boatDir.exists()) {
-            boatDir.mkdir();
-        }
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-        final String date = dateFormat.format(System.currentTimeMillis());
-        this.date = date;
-        File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
-        if (!dateDir.exists()) {
-            dateDir.mkdir();
-        }
-        File videoDir = new File(dateDir + "/Videos");
-        if (!videoDir.exists()) {
-            videoDir.mkdir();
-        }
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日hh:mm:ss");
-        final String time = format.format(System.currentTimeMillis());
-        this.time = time;
-        String cmd = "-i " + this.path + " -c copy " + videoDir.getPath() + "/" + boatName + "_" + time + ".flv";
-        final String[] command = cmd.split(" ");
-        try {
-            // to execute "ffmpeg -version" command you just need to pass "-version"
-            ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
+        if (videoView.getCurrentFrame() != null) {
+            File sdcardDir = Environment.getExternalStorageDirectory();
+            String path = sdcardDir.getPath() + "/VideoApp";
+            File appDir = new File(path);
+            if (!appDir.exists()) {
+                appDir.mkdir();
+            }
+            File boatDir = new File(appDir + "/" + boatName);
+            if (!boatDir.exists()) {
+                boatDir.mkdir();
+            }
+            final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+            final String date = dateFormat.format(System.currentTimeMillis());
+            File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
+            if (!dateDir.exists()) {
+                dateDir.mkdir();
+            }
+            File videoDir = new File(dateDir + "/Videos");
+            if (!videoDir.exists()) {
+                videoDir.mkdir();
+            }
+            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日hh:mm:ss");
+            final String time = format.format(System.currentTimeMillis());
+            this.time = time;
+            String cmd = "-i " + this.path + " -c copy " + videoDir.getPath() + "/" + boatName + "_" + time + ".flv";
+            final String[] command = cmd.split(" ");
+            try {
+                // to execute "ffmpeg -version" command you just need to pass "-version"
+                ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
 
-                @Override
-                public void onStart() {
-                    recordBtn.setVisibility(View.INVISIBLE);
-                    recordBtn.setEnabled(false);
-                    stopRecordBtn.setVisibility(View.VISIBLE);
-                    stopRecordBtn.setEnabled(true);
-                    VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
-                    VideoMessage videoMessage = new VideoMessage(null, boatName, boatName + "_" + time + ".flv", date, null);
-                    videoMessageDao.insertOrReplace(videoMessage);
-                    Log.d(TAG, "Started command : ffmpeg " + command);
-                }
+                    @Override
+                    public void onStart() {
+                        recordBtn.setVisibility(View.INVISIBLE);
+                        recordBtn.setEnabled(false);
+                        stopRecordBtn.setVisibility(View.VISIBLE);
+                        stopRecordBtn.setEnabled(true);
+                        VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
+                        VideoMessage videoMessage = new VideoMessage(null, boatName, boatName + "_" + time + ".flv", time, date, null);
+                        videoMessageDao.insertOrReplace(videoMessage);
+                        Log.d(TAG, "Started command : ffmpeg " + command);
+                    }
 
-                @Override
-                public void onProgress(String message) {
-                    Log.d(TAG, "Progress command : ffmpeg " + command);
-                }
+                    @Override
+                    public void onProgress(String message) {
+                        Log.d(TAG, "Progress command : ffmpeg " + command);
+                    }
 
-                @Override
-                public void onFailure(String message) {
-                    Log.d(TAG, "ffmpeg failure" + message);
-                }
+                    @Override
+                    public void onFailure(String message) {
+                        Log.d(TAG, "ffmpeg failure" + message);
+                    }
 
-                @Override
-                public void onSuccess(String message) {
-                    Log.d(TAG, "ffmpeg success" + message);
-                }
+                    @Override
+                    public void onSuccess(String message) {
+                        Log.d(TAG, "ffmpeg success" + message);
+                    }
 
-                @Override
-                public void onFinish() {
-                    Log.d(TAG, "ffmpeg finish");
-                }
-            });
-        } catch (FFmpegCommandAlreadyRunningException e) {
-            // Handle if FFmpeg is already running
+                    @Override
+                    public void onFinish() {
+                        Log.d(TAG, "ffmpeg finish");
+                    }
+                });
+            } catch (FFmpegCommandAlreadyRunningException e) {
+                // Handle if FFmpeg is already running
+            }
+        } else {
+            Toast.makeText(this, "请勿在视频有错误的情况下录像", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -396,7 +404,9 @@ public class PlayLiveActivity extends Activity {
         stopRecordBtn.setEnabled(false);
         recordBtn.setVisibility(View.VISIBLE);
         recordBtn.setEnabled(true);
-        SaveImageToLocalUtil.saveVideoIconAction(videoView.getCurrentFrame(), boatName, date);
+        if (videoView.getCurrentFrame() != null) {
+            SaveImageToLocalUtil.saveVideoIconAction(videoView.getCurrentFrame(), boatName, time);
+        }
         if (ffmpeg.isFFmpegCommandRunning()) {
             ffmpeg.killRunningProcesses();
             Log.d(TAG, "record success");
@@ -422,6 +432,11 @@ public class PlayLiveActivity extends Activity {
                     case MotionEvent.ACTION_UP:
                         stopVoice();
                         break;
+                    case MotionEvent.ACTION_CANCEL:
+                        stopVoiceRecord();
+                        Toast.makeText(getApplicationContext(), "取消录音", Toast.LENGTH_LONG).show();
+                        File voiceFile = new File(mFileNameFull);
+                        voiceFile.delete();
                     default:
                         break;
                 }
@@ -430,35 +445,7 @@ public class PlayLiveActivity extends Activity {
         });
     }
 
-    private void startVoice() {
-//        voiceStart.setImageResource(R.drawable.interphone_pick);
-//        vocalGif.setVisibility(View.VISIBLE);
-        String state = Environment.getExternalStorageState();
-        if (!state.equals(Environment.MEDIA_MOUNTED)) {
-            Log.i(TAG, "SD Card is not mounted,It is  " + state + ".");
-        }
-        File sdcardDir = Environment.getExternalStorageDirectory();
-        String path = sdcardDir.getPath() + "/VideoApp/" + boatName + "/Voices";
-        File appDir = new File(path);
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        mFileName = UUID.randomUUID().toString() + ".amr";
-        mFileNameFull = path + "/" + mFileName;
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-        mRecorder.setOutputFile(mFileNameFull);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(TAG, "prepare() failed");
-        }
-        mRecorder.start();
-    }
-
-    private void stopVoice() {
+    private void stopVoiceRecord() {
         voiceStart.setImageResource(R.drawable.interphone);
         vocalGif.setVisibility(View.INVISIBLE);
         if (mRecorder != null) {
@@ -479,79 +466,97 @@ public class PlayLiveActivity extends Activity {
                 e.printStackTrace();
                 // TODO: handle exception
             }
+            mRecorder.reset();
             mRecorder.release();
             mRecorder = null;
+            Log.d(TAG, "record voice finished");
         }
-//        Toast.makeText(getApplicationContext(), "录音完成，正在发送至渔船", Toast.LENGTH_LONG).show();
-//        File voiceFile = new File(mFileNameFull);
-//        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
-//        // MultipartBody.Part is used to send also the actual filename
-//        MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
-//        MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
-//        ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Observer<SmartResult>() {
-//                    @Override
-//                    public void onCompleted() {
-//                        android.util.Log.d("上传录音", "completed");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        android.util.Log.d("上传录音", "error");
-//                        e.printStackTrace();
-//                    }
-//
-//                    @Override
-//                    public void onNext(SmartResult smartResult) {
-//                        if (smartResult.getCode() == 1) {
-//                            android.util.Log.d("上传录音", "success");
-//                        } else {
-//                            android.util.Log.d("上传录音", "failed");
-//                            Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "上传录音失败", Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                });
+    }
+
+    private void startVoice() {
+        startTime = System.currentTimeMillis();
+        String state = Environment.getExternalStorageState();
+        if (!state.equals(Environment.MEDIA_MOUNTED)) {
+            Log.i(TAG, "SD Card is not mounted,It is  " + state + ".");
+        }
+        File sdcardDir = Environment.getExternalStorageDirectory();
+        String path = sdcardDir.getPath() + "/VideoApp";
+        File appDir = new File(path);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        File boatDir = new File(appDir + "/" + boatName);
+        if (!boatDir.exists()) {
+            boatDir.mkdir();
+        }
+        File voiceDir = new File(boatDir + "/Voices");
+        if (!voiceDir.exists()) {
+            voiceDir.mkdir();
+        }
+        String mFileName = UUID.randomUUID().toString() + ".amr";
+        mFileNameFull = voiceDir + "/" + mFileName;
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        mRecorder.setOutputFile(mFileNameFull);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "prepare() failed");
+        }
+        mRecorder.start();
+    }
+
+    private void stopVoice() {
+        stopVoiceRecord();
         Thread voiceThread = new SendVoiceThread();
         voiceThread.start();
-
-//        Toast.makeText(getApplicationContext(), "保存录音" + mFileName, Toast.LENGTH_LONG).show();
     }
 
     class SendVoiceThread extends Thread {
         @Override
         public void run() {
+            Looper.prepare();
+            long voiceTime = System.currentTimeMillis() - startTime;
             File voiceFile = new File(mFileNameFull);
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
-            // MultipartBody.Part is used to send also the actual filename
-            MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
-            MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
-            ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<SmartResult>() {
-                        @Override
-                        public void onCompleted() {
-                            android.util.Log.d("上传录音", "completed");
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            android.util.Log.d("上传录音", "error");
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onNext(SmartResult smartResult) {
-                            if (smartResult.getCode() == 1) {
-                                android.util.Log.d("上传录音", "success");
-                            } else {
-                                android.util.Log.d("上传录音", "failed");
-                                Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "对讲失败", Toast.LENGTH_LONG).show();
+            int MIN_VOICE_TIME = 3000;
+            if (voiceTime < MIN_VOICE_TIME) {
+                Toast.makeText(getApplicationContext(), "时间太短", Toast.LENGTH_LONG).show();
+                voiceFile.delete();
+            } else {
+                Log.d(TAG, "发送录音中");
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
+                // MultipartBody.Part is used to send also the actual filename
+                MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
+                MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
+                ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<SmartResult>() {
+                            @Override
+                            public void onCompleted() {
+                                android.util.Log.d("上传录音", "completed");
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onError(Throwable e) {
+                                android.util.Log.d("上传录音", "error");
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onNext(SmartResult smartResult) {
+                                if (smartResult.getCode() == 1) {
+                                    android.util.Log.d("上传录音", "success");
+                                } else {
+                                    android.util.Log.d("上传录音", "failed");
+                                    Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "对讲失败", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+            }
         }
     }
 

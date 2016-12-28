@@ -56,11 +56,27 @@ public class AccountBalanceAdapter extends ArrayAdapter {
         final ExpandableLayout expandableLayout = (ExpandableLayout) convertView.findViewById(R.id.balance_detail_open);
 
         final ImageView expand = (ImageView) convertView.findViewById(R.id.balance_expand);
+        final ImageView collapse = (ImageView) convertView.findViewById(R.id.balance_collapse);
+        collapse.setClickable(false);
+        collapse.setVisibility(View.INVISIBLE);
         expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 expandableLayout.show();
                 expand.setClickable(false);
+                expand.setVisibility(View.INVISIBLE);
+                collapse.setClickable(true);
+                collapse.setVisibility(View.VISIBLE);
+            }
+        });
+        collapse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expandableLayout.hide();
+                collapse.setClickable(false);
+                collapse.setVisibility(View.INVISIBLE);
+                expand.setClickable(true);
+                expand.setVisibility(View.VISIBLE);
             }
         });
 
@@ -69,7 +85,10 @@ public class AccountBalanceAdapter extends ArrayAdapter {
             @Override
             public void onClick(View v) {
                 expandableLayout.hide();
+                collapse.setClickable(false);
+                collapse.setVisibility(View.INVISIBLE);
                 expand.setClickable(true);
+                expand.setVisibility(View.VISIBLE);
             }
         });
 

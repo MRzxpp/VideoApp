@@ -18,6 +18,9 @@ import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -110,29 +113,39 @@ public class GetVerificationActivity extends Activity {
     public void send_fetch_code(View view) {
         CountDownTimerUtil countDownTimerUtil = new CountDownTimerUtil(getCodeBtn, 120000, 1000, blueBtn, greyBtn, white, white);
         countDownTimerUtil.start();
+        Pattern phoneNumPattern = Pattern.compile("^[1][3578][0-9]{9}$");
+        Matcher phoneNumMatcher = phoneNumPattern.matcher(phoneNum.getText().toString());
         String mobileNo = phoneNum.getText().toString();
         this.mobileNo = mobileNo;
-        ApiManage.getInstence().getUserApiService().getResetCode(mobileNo)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SmartResult>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i("info", "发送成功");
-                    }
+        if (!phoneNumMatcher.matches()) {
+            Toast.makeText(getApplicationContext(), "手机号格式输入不正确", Toast.LENGTH_SHORT).show();
+        } else {
+            ApiManage.getInstence().getUserApiService().getResetCode(mobileNo)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<SmartResult>() {
+                        @Override
+                        public void onCompleted() {
+                            Log.i("info", "发送结束");
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
 
-                    @Override
-                    public void onNext(SmartResult smartResult) {
-                        Log.i("info", "正在发送");
-                        Log.i("info", String.valueOf(smartResult.getCode()));
-                    }
-
-                });
+                        @Override
+                        public void onNext(SmartResult smartResult) {
+                            Log.i("info", "正在发送");
+                            if (smartResult.getCode() != 1) {
+                                Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "发送失败，请检查手机号是否输入正确", Toast.LENGTH_LONG).show();
+                                Log.i("info", String.valueOf(smartResult.getCode()));
+                            } else {
+                                Toast.makeText(getApplicationContext(), "发送成功，请查收，请勿泄露验证码", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+        }
     }
 
     @OnClick(R.id.meet_problem)

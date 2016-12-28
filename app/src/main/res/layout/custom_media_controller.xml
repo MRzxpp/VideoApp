@@ -25,7 +25,6 @@
             android:layout_alignBottom="@+id/operation_bg"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="32:22/45:00"
             android:textColor="#ffffff"
             android:textSize="10sp"
             android:visibility="gone" />

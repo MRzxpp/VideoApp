@@ -39,6 +39,7 @@ public class VideoFragment extends Fragment {
     VideoMessageDao videoMessageDao;
     VideoTimeLineAdapter adapter;
     String boatName;
+    String[] times = {};
 
 
     @Override
@@ -54,27 +55,31 @@ public class VideoFragment extends Fragment {
         super.onResume();
         boatName = VideoApplication.getApplication().getCurrentBoatName();
         dates = removeRepeatedDate(loadDatesPaths(boatName));
-        adapter = new VideoTimeLineAdapter(getContext(), dates, boatName);
+        adapter = new VideoTimeLineAdapter(getContext(), dates, boatName, times);
         adapter.notifyDataSetInvalidated();
         adapter.notifyDataSetChanged();
         timeLine.setAdapter(adapter);
     }
 
     public String[] loadDatesPaths(String boatName) {
-//        this.boatName = boatName;
         videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
         QueryBuilder queryBuilder = videoMessageDao.queryBuilder();
         List<VideoMessage> videoPaths = queryBuilder.where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
         String[] dates;
-         List<String> datesCopy = new ArrayList<>();
+        String[] times;
+        List<String> datesCopy = new ArrayList<>();
+        List<String> timesCopy = new ArrayList<>();
         for (int i = 0; i < videoPaths.size(); i++) {
-            datesCopy.add(i, videoPaths.get(i).getAddTime());
+            datesCopy.add(i, videoPaths.get(i).getAddDate());
+            timesCopy.add(i, videoPaths.get(i).getAddTime());
         }
         dates = datesCopy.toArray(new String[datesCopy.size()]);
+        times = timesCopy.toArray(new String[timesCopy.size()]);
         if (dates.length != 0) {
             videosBackground.setVisibility(View.INVISIBLE);
             videosBackgroundText.setVisibility(View.INVISIBLE);
         }
+        this.times = times;
         return dates;
     }
 
