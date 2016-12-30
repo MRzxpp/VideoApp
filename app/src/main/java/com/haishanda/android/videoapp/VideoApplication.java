@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex;
 import com.haishanda.android.videoapp.greendao.gen.DaoMaster;
 import com.haishanda.android.videoapp.greendao.gen.DaoSession;
 import com.pgyersdk.crash.PgyCrashManager;
+import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 /**
  * Created by Zhongsz on 2016/10/12.
@@ -69,6 +70,7 @@ public class VideoApplication extends Application {
         application = this;
         setDatabase();
         PgyCrashManager.register(this);
+        ZXingLibrary.initDisplayOpinion(this);
     }
 
     @Override

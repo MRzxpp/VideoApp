@@ -159,7 +159,7 @@ public class PlayLiveActivity extends Activity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+//        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //        path = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8";
     }
 
