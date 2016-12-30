@@ -100,7 +100,6 @@ public class LoginActivity extends Activity {
         password.addTextChangedListener(new LoginListener(username, password, loginBtn, blueBtn, greyBtn, white, white));
         Thread thread = new Thread(new LoginThread());
         thread.start();
-//        loginWithExistMessage();
 
     }
 
@@ -216,6 +215,7 @@ public class LoginActivity extends Activity {
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                                         LoginActivity.this.finish();
+                                        WelcomeActivity.instance.finish();
                                     }
 
                                     @Override
@@ -365,6 +365,7 @@ public class LoginActivity extends Activity {
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                         LoginActivity.this.finish();
+                        WelcomeActivity.instance.finish();
                     }
 
                     @Override

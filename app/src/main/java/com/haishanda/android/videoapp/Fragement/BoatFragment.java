@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
-import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -54,6 +53,7 @@ import retrofit2.Response;
 
 
 /**
+ * 船舶首页
  * Created by Zhongsz on 2016/10/14.
  */
 

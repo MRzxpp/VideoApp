@@ -40,11 +40,7 @@ public class QRCodeFragment extends Fragment {
         ButterKnife.bind(this, view);
         Bundle qrCodeData = this.getArguments();
         globalId = qrCodeData.getString("globalId");
-        Glide.with(this)
-                .load(createQRCode(globalId))
-                .asBitmap()
-                .into(qrCodeImage);
-//        qrCodeImage.setImageBitmap(createQRCode(globalId));
+        qrCodeImage.setImageBitmap(createQRCode(globalId));
         return view;
     }
 

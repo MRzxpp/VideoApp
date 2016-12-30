@@ -23,6 +23,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 首页 主要功能为完成一些基本模块的注册
+ * 有注册和登录两个选项
  * Created by Zhongsz on 2016/10/18.
  */
 
@@ -30,11 +32,14 @@ public class WelcomeActivity extends Activity {
     @BindView(R.id.frameLayout)
     RelativeLayout loginAndRegisterBtns;
 
+    public static WelcomeActivity instance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
+        instance = this;
         //初始化环信
         EMOptions options = new EMOptions();
         options.setAcceptInvitationAlways(false);
@@ -54,14 +59,13 @@ public class WelcomeActivity extends Activity {
                 if (firstLogin.getIsFirst() != 1) {
                     Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                     startActivity(intent);
+                    this.finish();
                 }
             }
-
         } catch (DaoException e) {
             FirstLogin firstLogin = new FirstLogin(1);
             firstLoginDao.insertOrReplace(firstLogin);
         }
-
     }
 
     @Override

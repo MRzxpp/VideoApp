@@ -80,7 +80,7 @@
         <!-- PushSDK:Push服务 -->
         <service
             android:name="com.huawei.android.pushagent.PushService"
-            android:process=":pushservice"></service>
+            android:process=":pushservice"/>
 
         <!-- 视频监控声明 -->
         <activity
