@@ -26,6 +26,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 添加船舶
  * Created by Zhongsz on 2016/10/26.
  */
 
@@ -73,8 +74,12 @@ public class AddBoatActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             // ZXing回傳的內容
-            String contents = intent.getStringExtra("codedContent");
-            boatNumber.setText(contents);
+            try {
+                String contents = intent.getStringExtra("codedContent");
+                boatNumber.setText(contents);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

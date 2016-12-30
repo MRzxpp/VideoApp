@@ -27,5 +27,6 @@ public class MessageCenterActivity extends Activity {
     public void backToLastPage(View view) {
         this.finish();
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        PgyUpdateManager.unregister();
     }
 }

@@ -74,7 +74,6 @@ public class BoatFragment extends Fragment {
     private String globalId;
     private Map<String, Integer> boatInfos;
     private Map<String, String> boatGlobalIds;
-    private List<Long> cameraIds;
     private List<String> boatLists;
     LiveAdapter adapter;
     private BoatMessageDao boatMessageDao;
@@ -291,8 +290,6 @@ public class BoatFragment extends Fragment {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
         }
-
-        this.cameraIds = cameraIds;
 
         BoatMessage boatMessage;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");

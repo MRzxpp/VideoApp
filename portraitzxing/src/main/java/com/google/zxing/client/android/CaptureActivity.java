@@ -385,10 +385,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             beepManager.playBeepSoundAndVibrate();
             drawResultPoints(barcode, scaleFactor, rawResult);
             Toast.makeText(this, "扫描成功", Toast.LENGTH_SHORT).show();
-            Intent intent = getIntent();
-            intent.putExtra("codedContent", rawResult.getText());
-            intent.putExtra("codedBitmap", barcode);
-            setResult(RESULT_OK, intent);
+            try {
+                Intent intent = getIntent();
+                intent.putExtra("codedContent", rawResult.getText());
+                intent.putExtra("codedBitmap", barcode);
+                setResult(RESULT_OK, intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             finish();
         }
     }

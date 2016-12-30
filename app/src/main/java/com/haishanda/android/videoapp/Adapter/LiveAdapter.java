@@ -18,6 +18,7 @@ import com.haishanda.android.videoapp.R;
 import java.util.List;
 
 /**
+ * set live
  * Created by Zhongsz on 2016/11/16.
  */
 @SuppressWarnings("ResourceType")

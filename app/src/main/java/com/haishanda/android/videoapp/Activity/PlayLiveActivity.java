@@ -102,7 +102,6 @@ public class PlayLiveActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_live);
-        Log.d(TAG, "create");
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
         ffmpeg = FFmpeg.getInstance(this);
@@ -154,12 +153,19 @@ public class PlayLiveActivity extends Activity {
         initTalkService();
         Thread getUrlThread = new Thread(new NetThread());
         getUrlThread.start();
+        loadingPic.setVisibility(View.VISIBLE);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        loadingPic.setVisibility(View.INVISIBLE);
         try {
             getUrlThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+//        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //        path = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8";
     }
 

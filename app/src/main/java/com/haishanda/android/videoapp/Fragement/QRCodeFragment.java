@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -39,7 +40,11 @@ public class QRCodeFragment extends Fragment {
         ButterKnife.bind(this, view);
         Bundle qrCodeData = this.getArguments();
         globalId = qrCodeData.getString("globalId");
-        qrCodeImage.setImageBitmap(createQRCode(globalId));
+        Glide.with(this)
+                .load(createQRCode(globalId))
+                .asBitmap()
+                .into(qrCodeImage);
+//        qrCodeImage.setImageBitmap(createQRCode(globalId));
         return view;
     }
 

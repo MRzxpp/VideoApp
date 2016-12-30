@@ -148,7 +148,6 @@ public class LoginActivity extends Activity {
                                 LoginMessage loginMessage = new LoginMessage(username.getText().toString(), password.getText().toString(), smartResult.getData().getId());
                                 loginMessageDao.deleteAll();
                                 loginMessageDao.insert(loginMessage);
-
                                 UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
                                 UserMessageBean userMessageBean = new UserMessageBean(smartResult.getData().getName(), smartResult.getData().getPortrait(), smartResult.getData().getId());
                                 userMessageBeanDao.insertOrReplace(userMessageBean);
