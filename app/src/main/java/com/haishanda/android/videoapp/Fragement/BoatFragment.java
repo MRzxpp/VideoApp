@@ -27,6 +27,7 @@ import com.haishanda.android.videoapp.Bean.QueryMachines;
 import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Utils.DaoUtil;
 import com.haishanda.android.videoapp.Utils.niceSpinner.NiceSpinner;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
@@ -68,15 +69,16 @@ public class BoatFragment extends Fragment {
     @BindViews({R.id.boat_background, R.id.boat_not_add_text, R.id.add_boat_btn_big})
     View[] views;
 
-
     private final String Tag = "船舶首页";
     private int machineId;
     private String globalId;
     private Map<String, Integer> boatInfos;
     private Map<String, String> boatGlobalIds;
+    private Map<Integer, String> supportMap;
     private List<String> boatLists;
     LiveAdapter adapter;
     private BoatMessageDao boatMessageDao;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,6 +92,10 @@ public class BoatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        refreshPage();
+    }
+
+    private void refreshPage() {
         dealSpinner();
         setLiveAdapter();
     }
@@ -121,7 +127,7 @@ public class BoatFragment extends Fragment {
             VideoApplication.getApplication().setCurrentBoatName(list.get(0));
         }
         if (VideoApplication.getApplication().getCurrentMachineId() == 0) {
-            if (list.get(0) != "添加船舶") {
+            if (!list.get(0).equals("添加船舶")) {
                 VideoApplication.getApplication().setCurrentMachineId(boatInfos.get(list.get(0)));
             } else {
                 VideoApplication.getApplication().setCurrentMachineId(-1);
@@ -136,11 +142,11 @@ public class BoatFragment extends Fragment {
                 view.setEnabled(false);
             }
         }
-
         mySpinner.attachDataSource(list);
         mySpinner.setSelectedIndex(VideoApplication.getApplication().getSelectedId());
         mySpinner.setBackgroundColor(titleBlue);
         mySpinner.setTextColor(Color.WHITE);
+        mySpinner.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -176,6 +182,17 @@ public class BoatFragment extends Fragment {
 
             }
         });
+        if (supportMap != null) {
+            String localBoatName = VideoApplication.getApplication().getCurrentBoatName();
+            String remoteBoatName = supportMap.get(VideoApplication.getApplication().getCurrentMachineId());
+            if (!localBoatName.equals(remoteBoatName)) {
+                if (!VideoApplication.getApplication().getCurrentBoatName().equals("添加船舶")) {
+                    Toast.makeText(getContext(), "服务器数据发生变化，数据更新中", Toast.LENGTH_LONG).show();
+                    DaoUtil.renameBoat(remoteBoatName, localBoatName, VideoApplication.getApplication().getCurrentMachineId());
+                    VideoApplication.getApplication().setCurrentBoatName(remoteBoatName);
+                }
+            }
+        }
         try {
             machineId = boatInfos.get(mySpinner.getText().toString());
             globalId = boatGlobalIds.get(mySpinner.getText().toString());
@@ -205,17 +222,7 @@ public class BoatFragment extends Fragment {
     private Map<String, Integer> getBoatInfos() {
         Map<String, Integer> boatInfos = new HashMap<String, Integer>();
         Map<String, String> boatGlobalIds = new HashMap<>();
-//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                .detectDiskWrites()
-//                .detectNetwork()
-//                .penaltyLog()
-//                .build());
-//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                .detectLeakedSqlLiteObjects()
-//                .detectLeakedClosableObjects()
-//                .penaltyLog()
-//                .penaltyDeath()
-//                .build());
+        Map<Integer, String> supportMap = new HashMap<>();
         Call<SmartResult<List<QueryMachines>>> call = ApiManage.getInstence().getBoatApiService().queryMachinesCopy();
         try {
             TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
@@ -253,8 +260,10 @@ public class BoatFragment extends Fragment {
                     timeBeanDao.insertOrReplace(timeBean);
                     boatInfos.put(queryMachines.getName(), queryMachines.getId());
                     boatGlobalIds.put(queryMachines.getName(), queryMachines.getGlobalId());
+                    supportMap.put(queryMachines.getId(), queryMachines.getName());
                 }
                 this.boatGlobalIds = boatGlobalIds;
+                this.supportMap = supportMap;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -317,8 +326,6 @@ public class BoatFragment extends Fragment {
     private String[] cameraIconsPaths;
 
     public void setLiveAdapter() {
-//        List<Long> cameraList = getCamenraList();
-//        String[] cameraIconsPaths = getCameraImagePaths();
         AdapterThread adapterThread = new AdapterThread();
         adapterThread.start();
         try {
@@ -344,7 +351,7 @@ public class BoatFragment extends Fragment {
     private String[] getCameraImagePaths() {
         QueryBuilder<BoatMessage> queryBuilder = boatMessageDao.queryBuilder();
         List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
-        List<String> cameraImagePathsCopy = new ArrayList<String>();
+        List<String> cameraImagePathsCopy = new ArrayList<>();
         for (int i = 0; i < cameraDetails.size(); i++) {
             cameraImagePathsCopy.add(cameraDetails.get(i).getCameraImagePath() != null ? cameraDetails.get(i).getCameraImagePath() : "default");
         }

@@ -95,10 +95,8 @@ dependencies {
     compile 'com.bigkoo:alertview:1.0.3'
     compile 'com.pgyersdk:sdk:2.4.5'
     compile 'cn.yipianfengye.android:zxing-library:2.1'
-    compile files('libs/hyphenatechat_3.1.5.jar')
     compile project(':vitamio')
-    compile files('libs/libammsdk.jar')
-    compile files('libs/juv-rtmp-client-1.9.2e.jar')
-    compile files('libs/google-play-services.jar')
     compile files('libs/HwPush_SDK_V2705.jar')
+    compile files('libs/hyphenatechat_3.2.3.jar')
+    compile files('libs/org.apache.http.legacy.jar')
 }

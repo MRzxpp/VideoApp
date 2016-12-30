@@ -30,7 +30,6 @@ public class LiveAdapter extends ArrayAdapter {
     private String[] imagePath;
     private List<Long> cameraId;
     private String boatName;
-    private int machineId;
 
     public LiveAdapter(Context context, String[] imagePath, List<Long> cameraId, String boatName) {
         super(context, R.layout.adapter_live, imagePath);
@@ -68,6 +67,7 @@ public class LiveAdapter extends ArrayAdapter {
 
         TextView boatName = (TextView) convertView.findViewById(R.id.live_adapter_text);
         boatName.setText("摄像头" + cameraId.get(position));
+        boatName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         return convertView;
     }

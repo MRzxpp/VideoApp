@@ -1,11 +1,11 @@
 [
     {
-        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_control_focused_holo.png",
-        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_control_focused_holo.png"
-    },
-    {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\mediacontroller_play.png",
         "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\mediacontroller_play.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\scrubber_control_focused_holo.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\src\\main\\res\\drawable-xhdpi\\scrubber_control_focused_holo.png"
     },
     {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4\\mediacontroller_pause1.png",

@@ -85,7 +85,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
             BadgeItem numberBadgeItem = new BadgeItem()
                     .setBorderWidth(5)
                     .setBackgroundColorResource(R.color.red)
-//                .setText(String.valueOf(alarmNum.getAlarmNum()))
                     .setText(String.valueOf(alarmNum.getAlarmNum()))
                     .setHideOnSelect(true);
             navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
@@ -112,7 +111,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
                 handler.post(updateUI);
             }
         }.start();
-
     }
 
     Runnable updateUI = new Runnable() {
@@ -164,88 +162,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         transaction.replace(R.id.fragment_main, boatFragment);
         transaction.commit();
     }
-
-//    TextView lastPickedText;
-//    ImageView lastPickedImg;
-//
-//    @OnClick({R.id.to_boat_fragment, R.id.to_photos_fragment, R.id.to_monitor_fragment, R.id.to_my_fragment})
-//    public void skipToBoatFragment(View view) {
-//
-//        if (lastPickedText == null) {
-//            lastPickedText = boatText;
-//        }
-//        if (lastPickedImg == null) {
-//            lastPickedImg = boatImg;
-//        }
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        switch (view.getId()) {
-//            case (R.id.to_boat_fragment): {
-//                BoatFragment boatFragment = new BoatFragment();
-//                fragmentTransaction.replace(R.id.fragment_main, boatFragment);
-//                lastPickedText.setTextColor(textGrey);
-//                setChangedImg();
-//                boatText.setTextColor(textBlue);
-//                boatImg.setImageDrawable(boatPick);
-//                lastPickedText = boatText;
-//                lastPickedImg = boatImg;
-//                break;
-//            }
-//            case (R.id.to_photos_fragment): {
-//                PhotosIndexFragment photosIndexFragment = new PhotosIndexFragment();
-//                fragmentTransaction.replace(R.id.fragment_main, photosIndexFragment);
-//                lastPickedText.setTextColor(textGrey);
-//                setChangedImg();
-//                photosText.setTextColor(textBlue);
-//                photoImg.setImageDrawable(photosPick);
-//                lastPickedText = photosText;
-//                lastPickedImg = photoImg;
-//                break;
-//            }
-//            case (R.id.to_monitor_fragment): {
-//                MonitorFragment monitorFragment = new MonitorFragment();
-//                fragmentTransaction.replace(R.id.fragment_main, monitorFragment);
-//                lastPickedText.setTextColor(textGrey);
-//                setChangedImg();
-//                monitorText.setTextColor(textBlue);
-//                monitorImg.setImageDrawable(monitorPick);
-//                lastPickedText = monitorText;
-//                lastPickedImg = monitorImg;
-//                break;
-//            }
-//            case (R.id.to_my_fragment): {
-//                MyFragment myFragment = new MyFragment();
-//                fragmentTransaction.replace(R.id.fragment_main, myFragment, "myFragment");
-//                lastPickedText.setTextColor(textGrey);
-//                setChangedImg();
-//                myAppText.setTextColor(textBlue);
-//                myAppImg.setImageDrawable(myPick);
-//                lastPickedText = myAppText;
-//                lastPickedImg = myAppImg;
-//                break;
-//            }
-//            default:
-//                break;
-//        }
-//        fragmentTransaction.commit();
-//
-//    }
-//
-//    private void setChangedImg() {
-//        if (lastPickedImg == boatImg) {
-//            lastPickedImg.setImageDrawable(boatUnPick);
-//        }
-//        if (lastPickedImg == photoImg) {
-//            lastPickedImg.setImageDrawable(photosUnPick);
-//        }
-//        if (lastPickedImg == monitorImg) {
-//            lastPickedImg.setImageDrawable(monitorUnPick);
-//        }
-//        if (lastPickedImg == myAppImg) {
-//            lastPickedImg.setImageDrawable(myUnPick);
-//        }
-//
-//    }
 
     private ArrayList<Fragment> getFragments() {
         BoatFragment boatFragment = new BoatFragment();

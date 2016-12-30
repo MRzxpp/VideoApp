@@ -65,6 +65,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 登录界面
  * Created by Zhongsz on 2016/10/9.
  */
 public class LoginActivity extends Activity {
@@ -192,14 +193,15 @@ public class LoginActivity extends Activity {
                                             }
 
                                             @Override
-                                            public void onMessageReadAckReceived(List<EMMessage> messages) {
-                                                //收到已读回执
+                                            public void onMessageRead(List<EMMessage> list) {
+
                                             }
 
                                             @Override
-                                            public void onMessageDeliveryAckReceived(List<EMMessage> message) {
-                                                //收到已送达回执
+                                            public void onMessageDelivered(List<EMMessage> list) {
+
                                             }
+
 
                                             @Override
                                             public void onMessageChanged(EMMessage message, Object change) {
@@ -341,13 +343,13 @@ public class LoginActivity extends Activity {
                             }
 
                             @Override
-                            public void onMessageReadAckReceived(List<EMMessage> messages) {
-                                //收到已读回执
+                            public void onMessageRead(List<EMMessage> list) {
+
                             }
 
                             @Override
-                            public void onMessageDeliveryAckReceived(List<EMMessage> message) {
-                                //收到已送达回执
+                            public void onMessageDelivered(List<EMMessage> list) {
+
                             }
 
                             @Override

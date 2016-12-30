@@ -4,12 +4,12 @@
         "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_secondary_holo.9.png"
     },
     {
-        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\scrubber_control_pressed_holo.png",
-        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_control_pressed_holo.png"
-    },
-    {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\scrubber_track_holo_dark.9.png",
         "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_track_holo_dark.9.png"
+    },
+    {
+        "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\scrubber_control_pressed_holo.png",
+        "source": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\bundles\\debug\\res\\drawable-xhdpi-v4\\scrubber_control_pressed_holo.png"
     },
     {
         "merged": "G:\\AndroidWorkSpace\\VideoApp\\vitamio\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-xhdpi-v4\\scrubber_control_normal_holo.png",
