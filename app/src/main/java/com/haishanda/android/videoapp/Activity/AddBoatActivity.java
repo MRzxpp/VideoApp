@@ -10,11 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.zxing.client.android.CaptureActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
+import com.uuzuche.lib_zxing.activity.CaptureActivity;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -46,6 +47,7 @@ public class AddBoatActivity extends Activity {
 
     private final String Tag = "添加船舶";
     private AddBoatActivity instance;
+    private static final int REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,19 +68,27 @@ public class AddBoatActivity extends Activity {
     @OnClick(R.id.add_boat_scan_qrcode_btn)
     public void scanBoatQRCode() {
         Intent intent = new Intent(AddBoatActivity.this, CaptureActivity.class);
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, REQUEST_CODE);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (resultCode == RESULT_OK) {
-            // ZXing回傳的內容
-            try {
-                String contents = intent.getStringExtra("codedContent");
-                boatNumber.setText(contents);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (requestCode == REQUEST_CODE) {
+            //处理扫描结果（在界面上显示）
+            if (null != intent) {
+                Bundle bundle = intent.getExtras();
+                if (bundle == null) {
+                    return;
+                }
+                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    String result = bundle.getString(CodeUtils.RESULT_STRING);
+                    Log.i(Tag, "二维码结果" + result);
+                    boatNumber.setText(result);
+
+                } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
+                    Toast.makeText(AddBoatActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }

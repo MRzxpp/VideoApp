@@ -1,2 +1,2 @@
-include ':app', ':zxinglibrary', ':portraitzxing'
+include ':app'
 include ':vitamio'
