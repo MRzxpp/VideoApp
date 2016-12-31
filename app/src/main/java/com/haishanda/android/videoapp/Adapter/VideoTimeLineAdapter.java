@@ -29,6 +29,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
     private String[] times;
     private String boatName;
     private String[] dates;
+    private List<String> shortPaths = new ArrayList<>();
 
     public VideoTimeLineAdapter(Context context, String[] dates, String boatName, String[] times) {
         super(context, R.layout.adapter_timeline, dates);
@@ -47,7 +48,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
         }
 
         NoScrollGridView timelineGridView = (NoScrollGridView) convertView.findViewById(R.id.timeline_gridview);
-        VideosAdapter adapter = new VideosAdapter(context, loadDateVideoPaths(dates[position]), boatName, loadDateIconPaths(dates[position]));
+        VideosAdapter adapter = new VideosAdapter(context, loadDateVideoPaths(dates[position]), boatName, loadDateIconPaths(dates[position]), shortPaths);
         adapter.notifyDataSetChanged();
         adapter.notifyDataSetInvalidated();
         timelineGridView.setAdapter(adapter);
@@ -80,7 +81,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
         List<String> videoUrlsCopy = new ArrayList<>();
         for (int i = 0; i < videoMessages.size(); i++) {
             videoUrlsCopy.add(i, "/sdcard/VideoApp/" + boatName + "/" + date + "/Videos/" + videoMessages.get(i).getVideoPath());
-//            videoUrlsCopy.add(i, videoMessages.get(i).getIconPath());
+            shortPaths.add(videoMessages.get(i).getVideoPath());
         }
         videoUrls = videoUrlsCopy.toArray(new String[videoUrlsCopy.size()]);
         return videoUrls;

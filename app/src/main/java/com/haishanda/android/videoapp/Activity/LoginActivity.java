@@ -285,8 +285,9 @@ public class LoginActivity extends Activity {
         }
         String username = loginMessage.getUsername();
         String password = loginMessage.getPassword();
-        this.username.setText(username);
-        this.password.setText(password);
+//        the two lines are bugs and i don't know why yet :(
+//        this.username.setText(username);
+//        this.password.setText(password);
         final boolean[] isLogined = {false};
         Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().loginActionCopy(username, password);
         try {
@@ -453,6 +454,9 @@ public class LoginActivity extends Activity {
         //清除登录信息
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         loginMessageDao.deleteAll();
+        //重置VideoApplication
+        VideoApplication.getApplication().setCurrentBoatName(null);
+        VideoApplication.getApplication().setCurrentMachineId(-1);
         //重置是否第一次登录
         FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
         FirstLogin firstLogin = new FirstLogin(1);

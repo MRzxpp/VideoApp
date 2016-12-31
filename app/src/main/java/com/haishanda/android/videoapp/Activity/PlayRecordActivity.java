@@ -4,10 +4,20 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
+import com.haishanda.android.videoapp.Bean.ImageMessage;
+import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
+import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
 
@@ -29,6 +39,7 @@ public class PlayRecordActivity extends Activity {
 
     Bundle extra;
     private String videoPath;
+    private String shortPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +48,7 @@ public class PlayRecordActivity extends Activity {
         ButterKnife.bind(this);
         extra = getIntent().getExtras();
         videoPath = extra.getString("videoPath");
+        shortPath = extra.getString("shortPath");
     }
 
     @Override
@@ -71,9 +83,45 @@ public class PlayRecordActivity extends Activity {
     }
 
     @OnClick(R.id.back_to_videos)
-    public void backToVideosPage() {
+    public void backToVideosPage(View view) {
         playRecordView.stopPlayback();
         this.finish();
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+    }
+
+    @OnClick(R.id.delete_video)
+    public void deleteVideo(final View view) {
+        final MaterialDialog materialDialog = new MaterialDialog(this);
+        materialDialog.setMessage("是否确认删除?");
+        materialDialog.setPositiveButton("确认", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAction(view);
+                materialDialog.dismiss();
+            }
+        });
+        materialDialog.setNegativeButton("取消", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                materialDialog.dismiss();
+            }
+        });
+        materialDialog.show();
+    }
+
+    private void deleteAction(View view) {
+        File file = new File(videoPath);
+        file.delete();
+        VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
+        QueryBuilder<VideoMessage> queryBuilder = videoMessageDao.queryBuilder();
+        VideoMessage videoMessage = queryBuilder.where(VideoMessageDao.Properties.VideoPath.eq(shortPath)).unique();
+        videoMessageDao.delete(videoMessage);
+//        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
+//        QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
+//        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
+//        ImageMessage im = imageMessage.get(0);
+//        imageMessageDao.delete(im);
+        Log.d("PlayRecord", "删除成功");
+        backToVideosPage(view);
     }
 }

@@ -185,8 +185,8 @@ public class BoatFragment extends Fragment {
         if (supportMap != null) {
             String localBoatName = VideoApplication.getApplication().getCurrentBoatName();
             String remoteBoatName = supportMap.get(VideoApplication.getApplication().getCurrentMachineId());
-            if (!localBoatName.equals(remoteBoatName)) {
-                if (!VideoApplication.getApplication().getCurrentBoatName().equals("添加船舶")) {
+            if (!localBoatName.equals(remoteBoatName) && remoteBoatName != null) {
+                if (!localBoatName.equals("添加船舶")) {
                     Toast.makeText(getContext(), "服务器数据发生变化，数据更新中", Toast.LENGTH_LONG).show();
                     DaoUtil.renameBoat(remoteBoatName, localBoatName, VideoApplication.getApplication().getCurrentMachineId());
                     VideoApplication.getApplication().setCurrentBoatName(remoteBoatName);

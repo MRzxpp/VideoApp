@@ -96,6 +96,7 @@ public class PlayLiveActivity extends Activity {
     private FFmpeg ffmpeg;
     private String time;
     private long startTime;
+    private long endTime;
     private boolean needResume;
 
     @Override
@@ -436,13 +437,22 @@ public class PlayLiveActivity extends Activity {
                         }).start();
                         break;
                     case MotionEvent.ACTION_UP:
-                        stopVoice();
+                        voiceStart.setEnabled(false);
+                        try {
+                            stopVoice();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "record voice failed");
+                        }
+                        voiceStart.setEnabled(true);
                         break;
                     case MotionEvent.ACTION_CANCEL:
+                        voiceStart.setEnabled(false);
                         stopVoiceRecord();
-                        Toast.makeText(getApplicationContext(), "取消录音", Toast.LENGTH_LONG).show();
                         File voiceFile = new File(mFileNameFull);
                         voiceFile.delete();
+                        voiceStart.setEnabled(true);
+                        Log.d(TAG, "record voice cancel");
                     default:
                         break;
                 }
@@ -452,6 +462,7 @@ public class PlayLiveActivity extends Activity {
     }
 
     private void stopVoiceRecord() {
+        endTime = System.currentTimeMillis();
         voiceStart.setImageResource(R.drawable.interphone);
         vocalGif.setVisibility(View.INVISIBLE);
         if (mRecorder != null) {
@@ -462,24 +473,18 @@ public class PlayLiveActivity extends Activity {
                 mRecorder.setOnInfoListener(null);
                 mRecorder.setPreviewDisplay(null);
                 mRecorder.stop();
-            } catch (IllegalStateException e) {
-                // TODO: handle exception
-                e.printStackTrace();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-                // TODO: handle exception
             } catch (Exception e) {
                 e.printStackTrace();
-                // TODO: handle exception
             }
             mRecorder.reset();
             mRecorder.release();
             mRecorder = null;
-            Log.d(TAG, "record voice finished");
+            Log.d(TAG, "record voice finish");
         }
     }
 
     private void startVoice() {
+        Log.d(TAG, "record voice start");
         startTime = System.currentTimeMillis();
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
@@ -502,17 +507,17 @@ public class PlayLiveActivity extends Activity {
         String mFileName = UUID.randomUUID().toString() + ".amr";
         mFileNameFull = voiceDir + "/" + mFileName;
         mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
-        mRecorder.setOutputFile(mFileNameFull);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         try {
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+            mRecorder.setOutputFile(mFileNameFull);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
             mRecorder.prepare();
-        } catch (IOException e) {
+            mRecorder.start();
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "prepare() failed");
+            Log.e(TAG, "start voice record failed");
         }
-        mRecorder.start();
     }
 
     private void stopVoice() {
@@ -525,43 +530,45 @@ public class PlayLiveActivity extends Activity {
         @Override
         public void run() {
             Looper.prepare();
-            long voiceTime = System.currentTimeMillis() - startTime;
-            File voiceFile = new File(mFileNameFull);
-            int MIN_VOICE_TIME = 3000;
-            if (voiceTime < MIN_VOICE_TIME) {
-                Toast.makeText(getApplicationContext(), "时间太短", Toast.LENGTH_LONG).show();
-                voiceFile.delete();
-            } else {
-                Log.d(TAG, "发送录音中");
-                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
-                // MultipartBody.Part is used to send also the actual filename
-                MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
-                MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
-                ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<SmartResult>() {
-                            @Override
-                            public void onCompleted() {
-                                android.util.Log.d("上传录音", "completed");
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                android.util.Log.d("上传录音", "error");
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onNext(SmartResult smartResult) {
-                                if (smartResult.getCode() == 1) {
-                                    android.util.Log.d("上传录音", "success");
-                                } else {
-                                    android.util.Log.d("上传录音", "failed");
-                                    Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "对讲失败", Toast.LENGTH_LONG).show();
+            long voiceTime = endTime - startTime;
+            try {
+                File voiceFile = new File(mFileNameFull);
+                int MIN_VOICE_TIME = 2000;
+                if (voiceTime < MIN_VOICE_TIME) {
+                    voiceFile.delete();
+                } else {
+                    Log.d(TAG, "发送录音中");
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
+                    // MultipartBody.Part is used to send also the actual filename
+                    MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
+                    MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
+                    ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<SmartResult>() {
+                                @Override
+                                public void onCompleted() {
+                                    android.util.Log.d("上传录音", "completed");
                                 }
-                            }
-                        });
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    android.util.Log.d("上传录音", "error");
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onNext(SmartResult smartResult) {
+                                    if (smartResult.getCode() == 1) {
+                                        android.util.Log.d("上传录音", "success");
+                                    } else {
+                                        android.util.Log.d("上传录音", "failed");
+                                    }
+                                }
+                            });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

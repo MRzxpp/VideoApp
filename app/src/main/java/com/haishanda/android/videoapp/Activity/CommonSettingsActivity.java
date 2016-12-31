@@ -119,6 +119,9 @@ public class CommonSettingsActivity extends FragmentActivity {
                 //清除登录信息
                 LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
                 loginMessageDao.deleteAll();
+                //重置VideoApplication
+                VideoApplication.getApplication().setCurrentBoatName(null);
+                VideoApplication.getApplication().setCurrentMachineId(-1);
                 //退出环信
                 Thread emThread = new Thread(new EMThread());
                 emThread.start();
