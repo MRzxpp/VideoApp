@@ -57,9 +57,7 @@ public class ImageInfoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        //        if (null == convertView) {
         convertView = inflater.inflate(R.layout.adapter_image_info, parent, false);
-//        }
         ButterKnife.bind(this, convertView);
 
         nameView.setText("文件名称：" + name);
@@ -68,9 +66,4 @@ public class ImageInfoAdapter extends BaseAdapter {
 
         return convertView;
     }
-
-//    @OnClick(R.id.close_image_details_btn)
-//    public void closeDetails() {
-//
-//    }
 }

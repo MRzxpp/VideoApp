@@ -96,7 +96,7 @@ public class MyFragment extends Fragment {
     private void initViews() {
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         QueryBuilder<LoginMessage> loginMessageQueryBuilder = loginMessageDao.queryBuilder();
-        long id = loginMessageQueryBuilder.unique().getId();
+         long id = loginMessageQueryBuilder.unique().getId();
         UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
         QueryBuilder<UserMessageBean> queryBuilder = userMessageBeanDao.queryBuilder();
         UserMessageBean userMessageBean = queryBuilder.where(UserMessageBeanDao.Properties.Id.eq(id)).unique();

@@ -7,9 +7,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Adapter.ImageInfoAdapter;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.FileSizeUtil;
@@ -17,7 +17,7 @@ import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.OnItemClickListener;
+import com.orhanobut.dialogplus.ViewHolder;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -69,20 +69,22 @@ public class PlayPhotoActivity extends Activity {
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
         imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
         ImageMessage im = imageMessage.get(0);
+        ViewHolder viewHolder = new ViewHolder(R.layout.adapter_image_info);
         DialogPlus dialogPlus = DialogPlus.newDialog(this)
-                .setAdapter(new ImageInfoAdapter(this, imageName, im.getAddTime(), FileSizeUtil.getAutoFileOrFilesSize(imagePath)))
+                .setContentHolder(viewHolder)
                 .setCancelable(true)
                 .setGravity(Gravity.CENTER)
                 .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)  // or any custom width ie: 300
                 .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                .setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-                        Log.i("DialogPlus", "Item clicked");
-                    }
-                })
                 .setExpanded(true)
                 .create();
+        View view = viewHolder.getInflatedView();
+        TextView nameView = (TextView) view.findViewById(R.id.image_info_name);
+        TextView addTimeView = (TextView) view.findViewById(R.id.image_info_addtime);
+        TextView sizeView = (TextView) view.findViewById(R.id.image_info_size);
+        nameView.setText("文件名称：" + imageName);
+        addTimeView.setText("拍摄时间：" + im.getAddTime());
+        sizeView.setText("文件大小：" + FileSizeUtil.getAutoFileOrFilesSize(imagePath));
         dialogPlus.show();
     }
 

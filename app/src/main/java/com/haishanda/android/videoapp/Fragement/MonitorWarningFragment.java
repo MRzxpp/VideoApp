@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,17 @@ import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ExpandableLayout;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.Views.PickerView;
 import com.haishanda.android.videoapp.greendao.gen.MonitorWarningBeanDao;
 import com.kyleduo.switchbutton.SwitchButton;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +43,7 @@ import rx.schedulers.Schedulers;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 /**
+ * 手机提醒功能的设置
  * Created by Zhongsz on 2016/11/23.
  */
 
@@ -256,6 +264,34 @@ public class MonitorWarningFragment extends Fragment {
         fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         fragmentTransaction.remove(this);
         fragmentTransaction.commit();
+    }
+
+    @OnClick(R.id.voice_gap)
+    public void setVoiceGap() {
+        ViewHolder viewHolder = new ViewHolder(R.layout.adapter_voice_gap);
+
+        DialogPlus dialogPlus = DialogPlus.newDialog(getContext())
+                .setContentHolder(viewHolder)
+                .setCancelable(true)
+                .setGravity(Gravity.CENTER)
+                .setContentWidth(ViewGroup.LayoutParams.WRAP_CONTENT)  // or any custom width ie: 300
+                .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setExpanded(false)
+                .create();
+
+        View view = viewHolder.getInflatedView();
+        PickerView voiceGapPicker = (PickerView) view.findViewById(R.id.voice_gap_picker);
+        List<String> minutes = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            minutes.add(i < 10 ? "0" + i : "" + i);
+        }
+        voiceGapPicker.setData(minutes);
+        voiceGapPicker.setOnSelectListener(new PickerView.onSelectListener() {
+            @Override
+            public void onSelect(String text) {
+            }
+        });
+        dialogPlus.show();
     }
 
 

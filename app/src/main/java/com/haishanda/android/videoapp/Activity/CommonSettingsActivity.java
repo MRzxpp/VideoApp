@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 通用设置界面
  * Created by Zhongsz on 2016/11/12.
  */
 
@@ -130,6 +131,7 @@ public class CommonSettingsActivity extends FragmentActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 getCommonSettingsActivity().finish();
+                MainActivity.instance.finish();
             }
         });
         dialog.setNegativeButton("取消", new View.OnClickListener() {

@@ -185,6 +185,7 @@ public class PlayLiveActivity extends Activity {
         } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
+
     }
 
 //    @Override

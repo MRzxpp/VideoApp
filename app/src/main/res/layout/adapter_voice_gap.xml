@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="260dp">
+
+    <TextView
+        android:id="@+id/gap_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="请选择提醒间隔"
+        android:textColor="#333333"
+        android:textSize="15sp" />
+
+    <com.haishanda.android.videoapp.Views.PickerView
+        android:id="@+id/voice_gap_picker"
+        android:layout_width="40dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/gap_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+
+</RelativeLayout>

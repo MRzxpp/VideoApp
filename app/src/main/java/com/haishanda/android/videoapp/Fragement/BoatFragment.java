@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,7 +118,7 @@ public class BoatFragment extends Fragment {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : boatInfos.entrySet()
                 ) {
             list.add(entry.getKey());
@@ -197,8 +198,9 @@ public class BoatFragment extends Fragment {
             machineId = boatInfos.get(mySpinner.getText().toString());
             globalId = boatGlobalIds.get(mySpinner.getText().toString());
         } catch (NullPointerException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
 //            Toast.makeText(getContext(), "未获取到船舶列表，请检查", Toast.LENGTH_LONG).show();
+            Log.d(Tag, e.toString());
         }
     }
 
@@ -220,7 +222,7 @@ public class BoatFragment extends Fragment {
     }
 
     private Map<String, Integer> getBoatInfos() {
-        Map<String, Integer> boatInfos = new HashMap<String, Integer>();
+        Map<String, Integer> boatInfos = new HashMap<>();
         Map<String, String> boatGlobalIds = new HashMap<>();
         Map<Integer, String> supportMap = new HashMap<>();
         Call<SmartResult<List<QueryMachines>>> call = ApiManage.getInstence().getBoatApiService().queryMachinesCopy();
@@ -277,12 +279,11 @@ public class BoatFragment extends Fragment {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
         }
-
         return boatInfos;
     }
 
-    public List<Long> getCamenraList() {
-        List<Long> cameraIds = new ArrayList<Long>();
+    public List<Long> getCameraList() {
+        List<Long> cameraIds = new ArrayList<>();
         int machineId = this.machineId;
         Call<SmartResult<List<QueryCameras>>> call = ApiManage.getInstence().getBoatApiService().queryCamerasCopy(machineId);
         try {
@@ -343,7 +344,7 @@ public class BoatFragment extends Fragment {
         @Override
         public void run() {
             Looper.prepare();
-            cameraList = getCamenraList();
+            cameraList = getCameraList();
             cameraIconsPaths = getCameraImagePaths();
         }
     }

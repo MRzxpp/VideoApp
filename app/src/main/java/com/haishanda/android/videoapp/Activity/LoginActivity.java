@@ -225,7 +225,7 @@ public class LoginActivity extends Activity {
 
                                     @Override
                                     public void onError(int code, String message) {
-                                        Log.d("main", "登录聊天服务器失败！");
+                                        Log.d("main", "登录聊天服务器失败！" + message);
                                     }
                                 });
                             }
@@ -376,7 +376,7 @@ public class LoginActivity extends Activity {
 
                     @Override
                     public void onError(int code, String message) {
-                        Log.d("main", "登录聊天服务器失败！");
+                        Log.d("main", "登录聊天服务器失败！" + message);
                     }
                 });
             }
