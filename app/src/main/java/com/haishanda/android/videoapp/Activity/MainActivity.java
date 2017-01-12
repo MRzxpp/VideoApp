@@ -1,5 +1,10 @@
 package com.haishanda.android.videoapp.Activity;
 
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,13 +17,21 @@ import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.haishanda.android.videoapp.Bean.AlarmNum;
+import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Fragement.BoatFragment;
 import com.haishanda.android.videoapp.Fragement.MonitorFragment;
 import com.haishanda.android.videoapp.Fragement.MyFragment;
 import com.haishanda.android.videoapp.Fragement.PhotosIndexFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
+import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
+import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
+import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
+import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
+import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
+import com.hyphenate.chat.EMClient;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -58,6 +71,15 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     public static MainActivity instance;
 
     private Handler handler;
+    private EMErrorReceiver receiver;
+    private boolean isRegistered;
+
+    public static final String ACTION_RECEIVE_MSG = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_MESSAGE";
+    public static final String EMERROR_CONFLICT = "账户在其他地方登录";
+    public static final String EMERROR_DISCONNECT = "连接环信服务器失败";
+    public static final String EMERROR_CLIENT_REMOVED = "账户已被移除，请联系经销商";
+    public static final String EMERROR_CHAT_FAILED = "登录聊天服务器失败";
+    MaterialDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +88,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         handler = new Handler();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        dialog = new MaterialDialog(this);
         fragments = getFragments();
         setDefaultFragment();
         navigationBar.setMode(BottomNavigationBar.MODE_FIXED);
@@ -105,6 +128,25 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //注册广播接收器
+        IntentFilter filter = new IntentFilter(ACTION_RECEIVE_MSG);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new EMErrorReceiver();
+        registerReceiver(receiver, filter);
+        isRegistered = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isRegistered) {
+            unregisterReceiver(receiver);
+        }
+    }
+
     public void refresh() {
         new Thread() {
             public void run() {
@@ -141,7 +183,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
                         .setFirstSelectedPosition(0)
                         .initialise();
                 navigationBar.setTabSelectedListener(MainActivity.instance);
-                return;
             } else {
                 navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
                         .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
@@ -209,5 +250,66 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     @Override
     public void onTabReselected(int position) {
 
+    }
+
+    //接收广播类
+    public class EMErrorReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String loginMessage = intent.getStringExtra("loginMessage");
+            if (loginMessage.equals(EMERROR_CONFLICT) || loginMessage.equals(EMERROR_CLIENT_REMOVED)) {
+                logoutAndDeleteLoginMessage();
+                dialog.setMessage(loginMessage);
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+                // 结束该Activity
+                finish();
+                //注销广播接收器
+                context.unregisterReceiver(this);
+                isRegistered = false;
+            } else {
+                MaterialDialog dialog = new MaterialDialog(getApplicationContext());
+                dialog.setMessage(loginMessage);
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+            }
+        }
+    }
+
+    private void logoutAndDeleteLoginMessage() {
+        //监控数目重置
+        AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
+        alarmVoBeanDao.deleteAll();
+        LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
+        lastIdDao.deleteAll();
+        //清除监控配置信息
+        MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
+        monitorConfigBeanDao.deleteAll();
+        //报警数目归零
+        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
+        alarmNumDao.deleteAll();
+        //清除登录信息
+        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
+        loginMessageDao.deleteAll();
+        //重置VideoApplication
+        VideoApplication.getApplication().setCurrentBoatName(null);
+        VideoApplication.getApplication().setCurrentMachineId(-1);
+        //重置是否第一次登录
+        FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+        FirstLogin firstLogin = new FirstLogin(1);
+        firstLoginDao.deleteAll();
+        firstLoginDao.insertOrReplace(firstLogin);
+        Thread emThread = new Thread(new EMThread());
+        emThread.start();
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+    }
+
+    class EMThread implements Runnable {
+        @Override
+        public void run() {
+            EMClient.getInstance().logout(true);
+        }
     }
 }

@@ -11,6 +11,7 @@ import android.view.View;
 import com.haishanda.android.videoapp.Bean.FirstLogin;
 import com.haishanda.android.videoapp.Fragement.ResetPasswordLoginedFragment;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
@@ -123,6 +124,7 @@ public class CommonSettingsActivity extends FragmentActivity {
                 //重置VideoApplication
                 VideoApplication.getApplication().setCurrentBoatName(null);
                 VideoApplication.getApplication().setCurrentMachineId(-1);
+                VideoApplication.getApplication().setSelectedId(0);
                 //退出环信
                 Thread emThread = new Thread(new EMThread());
                 emThread.start();
@@ -132,6 +134,8 @@ public class CommonSettingsActivity extends FragmentActivity {
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 getCommonSettingsActivity().finish();
                 MainActivity.instance.finish();
+                Intent serviceIntent = new Intent(getCommonSettingsActivity(), LoginService.class);
+                stopService(serviceIntent);
             }
         });
         dialog.setNegativeButton("取消", new View.OnClickListener() {

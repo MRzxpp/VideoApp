@@ -156,7 +156,11 @@ public class PlayLiveActivity extends Activity {
         getUrlThread.start();
         loadingPic.setVisibility(View.VISIBLE);
         try {
+            MaterialDialog dialog = new MaterialDialog(this);
+            dialog.setMessage("加载监控视频中…");
+            dialog.show();
             Thread.sleep(3000);
+            dialog.dismiss();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -166,7 +170,7 @@ public class PlayLiveActivity extends Activity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 //        path = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8";
     }
 

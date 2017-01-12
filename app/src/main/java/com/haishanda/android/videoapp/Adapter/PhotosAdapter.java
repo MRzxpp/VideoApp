@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.R;
 
+import java.util.List;
+
 /**
  * Created by Zhongsz on 2016/10/29.
  */

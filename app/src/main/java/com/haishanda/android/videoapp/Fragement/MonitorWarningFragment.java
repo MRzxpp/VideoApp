@@ -1,9 +1,7 @@
 package com.haishanda.android.videoapp.Fragement;
 
-import android.content.Context;
-import android.media.AudioManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,22 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.MonitorWarningBean;
+import com.haishanda.android.videoapp.Config.Config;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ExpandableLayout;
-import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.PickerView;
-import com.haishanda.android.videoapp.greendao.gen.MonitorWarningBeanDao;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +35,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static android.content.Context.VIBRATOR_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * 手机提醒功能的设置
@@ -58,28 +53,18 @@ public class MonitorWarningFragment extends Fragment {
     SwitchButton isVoiceOpen;
     @BindView(R.id.is_sending_email)
     SwitchButton isSendEmail;
+    @BindView(R.id.time_gap)
+    TextView timeGap;
 
-    MonitorWarningBean monitorWarningBean;
-    MonitorWarningBeanDao monitorWarningBeanDao;
+    SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_monitor_warning, container, false);
         ButterKnife.bind(this, view);
-        monitorWarningBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorWarningBeanDao();
-        QueryBuilder<MonitorWarningBean> queryBuilder = monitorWarningBeanDao.queryBuilder();
-        try {
-            monitorWarningBean = queryBuilder.unique();
-            if (monitorWarningBean == null) {
-                monitorWarningBean = new MonitorWarningBean(1, false, false, false, false);
-                monitorWarningBeanDao.insertOrReplace(monitorWarningBean);
-            }
-        } catch (DaoException e) {
-            e.printStackTrace();
-            monitorWarningBean = new MonitorWarningBean(1, false, false, false, false);
-            monitorWarningBeanDao.insertOrReplace(monitorWarningBean);
-        }
+        sharedPreferences = getActivity().getSharedPreferences(Config.WARNING_CONFIG, MODE_PRIVATE);
+        timeGap.setText(String.valueOf(sharedPreferences.getInt(Config.WARNING_CONFIG_TIME_SPAN, 15)) + "分钟");
         setIsNotificationOpenListener();
         setIsEmailSendListener();
         setIsShakeOpenListener();
@@ -96,26 +81,27 @@ public class MonitorWarningFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        monitorWarningBeanDao.update(monitorWarningBean);
     }
 
     private void initSwitchButtons() {
-        if (monitorWarningBean.getIsShakeOpen()) {
+        if (sharedPreferences.getBoolean(Config.WARNING_CONFIG_VIBRATE, true)) {
             isShakeOpen.setChecked(true);
         } else {
             isShakeOpen.setChecked(false);
         }
-        if (monitorWarningBean.getIsVoiceOpen()) {
+        if (sharedPreferences.getBoolean(Config.WARNING_CONFIG_VOICE, true)) {
             isVoiceOpen.setChecked(true);
         } else {
             isVoiceOpen.setChecked(false);
         }
-        if (monitorWarningBean.getIsNotificationOpen()) {
+        if (sharedPreferences.getBoolean(Config.WARNING_CONFIG_TIMER, true)) {
             isNotificationOpen.setChecked(true);
+            notificationOpenLayout.show();
         } else {
             isNotificationOpen.setChecked(false);
+            notificationOpenLayout.hide();
         }
-        if (monitorWarningBean.getIsSendingEmail()) {
+        if (sharedPreferences.getBoolean(Config.WARNING_CONFIG_SMS, true)) {
             isSendEmail.setChecked(true);
         } else {
             isSendEmail.setChecked(false);
@@ -123,72 +109,50 @@ public class MonitorWarningFragment extends Fragment {
     }
 
     private void setIsShakeOpenListener() {
-        if (monitorWarningBean.getIsVoiceOpen()) {
-            isShakeOpen.setChecked(true);
-        } else {
-            isShakeOpen.setChecked(false);
-        }
         isShakeOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Vibrator vibrator = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
-                long[] pattern = {1000, 2000, 1000, 3000};
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (isChecked) {
-                    vibrator.vibrate(pattern, -1);
-                    vibrator.cancel();
-                    monitorWarningBean.setIsShakeOpen(true);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    editor.putBoolean(Config.WARNING_CONFIG_VIBRATE, true);
+                    editor.apply();
                 } else {
-                    vibrator.cancel();
-                    monitorWarningBean.setIsShakeOpen(false);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    editor.putBoolean(Config.WARNING_CONFIG_VIBRATE, false);
+                    editor.apply();
                 }
             }
         });
     }
 
     private void setIsVoiceOpenListener() {
-        if (monitorWarningBean.getIsVoiceOpen()) {
-            isVoiceOpen.setChecked(true);
-        } else {
-            isVoiceOpen.setChecked(false);
-        }
         isVoiceOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                AudioManager audio = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
-                int ringerVolume = 30;
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (isChecked) {
-                    audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                    audio.setStreamVolume(AudioManager.RINGER_MODE_NORMAL, ringerVolume, 0);
-                    monitorWarningBean.setIsVoiceOpen(true);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    editor.putBoolean(Config.WARNING_CONFIG_VOICE, true);
+                    editor.apply();
                 } else {
-                    audio.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                    monitorWarningBean.setIsVoiceOpen(false);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    editor.putBoolean(Config.WARNING_CONFIG_VOICE, false);
+                    editor.apply();
                 }
             }
         });
     }
 
     private void setIsNotificationOpenListener() {
-        if (monitorWarningBean.getIsSendingEmail()) {
-            isSendEmail.setChecked(true);
-        } else {
-            isSendEmail.setChecked(false);
-        }
         isNotificationOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (isChecked) {
                     notificationOpenLayout.show();
-                    monitorWarningBean.setIsNotificationOpen(true);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    editor.putBoolean(Config.WARNING_CONFIG_TIMER, true);
+                    editor.apply();
                 } else {
                     notificationOpenLayout.hide();
-                    monitorWarningBean.setIsNotificationOpen(false);
-//                    monitorWarningBeanDao.update(monitorWarningBean);
+                    editor.putBoolean(Config.WARNING_CONFIG_TIMER, false);
+                    editor.apply();
                 }
             }
         });
@@ -199,7 +163,6 @@ public class MonitorWarningFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    monitorWarningBean.setIsSendingEmail(true);
                     ApiManage.getInstence().getMonitorApiService().editMonitorSms(true)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -218,7 +181,10 @@ public class MonitorWarningFragment extends Fragment {
                                 @Override
                                 public void onNext(SmartResult smartResult) {
                                     if (smartResult.getCode() == 1) {
-                                        Log.d("是否接受短信", "success");
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putBoolean(Config.WARNING_CONFIG_SMS, true);
+                                        editor.apply();
+                                        Log.d("是否接受短信", "yes");
                                     } else {
                                         Log.d("是否接受短信", "failed");
                                         Toast.makeText(getContext(), "修改失败", Toast.LENGTH_LONG).show();
@@ -226,7 +192,6 @@ public class MonitorWarningFragment extends Fragment {
                                 }
                             });
                 } else {
-                    monitorWarningBean.setIsSendingEmail(false);
                     ApiManage.getInstence().getMonitorApiService().editMonitorSms(false)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -245,7 +210,10 @@ public class MonitorWarningFragment extends Fragment {
                                 @Override
                                 public void onNext(SmartResult smartResult) {
                                     if (smartResult.getCode() == 1) {
-                                        Log.d("是否接受短信", "success");
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putBoolean(Config.WARNING_CONFIG_SMS, false);
+                                        editor.apply();
+                                        Log.d("是否接受短信", "no");
                                     } else {
                                         Log.d("是否接受短信", "failed");
                                         Toast.makeText(getContext(), "修改失败", Toast.LENGTH_LONG).show();
@@ -286,9 +254,17 @@ public class MonitorWarningFragment extends Fragment {
             minutes.add(i < 10 ? "0" + i : "" + i);
         }
         voiceGapPicker.setData(minutes);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Config.WARNING_CONFIG, MODE_PRIVATE);
+        voiceGapPicker.setSelected(sharedPreferences.getInt(Config.WARNING_CONFIG_TIME_SPAN, 15));
         voiceGapPicker.setOnSelectListener(new PickerView.onSelectListener() {
             @Override
             public void onSelect(String text) {
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Config.WARNING_CONFIG, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(Config.WARNING_CONFIG_TIME_SPAN, Integer.valueOf(text));
+                editor.apply();
+                timeGap.setText(text + "分钟");
+                Log.d("监控报警时间间隔", text);
             }
         });
         dialogPlus.show();

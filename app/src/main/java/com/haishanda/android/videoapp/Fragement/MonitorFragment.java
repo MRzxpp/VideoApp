@@ -31,6 +31,7 @@ import com.haishanda.android.videoapp.Bean.AlarmVoBean;
 import com.haishanda.android.videoapp.Bean.LastId;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
@@ -42,16 +43,17 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 监控界面
  * Created by Zhongsz on 2016/10/14.
  */
 
@@ -65,8 +67,8 @@ public class MonitorFragment extends Fragment {
 
     private int last;
     private final String TAG = "获取报警信息";
-    public List<AlarmVoBean> list = new ArrayList<AlarmVoBean>();
-    private List<AlarmVoBean> chosenList = new ArrayList<AlarmVoBean>();
+    public List<AlarmVoBean> list = new ArrayList<>();
+    private List<AlarmVoBean> chosenList = new ArrayList<>();
     private AlarmVoBeanDao alarmVoBeanDao;
 
     @Override
@@ -80,6 +82,16 @@ public class MonitorFragment extends Fragment {
         QueryBuilder<AlarmVoBean> queryBuilder = alarmVoBeanDao.queryBuilder();
         list = queryBuilder.list();
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (LoginService.getWarningTimer() != null) {
+            LoginService.getWarningTimer().cancel();
+            Log.d(TAG, "提醒关闭");
+        }
+
     }
 
     private void initLastId() {
@@ -164,10 +176,6 @@ public class MonitorFragment extends Fragment {
     }
 
     private void resetMessagesUnreadNum() throws InterruptedException {
-//        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-//        alarmNumDao.deleteAll();
-//        AlarmNum alarmNum = new AlarmNum(0);
-//        alarmNumDao.insert(alarmNum);
         SqlThread sqlThread = new SqlThread();
         sqlThread.start();
         sqlThread.join();
@@ -258,24 +266,19 @@ public class MonitorFragment extends Fragment {
         @NonNull
         @Override
         public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
-            ViewHolder viewHolder = null;
-            if (viewHolder == null) {
-                viewHolder = new ViewHolder();
-                if (null == convertView) {
-                    convertView = inflater.inflate(R.layout.adapter_monitor, parent, false);
-                }
-                viewHolder.alarmText = (TextView) convertView.findViewById(R.id.warning_text);
-                viewHolder.warningImg1 = (ImageView) convertView.findViewById(R.id.warning_img1);
-                viewHolder.warningImg2 = (ImageView) convertView.findViewById(R.id.warning_img2);
-                viewHolder.warningImg3 = (ImageView) convertView.findViewById(R.id.warning_img3);
-                viewHolder.warningImg4 = (ImageView) convertView.findViewById(R.id.warning_img4);
-                viewHolder.alarmTime = (TextView) convertView.findViewById(R.id.warning_time);
-                viewHolder.relativeLayout = (RelativeLayout) convertView.findViewById(R.id.chosen_layout);
-                viewHolder.isMessageChoosen = (CheckBox) convertView.findViewById(R.id.is_message_choosen);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
+            ViewHolder viewHolder = new ViewHolder();
+            if (null == convertView) {
+                convertView = inflater.inflate(R.layout.adapter_monitor, parent, false);
             }
+            viewHolder.alarmText = (TextView) convertView.findViewById(R.id.warning_text);
+            viewHolder.warningImg1 = (ImageView) convertView.findViewById(R.id.warning_img1);
+            viewHolder.warningImg2 = (ImageView) convertView.findViewById(R.id.warning_img2);
+            viewHolder.warningImg3 = (ImageView) convertView.findViewById(R.id.warning_img3);
+            viewHolder.warningImg4 = (ImageView) convertView.findViewById(R.id.warning_img4);
+            viewHolder.alarmTime = (TextView) convertView.findViewById(R.id.warning_time);
+            viewHolder.relativeLayout = (RelativeLayout) convertView.findViewById(R.id.chosen_layout);
+            viewHolder.isMessageChoosen = (CheckBox) convertView.findViewById(R.id.is_message_choosen);
+            convertView.setTag(viewHolder);
 
             String urls = alarmVos.get(position).getUrls();
             final String[] urlArray = convertUrlsToFourUrl(urls);
@@ -377,7 +380,7 @@ public class MonitorFragment extends Fragment {
                                                         }
             );
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss", Locale.SIMPLIFIED_CHINESE);
             TextView alarmTime = viewHolder.alarmTime;
             alarmTime.setText(format.format(alarmVos.get(position).getAlarmTime()));
 
@@ -406,7 +409,7 @@ public class MonitorFragment extends Fragment {
         }
 
         void playMonitorPhoto(int position, String imagePath) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss", Locale.CHINA);
             Intent intent = new Intent(getActivity(), PlayMonitorPhotoActivity.class);
             Bundle extra = new Bundle();
             extra.putString("imagePath", imagePath);

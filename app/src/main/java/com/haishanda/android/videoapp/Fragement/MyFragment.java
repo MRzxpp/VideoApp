@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 我的主页
  * Created by Zhongsz on 2016/10/14.
  */
 
@@ -62,21 +63,21 @@ public class MyFragment extends Fragment {
     }
 
     @OnClick(R.id.message_center)
-    public void skipToMessageCenter(View view) {
+    public void skipToMessageCenter() {
         Intent intent = new Intent(getActivity(), MessageCenterActivity.class);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.common_settings)
-    public void skipToCommonSettings(View view) {
+    public void skipToCommonSettings() {
         Intent intent = new Intent(getActivity(), CommonSettingsActivity.class);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
 
     @OnClick(R.id.account_balance)
-    public void skipToAccountBalance(View view) {
+    public void skipToAccountBalance() {
         Intent intent = new Intent(getActivity(), AccountBalanceActivity.class);
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
@@ -96,7 +97,7 @@ public class MyFragment extends Fragment {
     private void initViews() {
         LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
         QueryBuilder<LoginMessage> loginMessageQueryBuilder = loginMessageDao.queryBuilder();
-         long id = loginMessageQueryBuilder.unique().getId();
+        long id = loginMessageQueryBuilder.unique().getId();
         UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
         QueryBuilder<UserMessageBean> queryBuilder = userMessageBeanDao.queryBuilder();
         UserMessageBean userMessageBean = queryBuilder.where(UserMessageBeanDao.Properties.Id.eq(id)).unique();

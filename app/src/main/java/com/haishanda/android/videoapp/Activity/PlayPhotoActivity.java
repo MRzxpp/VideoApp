@@ -8,8 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.FileSizeUtil;
@@ -29,6 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 播放监控的截图
  * Created by Zhongsz on 2016/11/2.
  */
 
@@ -40,6 +46,9 @@ public class PlayPhotoActivity extends Activity {
     private String imagePath;
     private List<ImageMessage> imageMessage;
     private String boatName;
+    private String shortPath;
+
+    private final static String TAG = "PlayPhotoActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +58,33 @@ public class PlayPhotoActivity extends Activity {
         extra = getIntent().getExtras();
         imagePath = extra.getString("imagePath");
         boatName = extra.getString("boatName");
+        RequestListener<String, GlideDrawable> photoListener = new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                Log.d(TAG, "Glide load error:" + e.toString());
+                deleteAction();
+                Toast.makeText(getApplicationContext(), "图片已在本地被删除", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                return false;
+            }
+        };
         Glide
                 .with(this)
                 .load(imagePath)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .listener(photoListener)
                 .into(photoMain);
 
     }
 
+
     @OnClick(R.id.back_to_photos_btn)
-    public void backToPhotos(View view) {
+    public void backToPhotos() {
         this.finish();
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
@@ -94,13 +121,13 @@ public class PlayPhotoActivity extends Activity {
     }
 
     @OnClick(R.id.delete_photo)
-    public void deletePhoto(final View view) {
+    public void deletePhoto() {
         final MaterialDialog materialDialog = new MaterialDialog(this);
         materialDialog.setMessage("是否确认删除?");
         materialDialog.setPositiveButton("确认", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteAction(view);
+                deleteAction();
                 materialDialog.dismiss();
             }
         });
@@ -113,18 +140,25 @@ public class PlayPhotoActivity extends Activity {
         materialDialog.show();
     }
 
-    private void deleteAction(View view) {
+    private void deleteAction() {
         String imagePath = extra.getString("imagePath");
         String boatName = extra.getString("boatName");
-        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
-        File file = new File(imagePath);
-        file.delete();
-        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
-        QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
-        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
-        ImageMessage im = imageMessage.get(0);
-        imageMessageDao.delete(im);
-        Log.d("PhotoAction", "删除成功");
-        backToPhotos(view);
+        String imageName;
+        if (boatName != null && imagePath != null) {
+            imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
+            File file = new File(imagePath);
+            if (file.exists()) {
+                file.delete();
+            }
+            ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
+            QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
+            imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
+            ImageMessage im = imageMessage.get(0);
+            imageMessageDao.delete(im);
+            Log.d("PhotoAction", "删除成功");
+        } else {
+            Log.d("PhotoAction", "删除失败");
+        }
+        backToPhotos();
     }
 }

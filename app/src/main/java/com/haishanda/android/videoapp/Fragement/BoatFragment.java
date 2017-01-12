@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindColor;
@@ -70,7 +71,8 @@ public class BoatFragment extends Fragment {
     @BindViews({R.id.boat_background, R.id.boat_not_add_text, R.id.add_boat_btn_big})
     View[] views;
 
-    private final String Tag = "船舶首页";
+    private static final String Tag = "船舶首页";
+    private final String ADD_BOAT = "添加船舶";
     private int machineId;
     private String globalId;
     private Map<String, Integer> boatInfos;
@@ -123,12 +125,12 @@ public class BoatFragment extends Fragment {
                 ) {
             list.add(entry.getKey());
         }
-        list.add(list.size(), "添加船舶");
+        list.add(list.size(), ADD_BOAT);
         if (VideoApplication.getApplication().getCurrentBoatName() == null) {
             VideoApplication.getApplication().setCurrentBoatName(list.get(0));
         }
         if (VideoApplication.getApplication().getCurrentMachineId() == 0) {
-            if (!list.get(0).equals("添加船舶")) {
+            if (!list.get(0).equals(ADD_BOAT)) {
                 VideoApplication.getApplication().setCurrentMachineId(boatInfos.get(list.get(0)));
             } else {
                 VideoApplication.getApplication().setCurrentMachineId(-1);
@@ -152,7 +154,7 @@ public class BoatFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 1) {
-                    if (!parent.getItemAtPosition(position - 1).toString().equals("添加船舶")) {
+                    if (!parent.getItemAtPosition(position - 1).toString().equals(ADD_BOAT)) {
                         machineId = boatInfos.get(parent.getItemAtPosition(position - 1).toString());
                         globalId = boatGlobalIds.get(parent.getItemAtPosition(position - 1).toString());
                         VideoApplication.getApplication().setCurrentBoatName(boatLists.get(position));
@@ -164,7 +166,7 @@ public class BoatFragment extends Fragment {
                         startActivity(intent);
                     }
                 } else {
-                    if (!parent.getItemAtPosition(position).toString().equals("添加船舶")) {
+                    if (!parent.getItemAtPosition(position).toString().equals(ADD_BOAT)) {
                         machineId = boatInfos.get(parent.getItemAtPosition(position).toString());
                         globalId = boatGlobalIds.get(parent.getItemAtPosition(position).toString());
                         VideoApplication.getApplication().setCurrentBoatName(boatLists.get(position));
@@ -187,7 +189,7 @@ public class BoatFragment extends Fragment {
             String localBoatName = VideoApplication.getApplication().getCurrentBoatName();
             String remoteBoatName = supportMap.get(VideoApplication.getApplication().getCurrentMachineId());
             if (!localBoatName.equals(remoteBoatName) && remoteBoatName != null) {
-                if (!localBoatName.equals("添加船舶")) {
+                if (!localBoatName.equals(ADD_BOAT)) {
                     Toast.makeText(getContext(), "服务器数据发生变化，数据更新中", Toast.LENGTH_LONG).show();
                     DaoUtil.renameBoat(remoteBoatName, localBoatName, VideoApplication.getApplication().getCurrentMachineId());
                     VideoApplication.getApplication().setCurrentBoatName(remoteBoatName);
@@ -198,8 +200,6 @@ public class BoatFragment extends Fragment {
             machineId = boatInfos.get(mySpinner.getText().toString());
             globalId = boatGlobalIds.get(mySpinner.getText().toString());
         } catch (NullPointerException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getContext(), "未获取到船舶列表，请检查", Toast.LENGTH_LONG).show();
             Log.d(Tag, e.toString());
         }
     }
@@ -213,12 +213,14 @@ public class BoatFragment extends Fragment {
 
     @OnClick(R.id.boat_config_btn)
     public void skipToBoatConfigActivity() {
-        Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
-        intent.putExtra("machineId", machineId);
-        intent.putExtra("boatName", VideoApplication.getApplication().getCurrentBoatName());
-        intent.putExtra("globalId", globalId);
-        startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+        if (boatLists.size() > 1) {
+            Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
+            intent.putExtra("machineId", machineId);
+            intent.putExtra("boatName", VideoApplication.getApplication().getCurrentBoatName());
+            intent.putExtra("globalId", globalId);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+        }
     }
 
     private Map<String, Integer> getBoatInfos() {
@@ -302,7 +304,7 @@ public class BoatFragment extends Fragment {
         }
 
         BoatMessage boatMessage;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss", Locale.CHINA);
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
         String str = formatter.format(curDate);
         QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();

@@ -33,12 +33,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 修改船舶时间
  * Created by Zhongsz on 2016/11/1.
  */
 
 public class MonitorTimeFragment extends Fragment {
-    //    @BindView(R.id.next_day)
-//    TextView nextDay;
     @BindView(R.id.starttime_hour)
     PickerView startTimeHour;
     @BindView(R.id.starttime_minute)
@@ -85,8 +84,8 @@ public class MonitorTimeFragment extends Fragment {
     public void initTimePicker() {
         TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
         QueryBuilder<TimeBean> queryBuilder = timeBeanDao.queryBuilder();
-        List<String> hour = new ArrayList<String>();
-        List<String> minutes = new ArrayList<String>();
+        List<String> hour = new ArrayList<>();
+        List<String> minutes = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             hour.add(i < 10 ? "0" + i : "" + i);
         }
