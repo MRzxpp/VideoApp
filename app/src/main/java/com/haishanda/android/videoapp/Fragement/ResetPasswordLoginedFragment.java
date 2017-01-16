@@ -139,6 +139,7 @@ public class ResetPasswordLoginedFragment extends Fragment {
                             fragmentTransaction.replace(R.id.reset_password_with_token_layout, resetPasswordLoginedFragment2);
                             fragmentTransaction.commit();
                         } else {
+                            Log.d(TAG, String.valueOf(smartResult.getCode()));
                             Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "验证码输入错误", Toast.LENGTH_LONG).show();
                         }
                     }

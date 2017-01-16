@@ -13,10 +13,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.LoginActivity;
+import com.haishanda.android.videoapp.Activity.MainActivity;
+import com.haishanda.android.videoapp.Activity.WelcomeActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Service.LoginService;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,12 +92,11 @@ public class ResetPasswordLoginedFragment2 extends Fragment {
                         @Override
                         public void onNext(SmartResult smartResult) {
                             if (smartResult.getCode() == 1) {
-                                Toast.makeText(getContext(), "修改成功，请重新登录！", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                                startActivity(intent);
-                                getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-
+                                Toast.makeText(getContext(), "修改成功！", Toast.LENGTH_LONG).show();
+                                getActivity().finish();
                             } else {
+                                Log.d(TAG, String.valueOf(smartResult.getCode()));
+                                Log.d(TAG, smartResult.getMsg());
                                 Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "修改未成功！", Toast.LENGTH_LONG).show();
                             }
                         }

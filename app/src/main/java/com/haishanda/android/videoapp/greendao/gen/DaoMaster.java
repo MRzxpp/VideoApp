@@ -29,7 +29,6 @@ public class DaoMaster extends AbstractDaoMaster {
         LastIdDao.createTable(db, ifNotExists);
         LoginMessageDao.createTable(db, ifNotExists);
         MonitorConfigBeanDao.createTable(db, ifNotExists);
-        MonitorWarningBeanDao.createTable(db, ifNotExists);
         TimeBeanDao.createTable(db, ifNotExists);
         UserMessageBeanDao.createTable(db, ifNotExists);
         VideoMessageDao.createTable(db, ifNotExists);
@@ -45,7 +44,6 @@ public class DaoMaster extends AbstractDaoMaster {
         LastIdDao.dropTable(db, ifExists);
         LoginMessageDao.dropTable(db, ifExists);
         MonitorConfigBeanDao.dropTable(db, ifExists);
-        MonitorWarningBeanDao.dropTable(db, ifExists);
         TimeBeanDao.dropTable(db, ifExists);
         UserMessageBeanDao.dropTable(db, ifExists);
         VideoMessageDao.dropTable(db, ifExists);
@@ -75,7 +73,6 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(LastIdDao.class);
         registerDaoClass(LoginMessageDao.class);
         registerDaoClass(MonitorConfigBeanDao.class);
-        registerDaoClass(MonitorWarningBeanDao.class);
         registerDaoClass(TimeBeanDao.class);
         registerDaoClass(UserMessageBeanDao.class);
         registerDaoClass(VideoMessageDao.class);

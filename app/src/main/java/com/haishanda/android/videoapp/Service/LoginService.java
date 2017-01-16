@@ -106,22 +106,23 @@ public class LoginService extends Service {
                     NotificationUtil notificationUtil = new NotificationUtil(LoginService.this);
                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     notificationManager.notify(i, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
-                    //唤醒振动
-                    Intent broadcastIntent = new Intent();
-                    broadcastIntent.setAction(ACTION_RECEIVE_TIMER);
-                    broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                    broadcastIntent.putExtra("message", messages.get(0).getBody().toString());
-                    sendBroadcast(broadcastIntent);
                     try {
                         if (messages.get(0).getStringAttribute("type").equals("alarm")) {
+                            //如果收到的消息是船舶报警则唤醒振动
+                            Intent broadcastIntent = new Intent();
+                            broadcastIntent.setAction(ACTION_RECEIVE_TIMER);
+                            broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                            broadcastIntent.putExtra("message", messages.get(0).getBody().toString());
+                            sendBroadcast(broadcastIntent);
+                            //报警数目增加
                             AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
                             QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
                             AlarmNum alarmNum = queryBuilder.unique();
                             AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
                             alarmNumDao.deleteAll();
                             alarmNumDao.insert(newAlarnNum);
-                            MainActivity mainActivity = MainActivity.instance;
-                            mainActivity.refresh();
+                            //小红点更新
+                            MainActivity.instance.refresh();
                         }
                     } catch (HyphenateException e) {
                         e.printStackTrace();
@@ -158,13 +159,12 @@ public class LoginService extends Service {
         Log.d(TAG, "onStartCommand() executed");
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        Notification noti = new Notification.Builder(this)
+        final Notification noti = new Notification.Builder(this)
                 .setContentTitle("渔船监控")
                 .setContentText("正在保护您的渔船")
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .build();
-        startForeground(12346, noti);
         final String username = intent.getStringExtra("username");
         final String password = intent.getStringExtra("password");
         final Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().loginActionCopy(username, password);
@@ -174,6 +174,7 @@ public class LoginService extends Service {
                 try {
                     Response<SmartResult<UserBean>> response = call.execute();
                     if (response.body().getCode() == 1) {
+                        startForeground(12346, noti);
                         FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
                         FirstLogin firstLogin = new FirstLogin(0);
                         firstLoginDao.deleteAll();
@@ -303,7 +304,7 @@ public class LoginService extends Service {
                                         mp.seekTo(0);
                                     }
                                 });
-                                mediaPlayer.setVolume(0.10f, 0.10f);
+                                mediaPlayer.setVolume(0.30f, 0.30f);
                                 mediaPlayer.start();
                             }
                         }

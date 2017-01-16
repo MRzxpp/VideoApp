@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.List;
 
 /**
+ * 数据库操作工具类
  * Created by Zhongsz on 2016/12/30.
  */
 
@@ -51,5 +52,28 @@ public class DaoUtil {
         File newDir = new File(Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatNewName);
         originalDir.renameTo(newDir);
         VideoApplication.getApplication().setCurrentBoatName(boatNewName);
+    }
+
+    public static void deleteBoatFile(String boatName) {
+        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
+        BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
+        VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
+        QueryBuilder<BoatMessage> boatMessageQueryBuilder = boatMessageDao.queryBuilder();
+        QueryBuilder<ImageMessage> imageMessageQueryBuilder = imageMessageDao.queryBuilder();
+        QueryBuilder<VideoMessage> videoMessageQueryBuilder = videoMessageDao.queryBuilder();
+        List<BoatMessage> boatMessageList = boatMessageQueryBuilder.where(BoatMessageDao.Properties.Name.eq(boatName)).list();
+        List<ImageMessage> imageMessageList = imageMessageQueryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
+        List<VideoMessage> videoMessageList = videoMessageQueryBuilder.where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
+        for (BoatMessage b : boatMessageList
+                ) {
+            boatMessageDao.delete(b);
+        }
+        for (ImageMessage i : imageMessageList
+                ) {
+            imageMessageDao.delete(i);
+        }
+        for (VideoMessage v : videoMessageList) {
+            videoMessageDao.delete(v);
+        }
     }
 }

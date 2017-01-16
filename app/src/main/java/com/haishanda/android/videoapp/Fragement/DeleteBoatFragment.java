@@ -1,8 +1,8 @@
 package com.haishanda.android.videoapp.Fragement;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,8 +15,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
@@ -24,6 +24,7 @@ import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
+import com.haishanda.android.videoapp.Utils.DaoUtil;
 import com.haishanda.android.videoapp.Utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
@@ -42,6 +43,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 删除船只
  * Created by Zhongsz on 2016/10/26.
  */
 
@@ -104,12 +106,12 @@ public class DeleteBoatFragment extends Fragment {
     }
 
     @OnClick(R.id.eye4)
-    public void setBoatPasswordVisiable(View view) {
+    public void setBoatPasswordVisiable() {
         ChangeVisiable.changeVisiable(eye4, boatPassword);
     }
 
     @OnClick(R.id.clear4)
-    public void clearBoatPassword(View view) {
+    public void clearBoatPassword() {
         boatPassword.setText("");
     }
 
@@ -132,13 +134,17 @@ public class DeleteBoatFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
+                            //重置VideoApplication
+                            VideoApplication.getApplication().setCurrentBoatName(null);
+                            VideoApplication.getApplication().setCurrentMachineId(-1);
+                            VideoApplication.getApplication().setSelectedId(0);
                             Log.i(Tag, "delete successfully");
                             if (checkBox.isChecked()) {
                                 deletePhotosAndVideos(boatName);
                             }
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
+                            getActivity().finish();
                         } else {
+                            Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "删除船只失败", Toast.LENGTH_LONG).show();
                             Log.i(Tag, "delete failed!");
                         }
                     }
@@ -146,9 +152,8 @@ public class DeleteBoatFragment extends Fragment {
     }
 
     private void deletePhotosAndVideos(String boatName) {
-        File boatFile = new File("/sdcard/VideoApp/" + boatName);
+        File boatFile = new File(Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName);
         FileUtil.delete(boatFile);
+        DaoUtil.deleteBoatFile(boatName);
     }
-
-
 }

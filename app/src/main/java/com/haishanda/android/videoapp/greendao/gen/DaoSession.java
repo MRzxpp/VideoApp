@@ -16,7 +16,6 @@ import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.Bean.LastId;
 import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.MonitorConfigBean;
-import com.haishanda.android.videoapp.Bean.MonitorWarningBean;
 import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
 import com.haishanda.android.videoapp.Bean.VideoMessage;
@@ -29,7 +28,6 @@ import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
-import com.haishanda.android.videoapp.greendao.gen.MonitorWarningBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
@@ -51,7 +49,6 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig lastIdDaoConfig;
     private final DaoConfig loginMessageDaoConfig;
     private final DaoConfig monitorConfigBeanDaoConfig;
-    private final DaoConfig monitorWarningBeanDaoConfig;
     private final DaoConfig timeBeanDaoConfig;
     private final DaoConfig userMessageBeanDaoConfig;
     private final DaoConfig videoMessageDaoConfig;
@@ -64,7 +61,6 @@ public class DaoSession extends AbstractDaoSession {
     private final LastIdDao lastIdDao;
     private final LoginMessageDao loginMessageDao;
     private final MonitorConfigBeanDao monitorConfigBeanDao;
-    private final MonitorWarningBeanDao monitorWarningBeanDao;
     private final TimeBeanDao timeBeanDao;
     private final UserMessageBeanDao userMessageBeanDao;
     private final VideoMessageDao videoMessageDao;
@@ -97,9 +93,6 @@ public class DaoSession extends AbstractDaoSession {
         monitorConfigBeanDaoConfig = daoConfigMap.get(MonitorConfigBeanDao.class).clone();
         monitorConfigBeanDaoConfig.initIdentityScope(type);
 
-        monitorWarningBeanDaoConfig = daoConfigMap.get(MonitorWarningBeanDao.class).clone();
-        monitorWarningBeanDaoConfig.initIdentityScope(type);
-
         timeBeanDaoConfig = daoConfigMap.get(TimeBeanDao.class).clone();
         timeBeanDaoConfig.initIdentityScope(type);
 
@@ -117,7 +110,6 @@ public class DaoSession extends AbstractDaoSession {
         lastIdDao = new LastIdDao(lastIdDaoConfig, this);
         loginMessageDao = new LoginMessageDao(loginMessageDaoConfig, this);
         monitorConfigBeanDao = new MonitorConfigBeanDao(monitorConfigBeanDaoConfig, this);
-        monitorWarningBeanDao = new MonitorWarningBeanDao(monitorWarningBeanDaoConfig, this);
         timeBeanDao = new TimeBeanDao(timeBeanDaoConfig, this);
         userMessageBeanDao = new UserMessageBeanDao(userMessageBeanDaoConfig, this);
         videoMessageDao = new VideoMessageDao(videoMessageDaoConfig, this);
@@ -130,7 +122,6 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(LastId.class, lastIdDao);
         registerDao(LoginMessage.class, loginMessageDao);
         registerDao(MonitorConfigBean.class, monitorConfigBeanDao);
-        registerDao(MonitorWarningBean.class, monitorWarningBeanDao);
         registerDao(TimeBean.class, timeBeanDao);
         registerDao(UserMessageBean.class, userMessageBeanDao);
         registerDao(VideoMessage.class, videoMessageDao);
@@ -145,7 +136,6 @@ public class DaoSession extends AbstractDaoSession {
         lastIdDaoConfig.clearIdentityScope();
         loginMessageDaoConfig.clearIdentityScope();
         monitorConfigBeanDaoConfig.clearIdentityScope();
-        monitorWarningBeanDaoConfig.clearIdentityScope();
         timeBeanDaoConfig.clearIdentityScope();
         userMessageBeanDaoConfig.clearIdentityScope();
         videoMessageDaoConfig.clearIdentityScope();
@@ -181,10 +171,6 @@ public class DaoSession extends AbstractDaoSession {
 
     public MonitorConfigBeanDao getMonitorConfigBeanDao() {
         return monitorConfigBeanDao;
-    }
-
-    public MonitorWarningBeanDao getMonitorWarningBeanDao() {
-        return monitorWarningBeanDao;
     }
 
     public TimeBeanDao getTimeBeanDao() {
