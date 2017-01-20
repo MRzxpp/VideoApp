@@ -1,26 +1,37 @@
 package com.haishanda.android.videoapp.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Bean.FirstLogin;
+import com.haishanda.android.videoapp.Api.ApiManage;
+import com.haishanda.android.videoapp.Bean.UserBean;
+import com.haishanda.android.videoapp.Config.Constant;
+import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
+import com.haishanda.android.videoapp.Service.LoginService;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * 首页 主要功能为完成一些基本模块的注册
@@ -32,7 +43,14 @@ public class WelcomeActivity extends Activity {
     @BindView(R.id.frameLayout)
     RelativeLayout loginAndRegisterBtns;
 
+    @SuppressLint("StaticFieldLeak")
     public static WelcomeActivity instance;
+
+    SharedPreferences preferences;
+    private static final String TAG = "WelcomeActivity";
+
+    TokenReceiver receiver;
+    boolean isRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +58,7 @@ public class WelcomeActivity extends Activity {
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
         instance = this;
+        preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
         //初始化环信
         EMOptions options = new EMOptions();
         options.setAcceptInvitationAlways(false);
@@ -51,34 +70,50 @@ public class WelcomeActivity extends Activity {
         EMClient.getInstance().init(this, options);
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
-        FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
-        QueryBuilder<FirstLogin> queryBuilder = firstLoginDao.queryBuilder();
-        try {
-            FirstLogin firstLogin = queryBuilder.unique();
-            if (firstLogin != null) {
-                if (firstLogin.getIsFirst() != 1) {
-                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    this.finish();
-                }
-            }
-        } catch (DaoException e) {
-            FirstLogin firstLogin = new FirstLogin(1);
-            firstLoginDao.insertOrReplace(firstLogin);
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.gradually_appear);
-        loginAndRegisterBtns.startAnimation(animation);
+        IntentFilter filter = new IntentFilter(Constant.ACTION_RECEIVE_MSG);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new TokenReceiver();
+        registerReceiver(receiver, filter);
+        isRegistered = true;
+        Log.d(TAG, "tokenreceiver registered");
+        Thread validateThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (validateToken()) {
+                    Intent intent = new Intent(WelcomeActivity.instance, LoginService.class);
+                    intent.putExtra("validateTokenState", true);
+                    startService(intent);
+                } else {
+                    Animation animation = AnimationUtils.loadAnimation(instance, R.anim.gradually_appear);
+                    loginAndRegisterBtns.startAnimation(animation);
+                }
+            }
+        });
+        validateThread.start();
+        try {
+            validateThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isRegistered) {
+            unregisterReceiver(receiver);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        EMClient.getInstance().logout(true);
+        Log.d(TAG, "WelcomeActivity onDestroy!");
     }
 
     @OnClick({R.id.welcome_to_login, R.id.welcome_to_signup})
@@ -99,6 +134,44 @@ public class WelcomeActivity extends Activity {
             }
             default:
                 break;
+        }
+    }
+
+    private boolean validateToken() {
+        Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().validateToken(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""));
+        try {
+            Response<SmartResult<UserBean>> response = call.execute();
+            if (response.body().getCode() == 1) {
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public class TokenReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean loginStatus = intent.getBooleanExtra("loginStatus", false);
+            String loginMessage = intent.getStringExtra("loginMessage");
+            boolean loginFromToken = intent.getBooleanExtra("loginFromToken", false);
+            // 如果登录成功
+            if (loginStatus && loginFromToken) {
+                Intent nextIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                startActivity(nextIntent);
+                overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                // 结束该Activity
+                WelcomeActivity.instance.finish();
+                //注销广播接收器
+                context.unregisterReceiver(receiver);
+                isRegistered = false;
+                Log.d(TAG, "tokenreceiver unregistered");
+            }
+            if (!loginStatus && loginFromToken) {
+                Toast.makeText(context, loginMessage, Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

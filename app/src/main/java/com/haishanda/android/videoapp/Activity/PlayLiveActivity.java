@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,11 +12,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.support.annotation.RequiresApi;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -41,9 +38,9 @@ import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -83,9 +80,12 @@ public class PlayLiveActivity extends Activity {
     ImageView recordBtn;
     @BindView(R.id.loading)
     ImageView loadingPic;
+    @BindView(R.id.printscreen_btn)
+    ImageView printScreenBtn;
+    @BindView(R.id.back_to_boat_btn)
+    ImageView backBtn;
 
     private static final String TAG = "PlayLiveActivity";
-    private CustomMediaController mCustomMediaController;
     private int liveId = -1;
     private String boatName;
     private long cameraId;
@@ -98,6 +98,8 @@ public class PlayLiveActivity extends Activity {
     private long startTime;
     private long endTime;
     private boolean needResume;
+    private long statLiveTime;
+    private long endLiveTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,7 +173,6 @@ public class PlayLiveActivity extends Activity {
             e.printStackTrace();
         }
         path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-//        path = "http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8";
     }
 
     class NetThread implements Runnable {
@@ -220,7 +221,7 @@ public class PlayLiveActivity extends Activity {
             if (path != null) {
                 videoView.setVideoPath(path);//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    mCustomMediaController = new CustomMediaController(this, videoView, this);
+                    CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
                     mCustomMediaController.show(5000);
                     videoView.setMediaController(mCustomMediaController);//绑定控制器
                 } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -247,6 +248,10 @@ public class PlayLiveActivity extends Activity {
                                     videoView.pause();
                                     needResume = true;
                                 }
+                                recordBtn.setEnabled(false);
+                                stopRecordBtn.setEnabled(false);
+                                printScreenBtn.setEnabled(false);
+                                voiceStart.setEnabled(false);
                                 loadingPic.setVisibility(View.VISIBLE);
                                 break;
                             case MediaPlayer.MEDIA_INFO_BUFFERING_END:
@@ -254,6 +259,10 @@ public class PlayLiveActivity extends Activity {
                                 if (needResume)
                                     videoView.start();
                                 loadingPic.setVisibility(View.GONE);
+                                recordBtn.setEnabled(true);
+                                stopRecordBtn.setEnabled(true);
+                                printScreenBtn.setEnabled(true);
+                                voiceStart.setEnabled(true);
                                 break;
                             case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
                                 //显示 下载速度
@@ -304,6 +313,9 @@ public class PlayLiveActivity extends Activity {
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
                             Log.d(TAG, "停止播放，退出成功");
+                            endLiveTime = System.currentTimeMillis();
+                            long playTime = endLiveTime - statLiveTime;
+                            Log.d(TAG, "本次播放了" + playTime / 1000 + "秒");
                         } else {
                             Log.d(TAG, smartResult.getMsg());
                         }
@@ -351,7 +363,7 @@ public class PlayLiveActivity extends Activity {
             if (!boatDir.exists()) {
                 boatDir.mkdir();
             }
-            final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+            final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
             final String date = dateFormat.format(System.currentTimeMillis());
             File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
             if (!dateDir.exists()) {
@@ -361,7 +373,7 @@ public class PlayLiveActivity extends Activity {
             if (!videoDir.exists()) {
                 videoDir.mkdir();
             }
-            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日hh:mm:ss", Locale.CHINA);
             final String time = format.format(System.currentTimeMillis());
             this.time = time;
             String cmd = "-i " + this.path + " -c copy " + videoDir.getPath() + "/" + boatName + "_" + time + ".flv";
@@ -440,6 +452,8 @@ public class PlayLiveActivity extends Activity {
                                 startVoice();
                             }
                         }).start();
+                        backBtn.setEnabled(false);
+                        toggleFullscreen.setEnabled(false);
                         break;
                     case MotionEvent.ACTION_UP:
                         voiceStart.setEnabled(false);
@@ -450,6 +464,8 @@ public class PlayLiveActivity extends Activity {
                             Log.d(TAG, "record voice failed");
                         }
                         voiceStart.setEnabled(true);
+                        backBtn.setEnabled(true);
+                        toggleFullscreen.setEnabled(true);
                         break;
                     case MotionEvent.ACTION_CANCEL:
                         voiceStart.setEnabled(false);
@@ -457,6 +473,8 @@ public class PlayLiveActivity extends Activity {
                         File voiceFile = new File(mFileNameFull);
                         voiceFile.delete();
                         voiceStart.setEnabled(true);
+                        backBtn.setEnabled(true);
+                        toggleFullscreen.setEnabled(true);
                         Log.d(TAG, "record voice cancel");
                     default:
                         break;
@@ -590,57 +608,33 @@ public class PlayLiveActivity extends Activity {
         Call<SmartResult<CameraLive>> call = ApiManage.getInstence().getLiveApiService().getLiveStreamCopy(cameraId);
         try {
             Response<SmartResult<CameraLive>> response = call.execute();
-            CameraLive cameraLive = response.body().getData();
-            String liveUrl = "default";
-            int liveId = -1;
-            if (cameraLive != null) {
-                if (cameraLive.getLiveUrl() != null) {
-                    liveUrl = cameraLive.getLiveUrl();
+            if (response.body().getCode() == 1) {
+                statLiveTime = System.currentTimeMillis();
+                CameraLive cameraLive = response.body().getData();
+                String liveUrl = "default";
+                int liveId = -1;
+                if (cameraLive != null) {
+                    if (cameraLive.getLiveUrl() != null) {
+                        liveUrl = cameraLive.getLiveUrl();
+                    }
+                    if (cameraLive.getLiveId() != 0) {
+                        liveId = cameraLive.getLiveId();
+                    }
                 }
-                if (cameraLive.getLiveId() != 0) {
-                    liveId = cameraLive.getLiveId();
-                }
+                liveUrlCopy[0] = liveUrl;
+                liveIdCopy[0] = liveId;
             }
-            liveUrlCopy[0] = liveUrl;
-            liveIdCopy[0] = liveId;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "请重新登录", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(PlayLiveActivity.this, LoginActivity.class);
-            startActivity(intent);
         }
+//        catch (NullPointerException e) {
+//            e.printStackTrace();
+//            Toast.makeText(this, "请重新登录", Toast.LENGTH_LONG).show();
+//            Intent intent = new Intent(PlayLiveActivity.this, LoginActivity.class);
+//            startActivity(intent);
+//        }
         this.liveId = liveIdCopy[0];
         return liveUrlCopy[0];
     }
-
-    public int getHeightPixel(Activity activity) {
-        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(localDisplayMetrics);
-        return localDisplayMetrics.heightPixels;
-    }
-
-    public int getWidthPixel(Activity activity) {
-        DisplayMetrics localDisplayMetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(localDisplayMetrics);
-        return localDisplayMetrics.widthPixels;
-    }
-
-    public int getStatusBarHeight(Activity activity) {
-        Rect frame = new Rect();
-        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
-
-        int statusBarHeight = frame.top;
-        return statusBarHeight;
-    }
-
-
-    public int getTitleHeight(Activity activity) {
-        View v = getWindow().findViewById(Window.ID_ANDROID_CONTENT);///获得根视图
-        int titleHeight = v.getTop() - getStatusBarHeight(activity);//v.getTop():状态栏标题栏的总高度 ,   所以标题栏的高度为v.getTop()-getStatusBarHeight()
-        return titleHeight;
-    }
-
 
 }

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,22 +15,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Bean.LoginMessage;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
-import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
-import com.hyphenate.chat.EMClient;
 
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.query.QueryBuilder;
-
-
-import java.util.Timer;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -61,7 +52,6 @@ public class LoginActivity extends Activity {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
-    public static final String ACTION_RECEIVE_MSG = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_MESSAGE";
     public static final String TAG = "LoginActivity";
     private LoginMessageReceiver receiver;
     private MaterialDialog dialog;
@@ -78,8 +68,6 @@ public class LoginActivity extends Activity {
         loginBtn.setEnabled(false);
         password.addTextChangedListener(new ClearBtnListener(clear3, password));
         password.addTextChangedListener(new LoginListener(username, password, loginBtn, blueBtn, greyBtn, white, white));
-        Thread thread = new Thread(new LoginThread());
-        thread.start();
     }
 
     @Override
@@ -87,7 +75,7 @@ public class LoginActivity extends Activity {
         super.onResume();
         //动态注册receiver
         Log.d(TAG, "onResume() excute");
-        IntentFilter filter = new IntentFilter(ACTION_RECEIVE_MSG);
+        IntentFilter filter = new IntentFilter(Constant.ACTION_RECEIVE_MSG);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new LoginMessageReceiver();
         registerReceiver(receiver, filter);
@@ -122,6 +110,7 @@ public class LoginActivity extends Activity {
             Intent msgIntent = new Intent(LoginActivity.this, LoginService.class);
             msgIntent.putExtra("username", username.getText().toString());
             msgIntent.putExtra("password", password.getText().toString());
+            msgIntent.putExtra("validateTokenState", false);
             startService(msgIntent);
             dialog.show();
         }
@@ -151,50 +140,19 @@ public class LoginActivity extends Activity {
         password.setText("");
     }
 
-    class LoginThread implements Runnable {
-
-        @Override
-        public void run() {
-            Looper.prepare();
-            loginWithExistMessage();
-        }
-    }
-
-    public void loginWithExistMessage() {
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        LoginMessage loginMessage;
-        try {
-            loginMessage = queryBuilder.uniqueOrThrow();
-        } catch (DaoException e) {
-            return;
-        }
-        if (loginMessage == null) {
-            loginMessage = new LoginMessage("1", "1", -1);
-        }
-        String username = loginMessage.getUsername();
-        String password = loginMessage.getPassword();
-//        the two lines are bugs and i don't know why  yet :(
-//        this.username.setText(username);
-//        this.password.setText(password);
-        dialog.show();
-        Intent msgIntent = new Intent(LoginActivity.this, LoginService.class);
-        msgIntent.putExtra("username", username);
-        msgIntent.putExtra("password", password);
-        startService(msgIntent);
-
-    }
-
     //接收广播类
     public class LoginMessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             boolean loginStatus = intent.getBooleanExtra("loginStatus", false);
             String loginMessage = intent.getStringExtra("loginMessage");
+            boolean loginFromToken = intent.getBooleanExtra("loginFromToken", false);
             // 如果登录成功
-            if (loginStatus) {
+            if (loginStatus && !loginFromToken) {
                 // 启动Main Activity
-                dialog.dismiss();
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
                 Intent nextIntent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(nextIntent);
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
@@ -204,8 +162,11 @@ public class LoginActivity extends Activity {
                 //注销广播接收器
                 context.unregisterReceiver(this);
                 isRegistered = false;
-            } else {
-                dialog.dismiss();
+            }
+            if (!loginStatus && !loginFromToken) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
                 Toast.makeText(context, loginMessage, Toast.LENGTH_LONG).show();
             }
         }

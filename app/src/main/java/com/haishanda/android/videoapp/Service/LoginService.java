@@ -20,18 +20,14 @@ import android.util.Log;
 import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.AlarmNum;
-import com.haishanda.android.videoapp.Bean.FirstLogin;
-import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
-import com.haishanda.android.videoapp.Config.Config;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
-import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
@@ -61,7 +57,6 @@ import retrofit2.Response;
 
 public class LoginService extends Service {
 
-    public static final String ACTION_RECEIVE_MSG = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_MESSAGE";
     public static final String ACTION_RECEIVE_TIMER = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_TIMER";
     public static final String SUCCESS = "登录成功";
     public static final String EMERROR_CONFLICT = "账户在其他地方登录";
@@ -87,6 +82,7 @@ public class LoginService extends Service {
     }
 
     static Timer warningTimer;
+    SharedPreferences preferences;
 
     @Override
     public void onCreate() {
@@ -95,6 +91,7 @@ public class LoginService extends Service {
         IntentFilter filter = new IntentFilter(ACTION_RECEIVE_TIMER);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new TimerTaskReceiver();
+        preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
         registerReceiver(receiver, filter);
         if (emMessageListener == null) {
             emMessageListener = new EMMessageListener() {
@@ -125,7 +122,7 @@ public class LoginService extends Service {
                             MainActivity.instance.refresh();
                         }
                     } catch (HyphenateException e) {
-                        e.printStackTrace();
+                        Log.d(TAG, "环信消息出现错误" + e.toString());
                     }
                 }
 
@@ -151,11 +148,10 @@ public class LoginService extends Service {
                 }
             };
         }
-        connectionListener = new MyConnectionListener();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(Intent intent, final int flags, int startId) {
         Log.d(TAG, "onStartCommand() executed");
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -165,78 +161,116 @@ public class LoginService extends Service {
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .build();
-        final String username = intent.getStringExtra("username");
-        final String password = intent.getStringExtra("password");
-        final Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().loginActionCopy(username, password);
-        Thread netThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Response<SmartResult<UserBean>> response = call.execute();
-                    if (response.body().getCode() == 1) {
-                        startForeground(12346, noti);
-                        FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
-                        FirstLogin firstLogin = new FirstLogin(0);
-                        firstLoginDao.deleteAll();
-                        firstLoginDao.insertOrReplace(firstLogin);
-                        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-                        LoginMessage loginMessage = new LoginMessage(username, password, response.body().getData().getId());
-                        loginMessageDao.deleteAll();
-                        loginMessageDao.insert(loginMessage);
-                        UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
-                        UserMessageBean userMessageBean = new UserMessageBean(response.body().getData().getName(), response.body().getData().getPortrait(), response.body().getData().getId());
-                        userMessageBeanDao.insertOrReplace(userMessageBean);
-
-                        //token inject
-                        VideoApplication.getApplication().setToken(response.body().getData().getToken());
-                        //emclient login
-                        EMClient.getInstance().login("appmonitor_" + String.valueOf(response.body().getData().getId()), username, new EMCallBack() {//回调
-                            @Override
-                            public void onSuccess() {
-                                EMClient.getInstance().groupManager().loadAllGroups();
-                                EMClient.getInstance().chatManager().loadAllConversations();
-                                Log.d(TAG, "登录聊天服务器成功！");
-                                sendLoginedMsg(true, SUCCESS);
-                                if (emMessageListener != null) {
-                                    EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
-                                }
-                                if (connectionListener != null) {
-                                    EMClient.getInstance().addConnectionListener(connectionListener);
-                                }
-                            }
-
-                            @Override
-                            public void onProgress(int progress, String status) {
-
-                            }
-
-                            @Override
-                            public void onError(int code, String message) {
-                                Log.d(TAG, "登录聊天服务器失败！" + message);
-                                sendLoginedMsg(false, EMERROR_CHAT_FAILED);
-                            }
-                        });
-                    } else {
-                        sendLoginedMsg(false, response.body().getMsg());
-                        Log.i(TAG, String.valueOf(response.body().getCode()));
-                        if (response.body().getMsg() != null) {
-                            Log.i(TAG, response.body().getMsg());
-                        }
+        boolean validateTokenState = intent.getBooleanExtra("validateTokenState", false);
+        //验证token的方式登录
+        if (validateTokenState) {
+            startForeground(12346, noti);
+            connectionListener = new MyConnectionListener(true);
+            SharedPreferences sharedPreferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
+            int userId = sharedPreferences.getInt(Constant.USER_PREFERENCE_ID, -1);
+            String savedUsername = sharedPreferences.getString(Constant.USER_PREFERENCE_USERNAME, "");
+            EMClient.getInstance().login("appmonitor_" + String.valueOf(userId), savedUsername, new EMCallBack() {//回调
+                @Override
+                public void onSuccess() {
+                    EMClient.getInstance().groupManager().loadAllGroups();
+                    EMClient.getInstance().chatManager().loadAllConversations();
+                    Log.d(TAG, "登录聊天服务器成功！");
+                    sendLoginedMsg(true, SUCCESS, true);
+                    if (emMessageListener != null) {
+                        EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
                     }
-                } catch (SocketTimeoutException e) {
-                    Log.e(TAG, e.toString());
-                    sendLoginedMsg(false, HSDERROR_TIMEOUT);
-                } catch (ConnectException e) {
-                    Log.e(TAG, e.toString());
-                    sendLoginedMsg(false, HSDERROR_NETERROR);
-                } catch (IOException e) {
-                    Log.e(TAG, e.toString());
-                    sendLoginedMsg(false, SYSTEM_ERROR);
+                    if (connectionListener != null) {
+                        EMClient.getInstance().addConnectionListener(connectionListener);
+                    }
                 }
-            }
-        });
-        netThread.start();
-        return START_STICKY;
+
+                @Override
+                public void onProgress(int progress, String status) {
+
+                }
+
+                @Override
+                public void onError(int code, String message) {
+                    Log.d(TAG, "登录聊天服务器失败！" + message);
+                    sendLoginedMsg(false, EMERROR_CHAT_FAILED, true);
+                }
+            });
+        } else {
+            connectionListener = new MyConnectionListener(false);
+            //点击登录页面的按钮登录
+            final String username = intent.getStringExtra("username");
+            final String password = intent.getStringExtra("password");
+            final Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().loginActionCopy(username, password);
+            Thread netThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Response<SmartResult<UserBean>> response = call.execute();
+                        if (response.body().getCode() == 1) {
+                            startForeground(12346, noti);
+//                            FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
+//                            FirstLogin firstLogin = new FirstLogin(0);
+//                            firstLoginDao.deleteAll();
+//                            firstLoginDao.insertOrReplace(firstLogin);
+                            UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
+                            UserMessageBean userMessageBean = new UserMessageBean(response.body().getData().getName(), response.body().getData().getPortrait(), response.body().getData().getId());
+                            userMessageBeanDao.insertOrReplace(userMessageBean);
+                            //token inject
+                            SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString(Constant.USER_PREFERENCE_TOKEN, response.body().getData().getToken());
+                            editor.putString(Constant.USER_PREFERENCE_USERNAME, username);
+                            editor.putInt(Constant.USER_PREFERENCE_ID, response.body().getData().getId());
+                            editor.apply();
+                            //emclient login
+                            EMClient.getInstance().login("appmonitor_" + String.valueOf(response.body().getData().getId()), username, new EMCallBack() {//回调
+                                @Override
+                                public void onSuccess() {
+                                    EMClient.getInstance().groupManager().loadAllGroups();
+                                    EMClient.getInstance().chatManager().loadAllConversations();
+                                    Log.d(TAG, "登录聊天服务器成功！");
+                                    sendLoginedMsg(true, SUCCESS, false);
+                                    if (emMessageListener != null) {
+                                        EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+                                    }
+                                    if (connectionListener != null) {
+                                        EMClient.getInstance().addConnectionListener(connectionListener);
+                                    }
+                                }
+
+                                @Override
+                                public void onProgress(int progress, String status) {
+
+                                }
+
+                                @Override
+                                public void onError(int code, String message) {
+                                    Log.d(TAG, "登录聊天服务器失败！" + message);
+                                    sendLoginedMsg(false, EMERROR_CHAT_FAILED, false);
+                                }
+                            });
+                        } else {
+                            sendLoginedMsg(false, response.body().getMsg(), false);
+                            Log.i(TAG, String.valueOf(response.body().getCode()));
+                            if (response.body().getMsg() != null) {
+                                Log.i(TAG, response.body().getMsg());
+                            }
+                        }
+                    } catch (SocketTimeoutException e) {
+                        Log.e(TAG, e.toString());
+                        sendLoginedMsg(false, HSDERROR_TIMEOUT, false);
+                    } catch (ConnectException e) {
+                        Log.e(TAG, e.toString());
+                        sendLoginedMsg(false, HSDERROR_NETERROR, false);
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                        sendLoginedMsg(false, SYSTEM_ERROR, false);
+                    }
+                }
+            });
+            netThread.start();
+        }
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -255,19 +289,18 @@ public class LoginService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-//            final String message = intent.getStringExtra("message");
-            SharedPreferences warningPreferences = getSharedPreferences(Config.WARNING_CONFIG, MODE_PRIVATE);
+            SharedPreferences warningPreferences = getSharedPreferences(Constant.WARNING_CONFIG, MODE_PRIVATE);
             boolean isTimerTaskOn = true;
             boolean isVibratorOn = true;
             boolean isVoiceOn = true;
-            if (warningPreferences.contains(Config.WARNING_CONFIG_TIMER)) {
-                isTimerTaskOn = warningPreferences.getBoolean(Config.WARNING_CONFIG_TIMER, true);
+            if (warningPreferences.contains(Constant.WARNING_CONFIG_TIMER)) {
+                isTimerTaskOn = warningPreferences.getBoolean(Constant.WARNING_CONFIG_TIMER, true);
             }
-            if (warningPreferences.contains(Config.WARNING_CONFIG_VIBRATE)) {
-                isVibratorOn = warningPreferences.getBoolean(Config.WARNING_CONFIG_VIBRATE, true);
+            if (warningPreferences.contains(Constant.WARNING_CONFIG_VIBRATE)) {
+                isVibratorOn = warningPreferences.getBoolean(Constant.WARNING_CONFIG_VIBRATE, true);
             }
-            if (warningPreferences.contains(Config.WARNING_CONFIG_VOICE)) {
-                isVoiceOn = warningPreferences.getBoolean(Config.WARNING_CONFIG_VOICE, true);
+            if (warningPreferences.contains(Constant.WARNING_CONFIG_VOICE)) {
+                isVoiceOn = warningPreferences.getBoolean(Constant.WARNING_CONFIG_VOICE, true);
             }
             if (isTimerTaskOn) {
                 if (timer == null) {
@@ -309,7 +342,7 @@ public class LoginService extends Service {
                             }
                         }
                     };
-                    int timeSpan = warningPreferences.getInt(Config.WARNING_CONFIG_TIME_SPAN, 15);
+                    int timeSpan = warningPreferences.getInt(Constant.WARNING_CONFIG_TIME_SPAN, 15);
                     timer.schedule(timerTask, 0, timeSpan * 60 * 1000);
                     if (getWarningTimer() == null) {
                         setWarningTimer(timer);
@@ -325,17 +358,24 @@ public class LoginService extends Service {
         return null;
     }
 
-    private void sendLoginedMsg(boolean loginStatus, String loginMessage) {
+    private void sendLoginedMsg(boolean loginStatus, String loginMessage, boolean loginFromToken) {
         Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(ACTION_RECEIVE_MSG);
+        broadcastIntent.setAction(Constant.ACTION_RECEIVE_MSG);
         broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
         broadcastIntent.putExtra("loginStatus", loginStatus);
         broadcastIntent.putExtra("loginMessage", loginMessage);
+        broadcastIntent.putExtra("loginFromToken", loginFromToken);
         sendBroadcast(broadcastIntent);
     }
 
-
     private class MyConnectionListener implements EMConnectionListener {
+
+        private boolean loginFromToken;
+
+        MyConnectionListener(boolean loginFromToken) {
+            this.loginFromToken = loginFromToken;
+        }
+
         @Override
         public void onConnected() {
         }
@@ -343,19 +383,19 @@ public class LoginService extends Service {
         @Override
         public void onDisconnected(final int error) {
             if (error == EMError.USER_REMOVED) {
-                sendLoginedMsg(false, EMERROR_CLIENT_REMOVED);
+                sendLoginedMsg(false, EMERROR_CLIENT_REMOVED, loginFromToken);
                 // 显示帐号已经被移除
             } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
                 // 显示帐号在其他设备登录
-                sendLoginedMsg(false, EMERROR_CONFLICT);
+                sendLoginedMsg(false, EMERROR_CONFLICT, loginFromToken);
             } else {
                 if (NetUtils.hasNetwork(LoginService.this)) {
                     //连接不到聊天服务器
-                    sendLoginedMsg(false, EMERROR_DISCONNECT);
+                    sendLoginedMsg(false, EMERROR_DISCONNECT, loginFromToken);
                     EMClient.getInstance().logout(true);
                 } else {
                     //当前网络不可用，请检查网络设置
-                    sendLoginedMsg(false, NETERROR_ENABLED);
+                    sendLoginedMsg(false, NETERROR_ENABLED, loginFromToken);
                     EMClient.getInstance().logout(true);
                 }
             }

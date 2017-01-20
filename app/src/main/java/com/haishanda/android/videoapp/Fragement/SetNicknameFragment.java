@@ -1,5 +1,7 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Activity.MyCenterActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -62,11 +65,12 @@ public class SetNicknameFragment extends Fragment {
 
     @OnClick(R.id.save_nickname_btn)
     public void saveNickName() {
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
         final String nickName = nickNameInput.getText().toString();
         if (nickName.equals("")) {
             Toast.makeText(getContext(), "请输入昵称！", Toast.LENGTH_LONG).show();
         } else {
-            ApiManage.getInstence().getUserApiService().editNickName(VideoApplication.getApplication().getToken(), nickName)
+            ApiManage.getInstence().getUserApiService().editNickName(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""), nickName)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<SmartResult>() {

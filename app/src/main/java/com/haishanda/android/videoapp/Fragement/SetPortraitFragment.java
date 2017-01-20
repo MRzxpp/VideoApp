@@ -3,6 +3,7 @@ package com.haishanda.android.videoapp.Fragement;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -27,12 +28,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.haishanda.android.videoapp.Activity.MyCenterActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -54,6 +54,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 修改头像
  * Created by Zhongsz on 2016/11/26.
  */
 
@@ -65,19 +66,18 @@ public class SetPortraitFragment extends Fragment {
     private final int REQUEST_CODE_PICK_IMAGE = 1;
     private final int REQUEST_CODE_CAPTURE_CAMEIA = 0;
 
-    private String portraitUrl;
     private UserMessageBean userMessageBean;
     private UserMessageBeanDao userMessageBeanDao;
     private final String TAG = "修改头像";
+    SharedPreferences preferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_set_head_portrait, container, false);
         ButterKnife.bind(this, view);
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> loginMessageQueryBuilder = loginMessageDao.queryBuilder();
-        long id = loginMessageQueryBuilder.unique().getId();
+        preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
+        long id = preferences.getInt(Constant.USER_PREFERENCE_ID, -1);
         userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
         QueryBuilder<UserMessageBean> queryBuilder = userMessageBeanDao.queryBuilder();
         userMessageBean = queryBuilder.where(UserMessageBeanDao.Properties.Id.eq(id)).unique();
@@ -215,8 +215,9 @@ public class SetPortraitFragment extends Fragment {
         // MultipartBody.Part is used to send also the actual filename
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
         // adds another part within the multipart request
-        String descriptionString = "image";
-        ApiManage.getInstence().getUserApiService().uploadPortrait(VideoApplication.getApplication().getToken(), body)
+//        String descriptionString = "image";
+        final String token = preferences.getString(Constant.USER_PREFERENCE_TOKEN, "");
+        ApiManage.getInstence().getUserApiService().uploadPortrait(token, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SmartResult<String>>() {
@@ -236,7 +237,7 @@ public class SetPortraitFragment extends Fragment {
                         final String portraitUrl = stringSmartResult.getData();
                         if (stringSmartResult.getCode() == 1) {
                             Log.d(TAG, "upload success");
-                            ApiManage.getInstence().getUserApiServiceWithToken().editPortrait(VideoApplication.getApplication().getToken(), stringSmartResult.getData())
+                            ApiManage.getInstence().getUserApiServiceWithToken().editPortrait(token, stringSmartResult.getData())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new Observer<SmartResult>() {

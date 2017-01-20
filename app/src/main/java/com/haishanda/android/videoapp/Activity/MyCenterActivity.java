@@ -1,5 +1,6 @@
 package com.haishanda.android.videoapp.Activity;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -9,13 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Fragement.SetNicknameFragment;
 import com.haishanda.android.videoapp.Fragement.SetPortraitFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 个人中心
  * Created by Zhongsz on 2016/11/26.
  */
 
@@ -83,9 +84,8 @@ public class MyCenterActivity extends FragmentActivity {
     }
 
     public void initViews() {
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> loginMessageQueryBuilder = loginMessageDao.queryBuilder();
-        long id = loginMessageQueryBuilder.unique().getId();
+        SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
+        long id = preferences.getInt(Constant.USER_PREFERENCE_ID, -1);
         this.userId = id;
         UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
         QueryBuilder<UserMessageBean> queryBuilder = userMessageBeanDao.queryBuilder();

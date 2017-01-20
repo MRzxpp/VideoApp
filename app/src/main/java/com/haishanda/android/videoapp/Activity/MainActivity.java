@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +18,7 @@ import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.haishanda.android.videoapp.Bean.AlarmNum;
-import com.haishanda.android.videoapp.Bean.FirstLogin;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Fragement.BoatFragment;
 import com.haishanda.android.videoapp.Fragement.MonitorFragment;
 import com.haishanda.android.videoapp.Fragement.MyFragment;
@@ -27,9 +28,7 @@ import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
-import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
 
@@ -74,7 +73,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     private EMErrorReceiver receiver;
     private boolean isRegistered;
 
-    public static final String ACTION_RECEIVE_MSG = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_MESSAGE";
     public static final String EMERROR_CONFLICT = "账户在其他地方登录";
     public static final String EMERROR_DISCONNECT = "连接环信服务器失败";
     public static final String EMERROR_CLIENT_REMOVED = "账户已被移除，请联系经销商";
@@ -132,7 +130,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     public void onStart() {
         super.onStart();
         //注册广播接收器
-        IntentFilter filter = new IntentFilter(ACTION_RECEIVE_MSG);
+        IntentFilter filter = new IntentFilter(Constant.ACTION_RECEIVE_MSG);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new EMErrorReceiver();
         registerReceiver(receiver, filter);
@@ -289,16 +287,15 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
         alarmNumDao.deleteAll();
         //清除登录信息
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        loginMessageDao.deleteAll();
+        SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(Constant.USER_PREFERENCE_ID);
+        editor.remove(Constant.USER_PREFERENCE_USERNAME);
+        editor.remove(Constant.USER_PREFERENCE_TOKEN);
+        editor.apply();
         //重置VideoApplication
         VideoApplication.getApplication().setCurrentBoatName(null);
         VideoApplication.getApplication().setCurrentMachineId(-1);
-        //重置是否第一次登录
-        FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
-        FirstLogin firstLogin = new FirstLogin(1);
-        firstLoginDao.deleteAll();
-        firstLoginDao.insertOrReplace(firstLogin);
         Thread emThread = new Thread(new EMThread());
         emThread.start();
         Intent intent = new Intent(this, WelcomeActivity.class);

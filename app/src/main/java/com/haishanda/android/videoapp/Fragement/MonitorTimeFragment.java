@@ -62,10 +62,6 @@ public class MonitorTimeFragment extends Fragment {
         ButterKnife.bind(this, view);
         Bundle data = getArguments();
         machineId = data.getLong("machineId");
-//        begin1.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
-//        begin2.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
-//        end1.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
-//        end2.addTextChangedListener(new NextDayListener(this.begin, this.endPerform, nextDay));
         initTimePicker();
         return view;
     }
@@ -102,10 +98,6 @@ public class MonitorTimeFragment extends Fragment {
             if (timeBean.getBeginMinute() == -1 && timeBean.getEndMinute() == -2) {
                 timeBean = new TimeBean(12, 30, 12, 30, machineId);
             }
-//            begin1.setText(timeBean.getBeginHour());
-//            begin2.setText(timeBean.getBeginMinute());
-//            end1.setText(timeBean.getEndHour());
-//            end2.setText(timeBean.getEndMinute());
             begin = 60 * timeBean.getBeginHour() + timeBean.getBeginMinute();
             endPerform = 60 * timeBean.getEndHour() + timeBean.getEndMinute();
             times = new String[]{String.valueOf(timeBean.getBeginHour()),
@@ -127,7 +119,6 @@ public class MonitorTimeFragment extends Fragment {
             @Override
             public void onSelect(String text) {
                 times[0] = text;
-//                    begin1.setText(text);
                 begin = begin - 60 * timeBean.getBeginHour() + 60 * Integer.valueOf(text);
             }
         });
@@ -136,7 +127,6 @@ public class MonitorTimeFragment extends Fragment {
             @Override
             public void onSelect(String text) {
                 times[1] = text;
-//                    begin2.setText(text);
                 begin = begin - timeBean.getBeginMinute() + Integer.valueOf(text);
 
             }
@@ -145,7 +135,6 @@ public class MonitorTimeFragment extends Fragment {
             @Override
             public void onSelect(String text) {
                 times[2] = text;
-//                    end1.setText(text);
                 endPerform = endPerform - 60 * timeBean.getEndHour() + 60 * Integer.valueOf(text);
 
             }
@@ -155,7 +144,6 @@ public class MonitorTimeFragment extends Fragment {
             @Override
             public void onSelect(String text) {
                 times[3] = text;
-//                    end2.setText(text);
                 endPerform = endPerform - timeBean.getEndHour() + Integer.valueOf(text);
 
             }
@@ -206,7 +194,7 @@ public class MonitorTimeFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
-                            Toast.makeText(getContext(), "时间段保存成功", Toast.LENGTH_LONG).show();
+                            backToLastPage();
                             Log.i(TAG, "succeed");
                         } else {
                             Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "时间段保存失败", Toast.LENGTH_LONG).show();

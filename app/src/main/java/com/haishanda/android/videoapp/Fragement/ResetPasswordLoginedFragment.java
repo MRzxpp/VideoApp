@@ -1,6 +1,8 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,15 +19,11 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.ProblemActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.LoginMessage;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
-import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
-
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -37,6 +35,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 在已登录的情况下重置密码
  * Created by Zhongsz on 2016/11/24.
  */
 
@@ -56,7 +55,6 @@ public class ResetPasswordLoginedFragment extends Fragment {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
-    private String phoneNumLogined;
     private final String TAG = "修改密码";
 
     @Override
@@ -64,9 +62,8 @@ public class ResetPasswordLoginedFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reset_password_with_token, container, false);
         ButterKnife.bind(this, view);
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        phoneNumLogined = queryBuilder.uniqueOrThrow().getUsername();
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
+        String phoneNumLogined = preferences.getString(Constant.USER_PREFERENCE_USERNAME, "");
         loginedPhoneNumber.setText("验证当前账号绑定的密保手机：" + confusePhoneNum(phoneNumLogined));
         loginedCodeInput.addTextChangedListener(new LoginListener(loginedCodeInput, loginedCodeInput, toResetPwdWithToken2Btn, blueBtn, greyBtn, white, white));
         return view;
@@ -85,7 +82,8 @@ public class ResetPasswordLoginedFragment extends Fragment {
     public void getCodeLogined() {
         CountDownTimerUtil countDownTimerUtil = new CountDownTimerUtil(getCodeLogined, 120000, 1000, blueBtn, greyBtn, white, white);
         countDownTimerUtil.start();
-        ApiManage.getInstence().getUserApiServiceWithToken().getFetchCodeWithToken(VideoApplication.getApplication().getToken())
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
+        ApiManage.getInstence().getUserApiServiceWithToken().getFetchCodeWithToken(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SmartResult>() {

@@ -1,6 +1,10 @@
 package com.haishanda.android.videoapp.Api;
 
-import com.haishanda.android.videoapp.Config.Config;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Utils.NullOnEmptyConverterFactory;
 import com.haishanda.android.videoapp.VideoApplication;
 
@@ -17,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
+ * 接口管理
  * Created by Zhongsz on 2016/10/10.
  */
 
@@ -24,6 +29,7 @@ public class ApiManage {
 
     private static ApiManage apiManage;
     private Object zhihuMonitor = new Object();
+    private SharedPreferences preferences = VideoApplication.getApplication().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
 
     public static ApiManage getInstence() {
         if (apiManage == null) {
@@ -47,7 +53,7 @@ public class ApiManage {
             synchronized (zhihuMonitor) {
                 if (userApi == null) {
                     userApi = new Retrofit.Builder()
-                            .baseUrl(Config.SERVER_HOME)
+                            .baseUrl(Constant.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .build().create(UserApi.class);
@@ -62,7 +68,7 @@ public class ApiManage {
             synchronized (zhihuMonitor) {
                 if (userApiToken == null) {
                     userApiToken = new Retrofit.Builder()
-                            .baseUrl(Config.SERVER_HOME)
+                            .baseUrl(Constant.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(new NullOnEmptyConverterFactory())
                             .addConverterFactory(GsonConverterFactory.create())
@@ -80,7 +86,7 @@ public class ApiManage {
             synchronized (zhihuMonitor) {
                 if (liveApi == null) {
                     liveApi = new Retrofit.Builder()
-                            .baseUrl(Config.SERVER_HOME)
+                            .baseUrl(Constant.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(genericClient())
@@ -98,7 +104,7 @@ public class ApiManage {
             synchronized (zhihuMonitor) {
                 if (boatApi == null) {
                     boatApi = new Retrofit.Builder()
-                            .baseUrl(Config.SERVER_HOME)
+                            .baseUrl(Constant.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
                             .client(genericClient())
@@ -116,7 +122,7 @@ public class ApiManage {
             synchronized (zhihuMonitor) {
                 if (monitorApi == null) {
                     monitorApi = new Retrofit.Builder()
-                            .baseUrl(Config.SERVER_HOME)
+                            .baseUrl(Constant.SERVER_HOME)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(JacksonConverterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())
@@ -131,7 +137,7 @@ public class ApiManage {
     }
 
     private OkHttpClient genericClient() {
-        OkHttpClient httpClient = new OkHttpClient.Builder()
+        return new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
@@ -140,7 +146,7 @@ public class ApiManage {
                                 .addHeader("Content-Type", "application/json;charset=UTF-8")
                                 .addHeader("Connection", "keep-alive")
                                 .addHeader("Accept", "*/*")
-                                .addHeader("token", VideoApplication.getApplication().getToken())
+                                .addHeader("token", preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""))
                                 .build();
                         return chain.proceed(request);
                     }
@@ -148,7 +154,6 @@ public class ApiManage {
                 .retryOnConnectionFailure(true)
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .build();
-        return httpClient;
     }
 
 }

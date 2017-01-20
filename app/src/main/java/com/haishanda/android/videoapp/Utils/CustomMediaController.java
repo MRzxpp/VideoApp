@@ -23,6 +23,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
+ * 竖屏时的视频控件控制器
  * Created by Zhongsz on 2016/11/2.
  */
 
@@ -183,17 +184,17 @@ public class CustomMediaController extends MediaController {
         //滑动事件监听
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            float mOldX = e1.getX(), mOldY = e1.getY();
-            int y = (int) e2.getRawY();
-            int x = (int) e2.getRawX();
-            Display disp = activity.getWindowManager().getDefaultDisplay();
-            int windowWidth = disp.getWidth();
-            int windowHeight = disp.getHeight();
-            if (mOldX > windowWidth * 3.0 / 4.0) {// 右边滑动 屏幕 3/4
-                onVolumeSlide((mOldY - y) / windowHeight);
-            } else if (mOldX < windowWidth * 1.0 / 4.0) {// 左边滑动 屏幕 1/4
-                onBrightnessSlide((mOldY - y) / windowHeight);
-            }
+//            float mOldX = e1.getX(), mOldY = e1.getY();
+//            int y = (int) e2.getRawY();
+//            int x = (int) e2.getRawX();
+//            Display disp = activity.getWindowManager().getDefaultDisplay();
+//            int windowWidth = disp.getWidth();
+//            int windowHeight = disp.getHeight();
+//            if (mOldX > windowWidth * 3.0 / 4.0) {// 右边滑动 屏幕 3/4
+//                onVolumeSlide((mOldY - y) / windowHeight);
+//            } else if (mOldX < windowWidth * 1.0 / 4.0) {// 左边滑动 屏幕 1/4
+//                onBrightnessSlide((mOldY - y) / windowHeight);
+//            }
             return super.onScroll(e1, e2, distanceX, distanceY);
         }
 
@@ -215,85 +216,85 @@ public class CustomMediaController extends MediaController {
      *
      * @param percent
      */
-    private void onVolumeSlide(float percent) {
-        if (mVolume == -1) {
-            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            if (mVolume < 0)
-                mVolume = 0;
-
-            // 显示
-            mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
-            mOperationTv.setVisibility(VISIBLE);
-        }
-
-        int index = (int) (percent * mMaxVolume) + mVolume;
-        if (index > mMaxVolume)
-            index = mMaxVolume;
-        else if (index < 0)
-            index = 0;
-        if (index >= 10) {
-            mOperationBg.setImageResource(R.drawable.volumn_3);
-        } else if (index >= 5 && index < 10) {
-            mOperationBg.setImageResource(R.drawable.volumn_2);
-        } else if (index > 0 && index < 5) {
-            mOperationBg.setImageResource(R.drawable.volumn_1);
-        } else {
-            mOperationBg.setImageResource(R.drawable.volumn_0);
-        }
-        //DecimalFormat    df   = new DecimalFormat("######0.00");
-        mOperationTv.setText((int) (((double) index / mMaxVolume) * 100) + "%");
-        // 变更声音
-        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
-    }
+//    private void onVolumeSlide(float percent) {
+//        if (mVolume == -1) {
+//            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+//            if (mVolume < 0)
+//                mVolume = 0;
+//
+//            // 显示
+//            mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
+//            mOperationTv.setVisibility(VISIBLE);
+//        }
+//
+//        int index = (int) (percent * mMaxVolume) + mVolume;
+//        if (index > mMaxVolume)
+//            index = mMaxVolume;
+//        else if (index < 0)
+//            index = 0;
+//        if (index >= 10) {
+//            mOperationBg.setImageResource(R.drawable.volumn_3);
+//        } else if (index >= 5 && index < 10) {
+//            mOperationBg.setImageResource(R.drawable.volumn_2);
+//        } else if (index > 0 && index < 5) {
+//            mOperationBg.setImageResource(R.drawable.volumn_1);
+//        } else {
+//            mOperationBg.setImageResource(R.drawable.volumn_0);
+//        }
+//        //DecimalFormat    df   = new DecimalFormat("######0.00");
+//        mOperationTv.setText((int) (((double) index / mMaxVolume) * 100) + "%");
+//        // 变更声音
+//        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
+//    }
 
     /**
      * 滑动改变亮度
      *
      * @param percent
      */
-    private void onBrightnessSlide(float percent) {
-        if (mBrightness < 0) {
-            mBrightness = activity.getWindow().getAttributes().screenBrightness;
-            if (mBrightness <= 0.00f)
-                mBrightness = 0.50f;
-            if (mBrightness < 0.01f)
-                mBrightness = 0.01f;
-
-            // 显示
-            mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
-            mOperationTv.setVisibility(VISIBLE);
-
-        }
-
-
-        WindowManager.LayoutParams lpa = activity.getWindow().getAttributes();
-        lpa.screenBrightness = mBrightness + percent;
-        if (lpa.screenBrightness > 1.0f)
-            lpa.screenBrightness = 1.0f;
-        else if (lpa.screenBrightness < 0.01f)
-            lpa.screenBrightness = 0.01f;
-        activity.getWindow().setAttributes(lpa);
-
-        mOperationTv.setText((int) (lpa.screenBrightness * 100) + "%");
-        if (lpa.screenBrightness * 100 >= 87.5) {
-            mOperationBg.setImageResource(R.drawable.bright_8);
-        } else if (lpa.screenBrightness * 100 >= 75 && lpa.screenBrightness * 100 < 87.5) {
-            mOperationBg.setImageResource(R.drawable.bright_7);
-        } else if (lpa.screenBrightness * 100 >= 62.5 && lpa.screenBrightness * 100 < 75) {
-            mOperationBg.setImageResource(R.drawable.bright_6);
-        } else if (lpa.screenBrightness * 100 >= 50 && lpa.screenBrightness * 100 < 62.5) {
-            mOperationBg.setImageResource(R.drawable.bright_5);
-        } else if (lpa.screenBrightness * 100 >= 37.5 && lpa.screenBrightness * 100 < 50) {
-            mOperationBg.setImageResource(R.drawable.bright_4);
-        } else if (lpa.screenBrightness * 100 >= 25 && lpa.screenBrightness * 100 < 37.5) {
-            mOperationBg.setImageResource(R.drawable.bright_3);
-        } else if (lpa.screenBrightness * 100 >= 12.5 && lpa.screenBrightness * 100 < 25) {
-            mOperationBg.setImageResource(R.drawable.bright_2);
-        } else if (lpa.screenBrightness * 100 >= 0 && lpa.screenBrightness * 100 < 12.5) {
-            mOperationBg.setImageResource(R.drawable.bright_1);
-        }
-
-    }
+//    private void onBrightnessSlide(float percent) {
+//        if (mBrightness < 0) {
+//            mBrightness = activity.getWindow().getAttributes().screenBrightness;
+//            if (mBrightness <= 0.00f)
+//                mBrightness = 0.50f;
+//            if (mBrightness < 0.01f)
+//                mBrightness = 0.01f;
+//
+//            // 显示
+//            mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
+//            mOperationTv.setVisibility(VISIBLE);
+//
+//        }
+//
+//
+//        WindowManager.LayoutParams lpa = activity.getWindow().getAttributes();
+//        lpa.screenBrightness = mBrightness + percent;
+//        if (lpa.screenBrightness > 1.0f)
+//            lpa.screenBrightness = 1.0f;
+//        else if (lpa.screenBrightness < 0.01f)
+//            lpa.screenBrightness = 0.01f;
+//        activity.getWindow().setAttributes(lpa);
+//
+//        mOperationTv.setText((int) (lpa.screenBrightness * 100) + "%");
+//        if (lpa.screenBrightness * 100 >= 87.5) {
+//            mOperationBg.setImageResource(R.drawable.bright_8);
+//        } else if (lpa.screenBrightness * 100 >= 75 && lpa.screenBrightness * 100 < 87.5) {
+//            mOperationBg.setImageResource(R.drawable.bright_7);
+//        } else if (lpa.screenBrightness * 100 >= 62.5 && lpa.screenBrightness * 100 < 75) {
+//            mOperationBg.setImageResource(R.drawable.bright_6);
+//        } else if (lpa.screenBrightness * 100 >= 50 && lpa.screenBrightness * 100 < 62.5) {
+//            mOperationBg.setImageResource(R.drawable.bright_5);
+//        } else if (lpa.screenBrightness * 100 >= 37.5 && lpa.screenBrightness * 100 < 50) {
+//            mOperationBg.setImageResource(R.drawable.bright_4);
+//        } else if (lpa.screenBrightness * 100 >= 25 && lpa.screenBrightness * 100 < 37.5) {
+//            mOperationBg.setImageResource(R.drawable.bright_3);
+//        } else if (lpa.screenBrightness * 100 >= 12.5 && lpa.screenBrightness * 100 < 25) {
+//            mOperationBg.setImageResource(R.drawable.bright_2);
+//        } else if (lpa.screenBrightness * 100 >= 0 && lpa.screenBrightness * 100 < 12.5) {
+//            mOperationBg.setImageResource(R.drawable.bright_1);
+//        }
+//
+//    }
 
 
     /**

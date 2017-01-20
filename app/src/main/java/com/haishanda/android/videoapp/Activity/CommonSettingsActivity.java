@@ -2,13 +2,14 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
-import com.haishanda.android.videoapp.Bean.FirstLogin;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Fragement.ResetPasswordLoginedFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
@@ -16,9 +17,7 @@ import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
-import com.haishanda.android.videoapp.greendao.gen.FirstLoginDao;
 import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
 
@@ -113,14 +112,13 @@ public class CommonSettingsActivity extends FragmentActivity {
                 //报警数目归零
                 AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
                 alarmNumDao.deleteAll();
-                //重置是否第一次登录
-                FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
-                FirstLogin firstLogin = new FirstLogin(1);
-                firstLoginDao.deleteAll();
-                firstLoginDao.insertOrReplace(firstLogin);
                 //清除登录信息
-                LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-                loginMessageDao.deleteAll();
+                SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.remove(Constant.USER_PREFERENCE_ID);
+                editor.remove(Constant.USER_PREFERENCE_USERNAME);
+                editor.remove(Constant.USER_PREFERENCE_TOKEN);
+                editor.apply();
                 //重置VideoApplication
                 VideoApplication.getApplication().setCurrentBoatName(null);
                 VideoApplication.getApplication().setCurrentMachineId(-1);

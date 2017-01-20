@@ -1,6 +1,8 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,14 +17,12 @@ import com.haishanda.android.videoapp.Activity.AccountBalanceActivity;
 import com.haishanda.android.videoapp.Activity.CommonSettingsActivity;
 import com.haishanda.android.videoapp.Activity.MessageCenterActivity;
 import com.haishanda.android.videoapp.Activity.MyCenterActivity;
-import com.haishanda.android.videoapp.Bean.LoginMessage;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import butterknife.BindDrawable;
@@ -46,19 +46,15 @@ public class MyFragment extends Fragment {
     @BindDrawable(R.drawable.default_portrait)
     Drawable defaultPortrait;
 
+    SharedPreferences preferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my, container, false);
         ButterKnife.bind(this, view);
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        try {
-            LoginMessage loginMessage = queryBuilder.uniqueOrThrow();
-            myPhoneNumber.setText(confusePhoneNum(loginMessage.getUsername()));
-        } catch (DaoException e) {
-            e.printStackTrace();
-        }
+        preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
+        myPhoneNumber.setText(confusePhoneNum(preferences.getString(Constant.USER_PREFERENCE_USERNAME, "")));
         return view;
     }
 
@@ -95,9 +91,7 @@ public class MyFragment extends Fragment {
     }
 
     private void initViews() {
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> loginMessageQueryBuilder = loginMessageDao.queryBuilder();
-        long id = loginMessageQueryBuilder.unique().getId();
+        long id = preferences.getInt(Constant.USER_PREFERENCE_ID, -1);
         UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
         QueryBuilder<UserMessageBean> queryBuilder = userMessageBeanDao.queryBuilder();
         UserMessageBean userMessageBean = queryBuilder.where(UserMessageBeanDao.Properties.Id.eq(id)).unique();

@@ -11,15 +11,14 @@ import com.pgyersdk.crash.PgyCrashManager;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 /**
+ * 应用类,存放部分全局变量
  * Created by Zhongsz on 2016/10/12.
  */
 
 public class VideoApplication extends Application {
     private static VideoApplication application;
-    public static Context instance;
     private SQLiteDatabase db;
     private DaoSession mDaoSession;
-    private String Token;
     private int currentMachineId;
 
     public int getSelectedId() {
@@ -49,14 +48,6 @@ public class VideoApplication extends Application {
     }
 
     private String currentBoatName;
-
-    public String getToken() {
-        return Token;
-    }
-
-    public void setToken(String token) {
-        Token = token;
-    }
     // login user name
 //    public final String PREF_USERNAME = "username";
 
@@ -77,10 +68,6 @@ public class VideoApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
-    }
-
-    public static Context getInstance() {
-        return instance;
     }
 
     public static VideoApplication getApplication() {

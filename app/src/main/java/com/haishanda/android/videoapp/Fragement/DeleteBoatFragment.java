@@ -1,5 +1,7 @@
 package com.haishanda.android.videoapp.Fragement;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.LoginMessage;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Listener.ClearBtnListener;
 import com.haishanda.android.videoapp.Listener.LoginListener;
@@ -27,9 +29,6 @@ import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.DaoUtil;
 import com.haishanda.android.videoapp.Utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.LoginMessageDao;
-
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
 
@@ -76,11 +75,8 @@ public class DeleteBoatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_delete_boat, container, false);
         ButterKnife.bind(this, view);
-        LoginMessage loginMessage;
-        LoginMessageDao loginMessageDao = VideoApplication.getApplication().getDaoSession().getLoginMessageDao();
-        QueryBuilder<LoginMessage> queryBuilder = loginMessageDao.queryBuilder();
-        loginMessage = queryBuilder.uniqueOrThrow();
-        boatUsername.setText(loginMessage.getUsername());
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
+        boatUsername.setText(preferences.getString(Constant.USER_PREFERENCE_USERNAME, ""));
         data = getArguments();
         boatName = data.getString("boatName");
         clear4.setVisibility(View.INVISIBLE);

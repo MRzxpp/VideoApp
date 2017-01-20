@@ -24,10 +24,8 @@ public class DaoMaster extends AbstractDaoMaster {
         AlarmNumDao.createTable(db, ifNotExists);
         AlarmVoBeanDao.createTable(db, ifNotExists);
         BoatMessageDao.createTable(db, ifNotExists);
-        FirstLoginDao.createTable(db, ifNotExists);
         ImageMessageDao.createTable(db, ifNotExists);
         LastIdDao.createTable(db, ifNotExists);
-        LoginMessageDao.createTable(db, ifNotExists);
         MonitorConfigBeanDao.createTable(db, ifNotExists);
         TimeBeanDao.createTable(db, ifNotExists);
         UserMessageBeanDao.createTable(db, ifNotExists);
@@ -39,10 +37,8 @@ public class DaoMaster extends AbstractDaoMaster {
         AlarmNumDao.dropTable(db, ifExists);
         AlarmVoBeanDao.dropTable(db, ifExists);
         BoatMessageDao.dropTable(db, ifExists);
-        FirstLoginDao.dropTable(db, ifExists);
         ImageMessageDao.dropTable(db, ifExists);
         LastIdDao.dropTable(db, ifExists);
-        LoginMessageDao.dropTable(db, ifExists);
         MonitorConfigBeanDao.dropTable(db, ifExists);
         TimeBeanDao.dropTable(db, ifExists);
         UserMessageBeanDao.dropTable(db, ifExists);
@@ -68,10 +64,8 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(AlarmNumDao.class);
         registerDaoClass(AlarmVoBeanDao.class);
         registerDaoClass(BoatMessageDao.class);
-        registerDaoClass(FirstLoginDao.class);
         registerDaoClass(ImageMessageDao.class);
         registerDaoClass(LastIdDao.class);
-        registerDaoClass(LoginMessageDao.class);
         registerDaoClass(MonitorConfigBeanDao.class);
         registerDaoClass(TimeBeanDao.class);
         registerDaoClass(UserMessageBeanDao.class);

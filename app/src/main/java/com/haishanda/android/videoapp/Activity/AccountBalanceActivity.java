@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Adapter.AccountBalanceAdapter;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.PackageVo;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -24,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 /**
+ * 获取套餐
  * Created by Zhongsz on 2016/11/14.
  */
 
@@ -54,7 +57,7 @@ public class AccountBalanceActivity extends Activity {
     }
 
     public void initViews() {
-        Thread netThread=new Thread(new NetThread());
+        Thread netThread = new Thread(new NetThread());
         netThread.start();
         try {
             netThread.join();
@@ -74,8 +77,9 @@ public class AccountBalanceActivity extends Activity {
     }
 
     private List<PackageVo> queryPackages() {
+        SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
         List<PackageVo> packageVoList = new ArrayList<>();
-        Call<SmartResult<List<PackageVo>>> call = ApiManage.getInstence().getUserApiService().queryPackages(VideoApplication.getApplication().getToken());
+        Call<SmartResult<List<PackageVo>>> call = ApiManage.getInstence().getUserApiService().queryPackages(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""));
         try {
             Response<SmartResult<List<PackageVo>>> response = call.execute();
             if (response.body() != null) {

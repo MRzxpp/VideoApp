@@ -82,4 +82,8 @@ public interface UserApi {
     @GET("/monitor-platform-web/rest/user/queryPackages")
     Call<SmartResult<List<PackageVo>>> queryPackages(@Header("token") String token);
 
+    @GET("/monitor-platform-web/rest/user/validateToken")
+    Call<SmartResult<UserBean>> validateToken(@Header("token") String token);
+
+
 }
