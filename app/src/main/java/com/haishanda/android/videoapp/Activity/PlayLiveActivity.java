@@ -2,20 +2,23 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.RequiresApi;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -84,6 +87,8 @@ public class PlayLiveActivity extends Activity {
     ImageView printScreenBtn;
     @BindView(R.id.back_to_boat_btn)
     ImageView backBtn;
+    @BindView(R.id.play_live_title)
+    RelativeLayout playLiveTitle;
 
     private static final String TAG = "PlayLiveActivity";
     private int liveId = -1;
@@ -100,6 +105,7 @@ public class PlayLiveActivity extends Activity {
     private boolean needResume;
     private long statLiveTime;
     private long endLiveTime;
+    private ContentObserver rotationObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +113,7 @@ public class PlayLiveActivity extends Activity {
         setContentView(R.layout.activity_play_live);
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         ffmpeg = FFmpeg.getInstance(this);
         stopRecordBtn.setVisibility(View.INVISIBLE);
         stopRecordBtn.setEnabled(false);
@@ -137,6 +144,18 @@ public class PlayLiveActivity extends Activity {
             // Handle if FFmpeg is not supported by device
             e.printStackTrace();
         }
+        //注册 Settings.System.ACCELEROMETER_ROTATION
+        rotationObserver = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                if (selfChange) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
+                }
+            }
+        };
+        getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION), true, rotationObserver);
 //        //全屏键不可用
 //        toggleFullscreen.setVisibility(View.INVISIBLE);
 //        toggleFullscreen.setEnabled(false);
@@ -156,18 +175,8 @@ public class PlayLiveActivity extends Activity {
         initTalkService();
         Thread getUrlThread = new Thread(new NetThread());
         getUrlThread.start();
-        loadingPic.setVisibility(View.VISIBLE);
         try {
-            MaterialDialog dialog = new MaterialDialog(this);
-            dialog.setMessage("加载监控视频中…");
-            dialog.show();
             Thread.sleep(3000);
-            dialog.dismiss();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        loadingPic.setVisibility(View.INVISIBLE);
-        try {
             getUrlThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -190,24 +199,47 @@ public class PlayLiveActivity extends Activity {
         } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-
     }
 
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        Log.d(TAG, "orientation changed");
-//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            mCustomMediaController = new CustomMediaController(this, videoView, this);
-//            mCustomMediaController.show(5000);
-//            videoView.setMediaController(mCustomMediaController);
-//            // land donothing is ok
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
-//            landMediaController.show(5000);//控制器显示5s后自动隐藏
-//            videoView.setMediaController(landMediaController);
-//        }
-//        super.onConfigurationChanged(newConfig);
-//    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "orientation changed");
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //横屏
+            CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+            //控制器显示5s后自动隐藏
+            landMediaController.show(5000);
+            videoView.setMediaController(landMediaController);
+            //隐藏标题栏
+            playLiveTitle.setVisibility(View.GONE);
+            //设置全屏即隐藏状态栏
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            //横屏 视频充满全屏
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoView.getLayoutParams();
+//            layoutParams.height = FrameLayout.LayoutParams.MATCH_PARENT;
+            layoutParams.height = videoView.getVideoHeight();
+            layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
+            videoView.setLayoutParams(layoutParams);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
+            mCustomMediaController.show(5000);
+            videoView.setMediaController(mCustomMediaController);
+            //恢复标题栏
+            playLiveTitle.setVisibility(View.VISIBLE);
+            //恢复状态栏
+            WindowManager.LayoutParams attrs = getWindow().getAttributes();
+            attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().setAttributes(attrs);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            //竖屏 视频显示固定大小
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoView.getLayoutParams();
+            layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
+            videoView.setLayoutParams(layoutParams);
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -281,9 +313,9 @@ public class PlayLiveActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         videoView.stopPlayback();
+        getContentResolver().unregisterContentObserver(rotationObserver);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onPause() {
         super.onPause();
@@ -329,7 +361,6 @@ public class PlayLiveActivity extends Activity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @OnClick(R.id.printscreen_btn)
     public void printScreen(View view) {
         Log.i(TAG, "printScreen");
@@ -391,12 +422,12 @@ public class PlayLiveActivity extends Activity {
                         VideoMessageDao videoMessageDao = VideoApplication.getApplication().getDaoSession().getVideoMessageDao();
                         VideoMessage videoMessage = new VideoMessage(null, boatName, boatName + "_" + time + ".flv", time, date, null);
                         videoMessageDao.insertOrReplace(videoMessage);
-                        Log.d(TAG, "Started command : ffmpeg " + command);
+                        Log.d(TAG, "Started command : ffmpeg ");
                     }
 
                     @Override
                     public void onProgress(String message) {
-                        Log.d(TAG, "Progress command : ffmpeg " + command);
+                        Log.d(TAG, "Progress command : ffmpeg ");
                     }
 
                     @Override
@@ -449,7 +480,7 @@ public class PlayLiveActivity extends Activity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                startVoice();
+                                startRecordVoice();
                             }
                         }).start();
                         backBtn.setEnabled(false);
@@ -457,8 +488,14 @@ public class PlayLiveActivity extends Activity {
                         break;
                     case MotionEvent.ACTION_UP:
                         voiceStart.setEnabled(false);
+                        vocalGif.setVisibility(View.INVISIBLE);
                         try {
-                            stopVoice();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    stopRecordVoice();
+                                }
+                            }).start();
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.d(TAG, "record voice failed");
@@ -469,9 +506,18 @@ public class PlayLiveActivity extends Activity {
                         break;
                     case MotionEvent.ACTION_CANCEL:
                         voiceStart.setEnabled(false);
-                        stopVoiceRecord();
-                        File voiceFile = new File(mFileNameFull);
-                        voiceFile.delete();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                stopVoiceRecorder();
+                                File voiceFile = new File(mFileNameFull);
+                                try {
+                                    voiceFile.delete();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
                         voiceStart.setEnabled(true);
                         backBtn.setEnabled(true);
                         toggleFullscreen.setEnabled(true);
@@ -484,10 +530,14 @@ public class PlayLiveActivity extends Activity {
         });
     }
 
-    private void stopVoiceRecord() {
+    private void stopVoiceRecorder() {
         endTime = System.currentTimeMillis();
-        voiceStart.setImageResource(R.drawable.interphone);
-        vocalGif.setVisibility(View.INVISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                voiceStart.setImageResource(R.drawable.interphone);
+            }
+        });
         if (mRecorder != null) {
             try {
                 //下面三个参数必须加，不加的话会奔溃，在mediarecorder.stop();
@@ -496,17 +546,18 @@ public class PlayLiveActivity extends Activity {
                 mRecorder.setOnInfoListener(null);
                 mRecorder.setPreviewDisplay(null);
                 mRecorder.stop();
+                mRecorder.reset();
+                mRecorder.release();
+                mRecorder = null;
+                Log.d(TAG, "record voice finish");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            mRecorder.reset();
-            mRecorder.release();
-            mRecorder = null;
-            Log.d(TAG, "record voice finish");
+
         }
     }
 
-    private void startVoice() {
+    private void startRecordVoice() {
         Log.d(TAG, "record voice start");
         startTime = System.currentTimeMillis();
         String state = Environment.getExternalStorageState();
@@ -543,8 +594,8 @@ public class PlayLiveActivity extends Activity {
         }
     }
 
-    private void stopVoice() {
-        stopVoiceRecord();
+    private void stopRecordVoice() {
+        stopVoiceRecorder();
         Thread voiceThread = new SendVoiceThread();
         voiceThread.start();
     }
@@ -552,46 +603,52 @@ public class PlayLiveActivity extends Activity {
     class SendVoiceThread extends Thread {
         @Override
         public void run() {
-            Looper.prepare();
-            long voiceTime = endTime - startTime;
-            try {
-                File voiceFile = new File(mFileNameFull);
-                int MIN_VOICE_TIME = 2000;
-                if (voiceTime < MIN_VOICE_TIME) {
-                    voiceFile.delete();
-                } else {
-                    Log.d(TAG, "发送录音中");
-                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
-                    // MultipartBody.Part is used to send also the actual filename
-                    MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
-                    MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
-                    ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Observer<SmartResult>() {
-                                @Override
-                                public void onCompleted() {
-                                    android.util.Log.d("上传录音", "completed");
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    android.util.Log.d("上传录音", "error");
-                                    e.printStackTrace();
-                                }
-
-                                @Override
-                                public void onNext(SmartResult smartResult) {
-                                    if (smartResult.getCode() == 1) {
-                                        android.util.Log.d("上传录音", "success");
-                                    } else {
-                                        android.util.Log.d("上传录音", "failed");
+            synchronized (this) {
+                Looper.prepare();
+                long voiceTime = endTime - startTime;
+                try {
+                    File voiceFile = new File(mFileNameFull);
+                    int MIN_VOICE_TIME = 2000;
+                    if (voiceTime < MIN_VOICE_TIME) {
+                        try {
+                            voiceFile.delete();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "发送录音中");
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), voiceFile);
+                        // MultipartBody.Part is used to send also the actual filename
+                        MultipartBody.Part body = MultipartBody.Part.createFormData("voice", voiceFile.getName(), requestFile);
+                        MultipartBody.Part machineId = MultipartBody.Part.createFormData("cameraId", String.valueOf(cameraId));
+                        ApiManage.getInstence().getBoatApiService().uploadVoice(body, machineId)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Observer<SmartResult>() {
+                                    @Override
+                                    public void onCompleted() {
+                                        android.util.Log.d("上传录音", "completed");
                                     }
-                                }
-                            });
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        android.util.Log.d("上传录音", "error");
+                                        e.printStackTrace();
+                                    }
+
+                                    @Override
+                                    public void onNext(SmartResult smartResult) {
+                                        if (smartResult.getCode() == 1) {
+                                            android.util.Log.d("上传录音", "success");
+                                        } else {
+                                            android.util.Log.d("上传录音", "failed");
+                                        }
+                                    }
+                                });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

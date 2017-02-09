@@ -1,9 +1,5 @@
 package com.haishanda.android.videoapp.Config;
 
-/**
- * Created by Zhongsz on 2016/10/10.
- */
-
 public class Constant {
     public final static String SERVER_HOME = "http://114.55.28.239:8082";
 
@@ -22,7 +18,7 @@ public class Constant {
     public static final String SUCCESS = "登录成功";
     public static final String EMERROR_CONFLICT = "账户在其他地方登录";
     public static final String EMERROR_DISCONNECT = "连接环信服务器失败";
-    public static final String EMERROR_CLIENT_REMOVED = "账户已被移除，请联系经销商";
+    public static final String EMERROR_CLIENT_REMOVED = "账户已被强制下线，请联系经销商";
     public static final String EMERROR_CHAT_FAILED = "登录聊天服务器失败";
     public static final String NETERROR_ENABLED = "当前网络不可用";
     public static final String HSDERROR_TIMEOUT = "连接服务器超时";

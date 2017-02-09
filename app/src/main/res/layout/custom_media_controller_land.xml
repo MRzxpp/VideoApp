@@ -50,16 +50,16 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:src="@drawable/play_video" />
 
             <ImageView
                 android:id="@+id/toggle_volume"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:src="@drawable/volumn_on" />
         </RelativeLayout>
     </RelativeLayout>

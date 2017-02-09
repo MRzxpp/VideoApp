@@ -22,11 +22,11 @@
 
         <ImageView
             android:id="@+id/back_to_monitor_config_btn"
-            android:layout_centerVertical="true"
             android:layout_width="40dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:layout_centerVertical="true"
             android:layout_marginBottom="13dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="12dp"
             android:src="@drawable/back" />
     </RelativeLayout>
@@ -40,7 +40,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="16.5dp"
             android:text="不发出声音"
@@ -49,7 +49,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="65.5dp"
             android:text="默认音"
@@ -58,7 +58,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="114.5dp"
             android:text="自定义音"
@@ -66,11 +66,13 @@
             android:textSize="15sp" />
 
         <RadioGroup
+            android:id="@+id/voice_group"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true">
 
             <RadioButton
+                android:id="@+id/no_voice"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="15dp"
@@ -79,6 +81,7 @@
                 android:background="@drawable/bottom_stroke" />
 
             <RadioButton
+                android:id="@+id/default_voice"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="15dp"
@@ -87,6 +90,7 @@
                 android:background="@drawable/bottom_stroke" />
 
             <RadioButton
+                android:id="@+id/custom_voice"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="15dp"

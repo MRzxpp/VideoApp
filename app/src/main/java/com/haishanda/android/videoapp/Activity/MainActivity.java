@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
@@ -24,6 +25,7 @@ import com.haishanda.android.videoapp.Fragement.MonitorFragment;
 import com.haishanda.android.videoapp.Fragement.MyFragment;
 import com.haishanda.android.videoapp.Fragement.PhotosIndexFragment;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
@@ -73,12 +75,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     private EMErrorReceiver receiver;
     private boolean isRegistered;
 
-    public static final String EMERROR_CONFLICT = "账户在其他地方登录";
-    public static final String EMERROR_DISCONNECT = "连接环信服务器失败";
-    public static final String EMERROR_CLIENT_REMOVED = "账户已被移除，请联系经销商";
-    public static final String EMERROR_CHAT_FAILED = "登录聊天服务器失败";
-    MaterialDialog dialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +82,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         handler = new Handler();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        dialog = new MaterialDialog(this);
         fragments = getFragments();
         setDefaultFragment();
         navigationBar.setMode(BottomNavigationBar.MODE_FIXED);
@@ -255,21 +250,16 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         @Override
         public void onReceive(Context context, Intent intent) {
             String loginMessage = intent.getStringExtra("loginMessage");
-            if (loginMessage.equals(EMERROR_CONFLICT) || loginMessage.equals(EMERROR_CLIENT_REMOVED)) {
+            if (loginMessage.equals(Constant.EMERROR_CONFLICT) || loginMessage.equals(Constant.EMERROR_CLIENT_REMOVED)) {
                 logoutAndDeleteLoginMessage();
-                dialog.setMessage(loginMessage);
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
-                // 结束该Activity
+                Log.d("EMERROR", "环信账户连接失败,账号被迫下线 : " + loginMessage);                // 结束该Activity
                 finish();
-                //注销广播接收器
+                // 注销广播接收器
                 context.unregisterReceiver(this);
                 isRegistered = false;
-            } else {
-                MaterialDialog dialog = new MaterialDialog(getApplicationContext());
-                dialog.setMessage(loginMessage);
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
+            }
+            if (loginMessage.equals(Constant.EMERROR_CHAT_FAILED) || loginMessage.equals(Constant.EMERROR_DISCONNECT)) {
+                Log.d("EMERROR", "环信账户连接失败 : " + loginMessage);
             }
         }
     }
@@ -278,8 +268,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         //监控数目重置
         AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
         alarmVoBeanDao.deleteAll();
-        LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-        lastIdDao.deleteAll();
+//        LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
+//        lastIdDao.deleteAll();
         //清除监控配置信息
         MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
         monitorConfigBeanDao.deleteAll();
@@ -301,6 +291,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
+        Intent serviceIntent = new Intent(this, LoginService.class);
+        stopService(serviceIntent);
     }
 
     class EMThread implements Runnable {

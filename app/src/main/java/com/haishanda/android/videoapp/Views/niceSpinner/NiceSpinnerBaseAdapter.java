@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils.niceSpinner;
+package com.haishanda.android.videoapp.Views.niceSpinner;
 
 import android.content.Context;
 import android.os.Build;

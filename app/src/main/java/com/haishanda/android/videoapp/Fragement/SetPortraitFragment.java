@@ -148,8 +148,6 @@ public class SetPortraitFragment extends Fragment {
                         .error(defaultPortrait)
                         .into(portraitView);
                 uploadAndEditPortrait(new File(path));
-            } else {
-                Toast.makeText(getContext(), "err****", Toast.LENGTH_LONG).show();
             }
             //to do find the path of pic
 
@@ -170,8 +168,6 @@ public class SetPortraitFragment extends Fragment {
                             .error(defaultPortrait)
                             .into(portraitView);
                     uploadAndEditPortrait(new File(imagePath));
-                } else {
-                    Toast.makeText(getContext(), "err****", Toast.LENGTH_LONG).show();
                 }
             } else {
                 //to do find the path of pic by uri

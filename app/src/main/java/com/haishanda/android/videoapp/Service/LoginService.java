@@ -16,6 +16,7 @@ import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
@@ -58,15 +59,6 @@ import retrofit2.Response;
 public class LoginService extends Service {
 
     public static final String ACTION_RECEIVE_TIMER = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_TIMER";
-    public static final String SUCCESS = "登录成功";
-    public static final String EMERROR_CONFLICT = "账户在其他地方登录";
-    public static final String EMERROR_DISCONNECT = "连接环信服务器失败";
-    public static final String EMERROR_CLIENT_REMOVED = "账户已被移除，请联系经销商";
-    public static final String EMERROR_CHAT_FAILED = "登录聊天服务器失败";
-    public static final String NETERROR_ENABLED = "当前网络不可用";
-    public static final String HSDERROR_TIMEOUT = "连接服务器超时";
-    public static final String HSDERROR_NETERROR = "连接服务器失败";
-    public static final String SYSTEM_ERROR = "系统错误";
 
     private final static String TAG = "LoginService";
     TimerTaskReceiver receiver;
@@ -175,7 +167,7 @@ public class LoginService extends Service {
                     EMClient.getInstance().groupManager().loadAllGroups();
                     EMClient.getInstance().chatManager().loadAllConversations();
                     Log.d(TAG, "登录聊天服务器成功！");
-                    sendLoginedMsg(true, SUCCESS, true);
+                    sendLoginedMsg(true, Constant.SUCCESS, true);
                     if (emMessageListener != null) {
                         EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
                     }
@@ -192,7 +184,7 @@ public class LoginService extends Service {
                 @Override
                 public void onError(int code, String message) {
                     Log.d(TAG, "登录聊天服务器失败！" + message);
-                    sendLoginedMsg(false, EMERROR_CHAT_FAILED, true);
+                    sendLoginedMsg(false, Constant.EMERROR_CHAT_FAILED, true);
                 }
             });
         } else {
@@ -229,7 +221,7 @@ public class LoginService extends Service {
                                     EMClient.getInstance().groupManager().loadAllGroups();
                                     EMClient.getInstance().chatManager().loadAllConversations();
                                     Log.d(TAG, "登录聊天服务器成功！");
-                                    sendLoginedMsg(true, SUCCESS, false);
+                                    sendLoginedMsg(true, Constant.SUCCESS, false);
                                     if (emMessageListener != null) {
                                         EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
                                     }
@@ -246,7 +238,7 @@ public class LoginService extends Service {
                                 @Override
                                 public void onError(int code, String message) {
                                     Log.d(TAG, "登录聊天服务器失败！" + message);
-                                    sendLoginedMsg(false, EMERROR_CHAT_FAILED, false);
+                                    sendLoginedMsg(false, Constant.EMERROR_CHAT_FAILED, false);
                                 }
                             });
                         } else {
@@ -258,13 +250,13 @@ public class LoginService extends Service {
                         }
                     } catch (SocketTimeoutException e) {
                         Log.e(TAG, e.toString());
-                        sendLoginedMsg(false, HSDERROR_TIMEOUT, false);
+                        sendLoginedMsg(false, Constant.HSDERROR_TIMEOUT, false);
                     } catch (ConnectException e) {
                         Log.e(TAG, e.toString());
-                        sendLoginedMsg(false, HSDERROR_NETERROR, false);
+                        sendLoginedMsg(false, Constant.HSDERROR_NETERROR, false);
                     } catch (IOException e) {
                         Log.e(TAG, e.toString());
-                        sendLoginedMsg(false, SYSTEM_ERROR, false);
+                        sendLoginedMsg(false, Constant.SYSTEM_ERROR, false);
                     }
                 }
             });
@@ -313,7 +305,7 @@ public class LoginService extends Service {
                             //唤醒屏幕
                             Log.d(TAG, "唤醒屏幕");
                             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-                            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "monitorWake");
+                            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, "monitorWake");
                             wakeLock.acquire();
                             wakeLock.release();
                             if (finalIsVibratorOn) {
@@ -383,19 +375,19 @@ public class LoginService extends Service {
         @Override
         public void onDisconnected(final int error) {
             if (error == EMError.USER_REMOVED) {
-                sendLoginedMsg(false, EMERROR_CLIENT_REMOVED, loginFromToken);
+                sendLoginedMsg(false, Constant.EMERROR_CLIENT_REMOVED, loginFromToken);
                 // 显示帐号已经被移除
             } else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
                 // 显示帐号在其他设备登录
-                sendLoginedMsg(false, EMERROR_CONFLICT, loginFromToken);
+                sendLoginedMsg(false, Constant.EMERROR_CONFLICT, loginFromToken);
             } else {
                 if (NetUtils.hasNetwork(LoginService.this)) {
                     //连接不到聊天服务器
-                    sendLoginedMsg(false, EMERROR_DISCONNECT, loginFromToken);
+                    sendLoginedMsg(false, Constant.EMERROR_DISCONNECT, loginFromToken);
                     EMClient.getInstance().logout(true);
                 } else {
                     //当前网络不可用，请检查网络设置
-                    sendLoginedMsg(false, NETERROR_ENABLED, loginFromToken);
+                    sendLoginedMsg(false, Constant.NETERROR_ENABLED, loginFromToken);
                     EMClient.getInstance().logout(true);
                 }
             }

@@ -22,6 +22,7 @@ import com.haishanda.android.videoapp.Bean.MonitorConfigBean;
 import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Fragement.MonitorTimeFragment;
+import com.haishanda.android.videoapp.Fragement.MonitorVoiceFragment;
 import com.haishanda.android.videoapp.Fragement.MonitorWarningFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -42,6 +43,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 监控配置页面
  * Created by Zhongsz on 2016/11/1.
  */
 
@@ -50,7 +52,6 @@ public class MonitorConfigActivity extends FragmentActivity {
     ListView boatsConfig;
 
     private final String Tag = "MonitorConfig";
-    private int machineId;
     private long[] machineIds;
     private String[] boatNames;
     private int[] isSwitchOns;
@@ -61,6 +62,8 @@ public class MonitorConfigActivity extends FragmentActivity {
 
     public MonitorConfigActivity() {
     }
+
+    //Todo 监控报警音的配置，服务器端传来的船舶属性当中也应当有监控报警音的属性
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +147,6 @@ public class MonitorConfigActivity extends FragmentActivity {
     }
 
     public class MonitorConfigAdapter extends ArrayAdapter {
-        private Context context;
         private LayoutInflater inflater;
         private String[] boatNames;
         private long[] machineIds;
@@ -152,7 +154,6 @@ public class MonitorConfigActivity extends FragmentActivity {
 
         MonitorConfigAdapter(Context context, String[] boatNames, long[] machineIds, int isSwitchOpens[]) {
             super(context, R.layout.adapter_monitor_config, boatNames);
-            this.context = context;
             this.boatNames = boatNames;
             this.machineIds = machineIds;
             this.isSwitchOpens = isSwitchOpens;
@@ -262,7 +263,15 @@ public class MonitorConfigActivity extends FragmentActivity {
             monitorVoice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Bundle data = new Bundle();
+                    data.putLong("machineId", machineIds[position]);
+                    MonitorVoiceFragment monitorVoiceFragment = new MonitorVoiceFragment();
+                    monitorVoiceFragment.setArguments(data);
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+                    fragmentTransaction.replace(R.id.monitor_config_layout, monitorVoiceFragment);
+                    fragmentTransaction.commit();
                 }
             });
 

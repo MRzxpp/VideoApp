@@ -35,4 +35,8 @@ public interface MonitorApi {
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMonitorSms")
     Observable<SmartResult> editMonitorSms(@Field("isSwitchOn") boolean isSwitchOn);
+
+    @FormUrlEncoded
+    @POST("/monitor-platform-web/rest/user/chooseAlarmVoice")
+    Observable<SmartResult> chooseAlarmVoice(@Field("machineId") long machineId, @Field("voice") int voice);
 }

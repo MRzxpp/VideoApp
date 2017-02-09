@@ -19,6 +19,10 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络通信 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 获取设备信息 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取MAC地址 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
+    <!-- 获取logcat日志 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <application
         android:name=".VideoApplication"
         android:allowBackup="true"
@@ -122,11 +126,11 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <!--android:configChanges="orientation|keyboardHidden|screenSize"-->
         <activity
             android:name=".Activity.PlayLiveActivity"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".Activity.AddBoatActivity"
@@ -204,13 +208,5 @@
         </service>
 
     </application>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
-
-
-    <!-- 可选 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
-
-    <!-- 获取logcat日志 -->
-    <uses-permission android:name="android.permission.READ_LOGS" />
 
 </manifest>

@@ -168,6 +168,8 @@ public class LoginActivity extends Activity {
                     dialog.dismiss();
                 }
                 Toast.makeText(context, loginMessage, Toast.LENGTH_LONG).show();
+                Intent serviceIntent = new Intent(LoginActivity.this, LoginService.class);
+                stopService(serviceIntent);
             }
         }
     }

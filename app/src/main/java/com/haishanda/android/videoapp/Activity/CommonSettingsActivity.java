@@ -104,8 +104,8 @@ public class CommonSettingsActivity extends FragmentActivity {
                 //监控数目重置
                 AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
                 alarmVoBeanDao.deleteAll();
-                LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-                lastIdDao.deleteAll();
+//                LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
+//                lastIdDao.deleteAll();
                 //清除监控配置信息
                 MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
                 monitorConfigBeanDao.deleteAll();

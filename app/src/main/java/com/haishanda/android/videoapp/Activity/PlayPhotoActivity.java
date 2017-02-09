@@ -17,7 +17,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.FileSizeUtil;
+import com.haishanda.android.videoapp.Utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
@@ -111,7 +111,7 @@ public class PlayPhotoActivity extends Activity {
         TextView sizeView = (TextView) view.findViewById(R.id.image_info_size);
         nameView.setText("文件名称：" + imageName);
         addTimeView.setText("拍摄时间：" + im.getAddTime());
-        sizeView.setText("文件大小：" + FileSizeUtil.getAutoFileOrFilesSize(imagePath));
+        sizeView.setText("文件大小：" + FileUtil.getAutoFileOrFilesSize(imagePath));
         dialogPlus.show();
     }
 

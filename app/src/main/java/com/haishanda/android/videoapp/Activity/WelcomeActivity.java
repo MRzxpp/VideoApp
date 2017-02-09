@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -75,6 +76,7 @@ public class WelcomeActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        //注册接收是否通过token登录成功的token
         IntentFilter filter = new IntentFilter(Constant.ACTION_RECEIVE_MSG);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new TokenReceiver();
@@ -84,13 +86,19 @@ public class WelcomeActivity extends Activity {
         Thread validateThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                Looper.prepare();
                 if (validateToken()) {
                     Intent intent = new Intent(WelcomeActivity.instance, LoginService.class);
                     intent.putExtra("validateTokenState", true);
                     startService(intent);
                 } else {
-                    Animation animation = AnimationUtils.loadAnimation(instance, R.anim.gradually_appear);
-                    loginAndRegisterBtns.startAnimation(animation);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Animation animation = AnimationUtils.loadAnimation(instance, R.anim.gradually_appear);
+                            loginAndRegisterBtns.startAnimation(animation);
+                        }
+                    });
                 }
             }
         });
@@ -138,16 +146,24 @@ public class WelcomeActivity extends Activity {
     }
 
     private boolean validateToken() {
-        Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().validateToken(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""));
-        try {
-            Response<SmartResult<UserBean>> response = call.execute();
-            if (response.body().getCode() == 1) {
-                return true;
+        String token = preferences.getString(Constant.USER_PREFERENCE_TOKEN, "");
+        if (token.equals("")) {
+            return false;
+        } else {
+            Call<SmartResult<UserBean>> call = ApiManage.getInstence().getUserApiService().validateToken(token);
+            try {
+                Response<SmartResult<UserBean>> response = call.execute();
+                if (response.body().getCode() == 1) {
+                    return true;
+                } else {
+                    Toast.makeText(this, response.body().getMsg(), Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     public class TokenReceiver extends BroadcastReceiver {
@@ -171,6 +187,8 @@ public class WelcomeActivity extends Activity {
             }
             if (!loginStatus && loginFromToken) {
                 Toast.makeText(context, loginMessage, Toast.LENGTH_LONG).show();
+                Intent serviceIntent = new Intent(instance, LoginService.class);
+                stopService(serviceIntent);
             }
         }
     }

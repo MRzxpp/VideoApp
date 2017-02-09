@@ -28,7 +28,7 @@ import com.haishanda.android.videoapp.Bean.TimeBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.DaoUtil;
-import com.haishanda.android.videoapp.Utils.niceSpinner.NiceSpinner;
+import com.haishanda.android.videoapp.Views.niceSpinner.NiceSpinner;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
@@ -236,7 +236,7 @@ public class BoatFragment extends Fragment {
             int endHour;
             int endMinute;
             Response<SmartResult<List<QueryMachines>>> response = call.execute();
-            if (response.body().getCode() == 1) {
+            if (response.body().getData() != null && response.body().getCode() == 1) {
                 for (QueryMachines queryMachines : response.body().getData()
                         ) {
                     //配置监控设置页面的数据
@@ -271,15 +271,6 @@ public class BoatFragment extends Fragment {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "请重新登录", Toast.LENGTH_LONG).show();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(this);
-            fragmentTransaction.commit();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
         }
         return boatInfos;
     }
@@ -290,17 +281,16 @@ public class BoatFragment extends Fragment {
         Call<SmartResult<List<QueryCameras>>> call = ApiManage.getInstence().getBoatApiService().queryCamerasCopy(machineId);
         try {
             Response<SmartResult<List<QueryCameras>>> response = call.execute();
-            for (QueryCameras queryCamera : response.body().getData()
-                    ) {
-                cameraIds.add(queryCamera.getId());
+            if (response.body().getData() != null) {
+                for (QueryCameras queryCamera : response.body().getData()
+                        ) {
+                    if (queryCamera != null) {
+                        cameraIds.add(queryCamera.getId());
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "请重新登录", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
         }
 
         BoatMessage boatMessage;

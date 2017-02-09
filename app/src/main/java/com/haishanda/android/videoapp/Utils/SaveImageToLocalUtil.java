@@ -1,9 +1,7 @@
 package com.haishanda.android.videoapp.Utils;
 
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
 
 import com.haishanda.android.videoapp.Bean.BoatMessage;
 import com.haishanda.android.videoapp.Bean.ImageMessage;
@@ -19,8 +17,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
+ * 保存图片到本地的工具类
  * Created by Zhongsz on 2016/10/28.
  */
 
@@ -37,12 +37,12 @@ public class SaveImageToLocalUtil {
         if (!boatDir.exists()) {
             boatDir.mkdir();
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
         if (!dateDir.exists()) {
             dateDir.mkdir();
         }
-        SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒", Locale.CHINA);
         String imgName = boatName + "_" + timeFormat.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(dateDir, imgName);
         try {
@@ -58,7 +58,6 @@ public class SaveImageToLocalUtil {
         imageMessageDao.insert(imageMessage);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void saveCameraIconAction(Bitmap img, String boatName, long cameraId) {
         File sdcardDir = Environment.getExternalStorageDirectory();
         String path = sdcardDir.getPath() + "/VideoApp";
@@ -70,7 +69,7 @@ public class SaveImageToLocalUtil {
         if (!boatDir.exists()) {
             boatDir.mkdir();
         }
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒", Locale.CHINA);
         String imgName = format.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(boatDir, imgName);
         try {
@@ -100,7 +99,7 @@ public class SaveImageToLocalUtil {
         if (!boatDir.exists()) {
             boatDir.mkdir();
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
         if (!dateDir.exists()) {
             dateDir.mkdir();
@@ -109,7 +108,7 @@ public class SaveImageToLocalUtil {
         if (!iconDir.exists()) {
             iconDir.mkdir();
         }
-        SimpleDateFormat hourFormat = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat hourFormat = new SimpleDateFormat("hh:mm:ss", Locale.CHINA);
         String imgName = "videoicon_" + boatName + "_" + time + hourFormat.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(iconDir, imgName);
         try {
