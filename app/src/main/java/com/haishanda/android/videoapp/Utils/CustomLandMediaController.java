@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -23,11 +24,13 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
+ * 播放本地视频时的控制器
  * Created by Zhongsz on 2016/11/2.
  */
 
 public class CustomLandMediaController extends MediaController {
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
+    private static final String TAG = "本地视频播放";
 
     private GestureDetector mGestureDetector;
     private VideoView videoView;
@@ -40,6 +43,8 @@ public class CustomLandMediaController extends MediaController {
     private ImageView mOperationBg;//提示图片
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
+    private ImageView backBtn;
+    private ImageView deleteVideoBtn;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -104,21 +109,28 @@ public class CustomLandMediaController extends MediaController {
     @Override
     protected View makeControllerView() {
         //此处的   mymediacontroller  为我们自定义控制器的布局文件名称
-        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("custom_media_controller_land", "layout", getContext().getPackageName()), this);
+        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_custom_land", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
         volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
-
+        backBtn = (ImageView) v.findViewById(R.id.back_to_videos_btn);
+        deleteVideoBtn = (ImageView) v.findViewById(R.id.delete_video);
         //声音控制
-        mVolumeBrightnessLayout = (RelativeLayout) v.findViewById(R.id.operation_volume_brightness);
+        mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
         mOperationTv = (TextView) v.findViewById(R.id.operation_tv);
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
         //注册事件监听
         volumeToggle.setOnClickListener(volumnListener);
+        backBtn.setOnClickListener(backListener);
+        deleteVideoBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "删除了一个视频");
+            }
+        });
         return v;
     }
 

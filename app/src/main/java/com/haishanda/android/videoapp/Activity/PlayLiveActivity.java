@@ -32,8 +32,8 @@ import com.haishanda.android.videoapp.Bean.CameraLive;
 import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
+import com.haishanda.android.videoapp.Utils.LiveLandMediaController;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
@@ -72,17 +72,17 @@ public class PlayLiveActivity extends Activity {
     @BindView(R.id.play_live)
     VideoView videoView;
     @BindView(R.id.vocal_is_in)
-    ImageView vocalGif;
+    public ImageView vocalGif;
     @BindView(R.id.voice_start)
-    ImageView voiceStart;
+    public ImageView voiceStart;
     @BindView(R.id.toggle_fullscreen)
-    ImageView toggleFullscreen;
+    public ImageView toggleFullscreen;
     @BindView(R.id.stop_record_btn)
-    ImageView stopRecordBtn;
+    public ImageView stopRecordBtn;
     @BindView(R.id.record_btn)
-    ImageView recordBtn;
+    public ImageView recordBtn;
     @BindView(R.id.loading)
-    ImageView loadingPic;
+    public ImageView loadingPic;
     @BindView(R.id.printscreen_btn)
     ImageView printScreenBtn;
     @BindView(R.id.back_to_boat_btn)
@@ -93,14 +93,14 @@ public class PlayLiveActivity extends Activity {
     private static final String TAG = "PlayLiveActivity";
     private int liveId = -1;
     private String boatName;
-    private long cameraId;
+    public long cameraId;
     private String path;
 
     private MediaRecorder mRecorder;
-    private String mFileNameFull;
+    public String mFileNameFull;
     private FFmpeg ffmpeg;
     private String time;
-    private long startTime;
+    public long startTime;
     private long endTime;
     private boolean needResume;
     private long statLiveTime;
@@ -207,7 +207,7 @@ public class PlayLiveActivity extends Activity {
         Log.d(TAG, "orientation changed");
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //横屏
-            CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+            LiveLandMediaController landMediaController = new LiveLandMediaController(this, videoView, this);
             //控制器显示5s后自动隐藏
             landMediaController.show(5000);
             videoView.setMediaController(landMediaController);
@@ -223,9 +223,9 @@ public class PlayLiveActivity extends Activity {
             layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
             videoView.setLayoutParams(layoutParams);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
-            mCustomMediaController.show(5000);
-            videoView.setMediaController(mCustomMediaController);
+//            CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
+//            mCustomMediaController.show(5000);
+//            videoView.setMediaController(mCustomMediaController);
             //恢复标题栏
             playLiveTitle.setVisibility(View.VISIBLE);
             //恢复状态栏
@@ -253,11 +253,13 @@ public class PlayLiveActivity extends Activity {
             if (path != null) {
                 videoView.setVideoPath(path);//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
-                    mCustomMediaController.show(5000);
-                    videoView.setMediaController(mCustomMediaController);//绑定控制器
+//                    CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
+//                    mCustomMediaController.show(5000);
+//                    videoView.setMediaController(mCustomMediaController);//绑定控制器
                 } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    CustomLandMediaController landMediaController = new CustomLandMediaController(this, videoView, this);
+                    //隐藏标题栏
+                    playLiveTitle.setVisibility(View.GONE);
+                    LiveLandMediaController landMediaController = new LiveLandMediaController(this, videoView, this);
                     landMediaController.show(5000);//控制器显示5s后自动隐藏
                     videoView.setMediaController(landMediaController);
                 }
@@ -362,7 +364,7 @@ public class PlayLiveActivity extends Activity {
 
 
     @OnClick(R.id.printscreen_btn)
-    public void printScreen(View view) {
+    public void printScreen() {
         Log.i(TAG, "printScreen");
         try {
             if (videoView.getCurrentFrame() != null) {
@@ -382,7 +384,7 @@ public class PlayLiveActivity extends Activity {
     }
 
     @OnClick(R.id.record_btn)
-    public void recordVideo(View view) {
+    public void recordVideo() {
         if (videoView.getCurrentFrame() != null) {
             File sdcardDir = Environment.getExternalStorageDirectory();
             String path = sdcardDir.getPath() + "/VideoApp";
@@ -530,7 +532,7 @@ public class PlayLiveActivity extends Activity {
         });
     }
 
-    private void stopVoiceRecorder() {
+    public void stopVoiceRecorder() {
         endTime = System.currentTimeMillis();
         runOnUiThread(new Runnable() {
             @Override
@@ -557,7 +559,7 @@ public class PlayLiveActivity extends Activity {
         }
     }
 
-    private void startRecordVoice() {
+    public void startRecordVoice() {
         Log.d(TAG, "record voice start");
         startTime = System.currentTimeMillis();
         String state = Environment.getExternalStorageState();
@@ -594,7 +596,7 @@ public class PlayLiveActivity extends Activity {
         }
     }
 
-    private void stopRecordVoice() {
+    public void stopRecordVoice() {
         stopVoiceRecorder();
         Thread voiceThread = new SendVoiceThread();
         voiceThread.start();

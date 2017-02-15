@@ -1,12 +1,10 @@
 package com.haishanda.android.videoapp.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -14,9 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
 import com.haishanda.android.videoapp.R;
 
 import io.vov.vitamio.widget.MediaController;
@@ -32,7 +31,7 @@ public class CustomMediaController extends MediaController {
 
     private GestureDetector mGestureDetector;
     private VideoView videoView;
-    private Activity activity;
+    private PlayRecordActivity activity;
     private Context context;
     private int controllerWidth = 0;//设置mediaController高度为了使横屏时top显示在屏幕顶端
 
@@ -41,6 +40,9 @@ public class CustomMediaController extends MediaController {
     private ImageView mOperationBg;//提示图片
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
+    private TextView videoCurrenttTime;
+    private TextView videoTotalTime;
+    private SeekBar videoSeekBar;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -92,7 +94,7 @@ public class CustomMediaController extends MediaController {
         }
     };
 
-    public CustomMediaController(Context context, VideoView videoView, Activity activity) {
+    public CustomMediaController(Context context, VideoView videoView, PlayRecordActivity activity) {
         super(context);
         this.context = context;
         this.videoView = videoView;
@@ -105,11 +107,13 @@ public class CustomMediaController extends MediaController {
     @Override
     protected View makeControllerView() {
         //此处的   mymediacontroller  为我们自定义控制器的布局文件名称
-        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("custom_media_controller", "layout", getContext().getPackageName()), this);
+        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_custom", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
         volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
-
+        videoCurrenttTime = (TextView) v.findViewById(R.id.video_current_time);
+        videoTotalTime = (TextView) v.findViewById(R.id.video_total_time);
+        videoSeekBar = (SeekBar) v.findViewById(R.id.video_seekbar);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
@@ -117,9 +121,30 @@ public class CustomMediaController extends MediaController {
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
         //注册事件监听
         volumeToggle.setOnClickListener(volumnListener);
+        videoTotalTime.setText(getVideoDuration(activity.getVideoDuration()));
+        videoCurrenttTime.setText("00:00");
+        videoSeekBar.setMax(1000);
+        videoSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int process = seekBar.getProgress();
+                if (videoView != null && videoView.isPlaying()) {
+                    videoView.seekTo(process);
+                }
+            }
+        });
         return v;
     }
 
@@ -330,5 +355,18 @@ public class CustomMediaController extends MediaController {
             } else {
                 videoView.start();
             }
+    }
+
+    private String getVideoDuration(long videoDuration) {
+        int totalSeconds = (int) videoDuration / 1000;
+        String minute;
+        String second;
+        if (totalSeconds / 60 < 10) {
+            minute = "0" + totalSeconds / 60;
+        } else {
+            minute = String.valueOf(totalSeconds / 60);
+        }
+        second = (totalSeconds - 60 * Integer.valueOf(minute)) < 10 ? "0" + String.valueOf(totalSeconds - 60 * Integer.valueOf(minute)) : String.valueOf(totalSeconds - 60 * Integer.valueOf(minute));
+        return minute + ":" + second;
     }
 }

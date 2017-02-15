@@ -2,19 +2,18 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.haishanda.android.videoapp.Bean.ImageMessage;
 import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CustomLandMediaController;
 import com.haishanda.android.videoapp.Utils.CustomMediaController;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
-import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -25,7 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
@@ -40,6 +38,16 @@ public class PlayRecordActivity extends Activity {
     Bundle extra;
     private String videoPath;
     private String shortPath;
+
+    public long getVideoDuration() {
+        return videoDuration;
+    }
+
+    public void setVideoDuration(long videoDuration) {
+        this.videoDuration = videoDuration;
+    }
+
+    public long videoDuration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +67,6 @@ public class PlayRecordActivity extends Activity {
                 playRecordView.setVideoURI(Uri.fromFile(new File(videoPath)));//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                     CustomMediaController mCustomMediaController = new CustomMediaController(this, playRecordView, this);
-//                    MediaController mCustomMediaController = new MediaController(this);
                     mCustomMediaController.show(5000);
                     playRecordView.setMediaController(mCustomMediaController);//绑定控制器
                 } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -78,6 +85,7 @@ public class PlayRecordActivity extends Activity {
                     }
                 });
                 playRecordView.start();
+                setVideoDuration(playRecordView.getDuration());
             }
         }
     }
@@ -116,11 +124,6 @@ public class PlayRecordActivity extends Activity {
         QueryBuilder<VideoMessage> queryBuilder = videoMessageDao.queryBuilder();
         VideoMessage videoMessage = queryBuilder.where(VideoMessageDao.Properties.VideoPath.eq(shortPath)).unique();
         videoMessageDao.delete(videoMessage);
-//        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
-//        QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
-//        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
-//        ImageMessage im = imageMessage.get(0);
-//        imageMessageDao.delete(im);
         Log.d("PlayRecord", "删除成功");
         backToVideosPage(view);
     }

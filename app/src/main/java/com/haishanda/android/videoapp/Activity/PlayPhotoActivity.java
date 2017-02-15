@@ -1,5 +1,6 @@
 package com.haishanda.android.videoapp.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,7 +47,6 @@ public class PlayPhotoActivity extends Activity {
     private String imagePath;
     private List<ImageMessage> imageMessage;
     private String boatName;
-    private String shortPath;
 
     private final static String TAG = "PlayPhotoActivity";
 
@@ -89,6 +89,7 @@ public class PlayPhotoActivity extends Activity {
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
     }
 
+    @SuppressLint("SetTextI18n")
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
         String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
@@ -103,7 +104,7 @@ public class PlayPhotoActivity extends Activity {
                 .setGravity(Gravity.CENTER)
                 .setContentWidth(ViewGroup.LayoutParams.MATCH_PARENT)  // or any custom width ie: 300
                 .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                .setExpanded(true)
+                .setExpanded(false)
                 .create();
         View view = viewHolder.getInflatedView();
         TextView nameView = (TextView) view.findViewById(R.id.image_info_name);
