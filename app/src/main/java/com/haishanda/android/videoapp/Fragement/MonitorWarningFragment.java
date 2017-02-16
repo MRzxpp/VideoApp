@@ -96,10 +96,14 @@ public class MonitorWarningFragment extends Fragment {
         }
         if (sharedPreferences.getBoolean(Constant.WARNING_CONFIG_TIMER, true)) {
             isNotificationOpen.setChecked(true);
-            notificationOpenLayout.show();
+            if (!notificationOpenLayout.isOpened()) {
+                notificationOpenLayout.show();
+            }
         } else {
             isNotificationOpen.setChecked(false);
-            notificationOpenLayout.hide();
+            if (notificationOpenLayout.isOpened()) {
+                notificationOpenLayout.hide();
+            }
         }
         if (sharedPreferences.getBoolean(Constant.WARNING_CONFIG_SMS, true)) {
             isSendEmail.setChecked(true);
@@ -146,11 +150,15 @@ public class MonitorWarningFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 if (isChecked) {
-                    notificationOpenLayout.show();
+                    if (!notificationOpenLayout.isOpened()) {
+                        notificationOpenLayout.show();
+                    }
                     editor.putBoolean(Constant.WARNING_CONFIG_TIMER, true);
                     editor.apply();
                 } else {
-                    notificationOpenLayout.hide();
+                    if (notificationOpenLayout.isOpened()) {
+                        notificationOpenLayout.hide();
+                    }
                     editor.putBoolean(Constant.WARNING_CONFIG_TIMER, false);
                     editor.apply();
                 }

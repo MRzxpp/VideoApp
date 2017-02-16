@@ -1,6 +1,6 @@
 package com.haishanda.android.videoapp.Api;
 
-import com.haishanda.android.videoapp.Bean.AlarmVo;
+import com.haishanda.android.videoapp.Bean.AlarmVoBean;
 import com.haishanda.android.videoapp.Config.SmartResult;
 
 import java.util.List;
@@ -13,6 +13,7 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 /**
+ * 与监控相关的接口
  * Created by Zhongsz on 2016/11/22.
  */
 
@@ -30,7 +31,7 @@ public interface MonitorApi {
                                               @Field("isSwitchOn") boolean isSwitchOn);
 
     @GET("/monitor-platform-web/rest/user/queryAlarms")
-    Observable<SmartResult<List<AlarmVo>>> queryAlarms(@Query("lastId") int lastId);
+    Observable<SmartResult<List<AlarmVoBean>>> queryAlarms(@Query("lastId") int lastId);
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMonitorSms")

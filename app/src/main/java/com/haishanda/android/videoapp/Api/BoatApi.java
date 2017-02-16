@@ -18,6 +18,7 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 /**
+ * 与船舶相关的接口
  * Created by Zhongsz on 2016/11/14.
  */
 

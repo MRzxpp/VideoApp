@@ -5,6 +5,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 /**
+ * 改变密码的可见性
+ * 用在登录与注册界面中
  * Created by Zhongsz on 2016/10/13.
  */
 

@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Bean;
 
 /**
+ * 储存船舶信息
  * Created by Zhongsz on 2016/11/15.
  */
 

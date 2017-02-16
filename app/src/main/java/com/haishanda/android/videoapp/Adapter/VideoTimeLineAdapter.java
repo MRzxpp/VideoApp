@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 本地视频时间线所对应的listview adapter
  * Created by Zhongsz on 2016/12/24.
  */
 
@@ -66,7 +68,6 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
         String[] iconUrls;
         List<String> iconUrlsCopy = new ArrayList<>();
         for (int i = 0; i < videoMessages.size(); i++) {
-//            videoUrlsCopy.add(i, "/sdcard/VideoApp/" + boatName + "/" + date + "/Videos/" + videoMessages.get(i).getIconPath());
             iconUrlsCopy.add(i, videoMessages.get(i).getIconPath());
         }
         iconUrls = iconUrlsCopy.toArray(new String[iconUrlsCopy.size()]);
@@ -80,7 +81,7 @@ public class VideoTimeLineAdapter extends ArrayAdapter {
         String[] videoUrls;
         List<String> videoUrlsCopy = new ArrayList<>();
         for (int i = 0; i < videoMessages.size(); i++) {
-            videoUrlsCopy.add(i, "/sdcard/VideoApp/" + boatName + "/" + date + "/Videos/" + videoMessages.get(i).getVideoPath());
+            videoUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + date + "/Videos/" + videoMessages.get(i).getVideoPath());
             shortPaths.add(videoMessages.get(i).getVideoPath());
         }
         videoUrls = videoUrlsCopy.toArray(new String[videoUrlsCopy.size()]);

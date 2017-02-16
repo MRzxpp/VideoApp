@@ -3,7 +3,6 @@ package com.haishanda.android.videoapp.Activity;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.haishanda.android.videoapp.Listener.LoginListener;
 import com.haishanda.android.videoapp.R;
 import com.pgyersdk.feedback.PgyFeedbackShakeManager;
 
@@ -11,6 +10,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 帮助与反馈
  * Created by Zhongsz on 2016/12/15.
  */
 

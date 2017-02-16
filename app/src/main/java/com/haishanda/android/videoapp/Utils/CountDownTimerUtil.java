@@ -1,9 +1,5 @@
 package com.haishanda.android.videoapp.Utils;
 
-/**
- * Created by Zhongsz on 2016/10/11.
- */
-
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -11,6 +7,7 @@ import android.text.SpannableString;
 import android.widget.Button;
 
 /**
+ * 倒计时
  * Created by Jackie on 2015/11/30.
  */
 public class CountDownTimerUtil extends CountDownTimer {

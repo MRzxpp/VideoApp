@@ -7,14 +7,15 @@ import java.io.FileInputStream;
 import java.text.DecimalFormat;
 
 /**
+ * 操作文件的工具类
  * Created by Zhongsz on 2016/11/21.
  */
 
 public class FileUtil {
-    public static final int SIZETYPE_B = 1;// 获取文件大小单位为B的double值
-    public static final int SIZETYPE_KB = 2;// 获取文件大小单位为KB的double值
-    public static final int SIZETYPE_MB = 3;// 获取文件大小单位为MB的double值
-    public static final int SIZETYPE_GB = 4;// 获取文件大小单位为GB的double值
+    private static final int SIZETYPE_B = 1;// 获取文件大小单位为B的double值
+    private static final int SIZETYPE_KB = 2;// 获取文件大小单位为KB的double值
+    private static final int SIZETYPE_MB = 3;// 获取文件大小单位为MB的double值
+    private static final int SIZETYPE_GB = 4;// 获取文件大小单位为GB的double值
 
     /**
      * 获取文件指定文件的指定单位的大小
@@ -64,14 +65,14 @@ public class FileUtil {
     /**
      * 获取指定文件大小
      *
-     * @param
-     * @return
+     * @param file filename
+     * @return size
      * @throws Exception
      */
     private static long getFileSize(File file) throws Exception {
         long size = 0;
         if (file.exists()) {
-            FileInputStream fis = null;
+            FileInputStream fis;
             fis = new FileInputStream(file);
             size = fis.available();
             fis.close();
@@ -85,18 +86,17 @@ public class FileUtil {
     /**
      * 获取指定文件夹
      *
-     * @param f
-     * @return
+     * @return fileSize
      * @throws Exception
      */
     private static long getFileSizes(File f) throws Exception {
         long size = 0;
         File flist[] = f.listFiles();
-        for (int i = 0; i < flist.length; i++) {
-            if (flist[i].isDirectory()) {
-                size = size + getFileSizes(flist[i]);
+        for (File aFlist : flist) {
+            if (aFlist.isDirectory()) {
+                size = size + getFileSizes(aFlist);
             } else {
-                size = size + getFileSize(flist[i]);
+                size = size + getFileSize(aFlist);
             }
         }
         return size;
@@ -104,13 +104,10 @@ public class FileUtil {
 
     /**
      * 转换文件大小
-     *
-     * @param fileS
-     * @return
      */
     private static String FormetFileSize(long fileS) {
         DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeString = "";
+        String fileSizeString;
         String wrongSize = "0B";
         if (fileS == 0) {
             return wrongSize;
@@ -130,9 +127,9 @@ public class FileUtil {
     /**
      * 转换文件大小,指定转换的类型
      *
-     * @param fileS
-     * @param sizeType
-     * @return
+     * @param fileS    fileSize
+     * @param sizeType unit type
+     * @return new unit
      */
     private static double FormetFileSize(long fileS, int sizeType) {
         DecimalFormat df = new DecimalFormat("#.00");

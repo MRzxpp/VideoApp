@@ -9,6 +9,8 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
+ * 网络请求过滤器
+ * 当返回为空时进行过滤，防止程序crash
  * Created by Zhongsz on 2016/11/24.
  */
 

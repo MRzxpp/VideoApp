@@ -18,6 +18,7 @@ import retrofit2.http.Part;
 import rx.Observable;
 
 /**
+ * 与用户相关的接口
  * Created by Zhongsz on 2016/10/10.
  */
 

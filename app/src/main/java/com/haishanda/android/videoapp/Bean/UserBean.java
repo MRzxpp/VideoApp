@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Bean;
 
 /**
+ * 登录用户的信息
  * Created by Zhongsz on 2016/10/10.
  */
 

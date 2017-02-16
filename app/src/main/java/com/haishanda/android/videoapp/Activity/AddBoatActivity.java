@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.LoginListener;
+import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
@@ -56,7 +56,7 @@ public class AddBoatActivity extends Activity {
         ButterKnife.bind(this);
         instance = this;
         confirmAddBoatBtn.setEnabled(false);
-        boatPassword.addTextChangedListener(new LoginListener(boatNumber, boatPassword, confirmAddBoatBtn, blueBtn, greyBtn, white, white));
+        boatPassword.addTextChangedListener(new LoginWatcher(boatNumber, boatPassword, confirmAddBoatBtn, blueBtn, greyBtn, white, white));
     }
 
     @OnClick(R.id.back_to_boat_fragment_btn)

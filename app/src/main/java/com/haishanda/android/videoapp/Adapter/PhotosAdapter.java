@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.R;
 
-import java.util.List;
 
 /**
  * 相册界面的图标适配器
@@ -30,7 +29,7 @@ class PhotosAdapter extends ArrayAdapter {
     private String[] imagePath;
     private String boatName;
 
-    public PhotosAdapter(Context context, String[] imagePath, String boatName) {
+    PhotosAdapter(Context context, String[] imagePath, String boatName) {
         super(context, R.layout.adapter_photos, imagePath);
 
         this.context = context;
@@ -42,7 +41,7 @@ class PhotosAdapter extends ArrayAdapter {
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         if (null == convertView) {
             convertView = inflater.inflate(R.layout.adapter_photos, parent, false);
         }

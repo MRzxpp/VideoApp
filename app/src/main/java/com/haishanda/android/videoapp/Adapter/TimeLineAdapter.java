@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * 相册照片时间线适配器
  * Created by Zhongsz on 2016/12/7.
  */
 
@@ -64,7 +65,7 @@ public class TimeLineAdapter extends ArrayAdapter {
         String[] imageUrls;
         List<String> imageUrlsCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {
-            imageUrlsCopy.add(i, "/sdcard/VideoApp/" + boatName + "/" + date + "/" + imagePaths.get(i).getImgPath());
+            imageUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + date + "/" + imagePaths.get(i).getImgPath());
         }
         imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
         return imageUrls;

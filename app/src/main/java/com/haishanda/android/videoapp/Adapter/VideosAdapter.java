@@ -2,7 +2,7 @@ package com.haishanda.android.videoapp.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
 import com.haishanda.android.videoapp.R;
 
@@ -19,10 +18,11 @@ import java.io.File;
 import java.util.List;
 
 /**
+ * 每一天内的视频缩略图适配器
  * Created by Zhongsz on 2016/12/24.
  */
 
-public class VideosAdapter extends ArrayAdapter {
+class VideosAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
 
@@ -31,7 +31,7 @@ public class VideosAdapter extends ArrayAdapter {
     private String[] iconPath;
     private List<String> shortPaths;
 
-    public VideosAdapter(Context context, String[] videoPath, String boatName, String[] iconPath, List<String> shortPaths) {
+    VideosAdapter(Context context, String[] videoPath, String boatName, String[] iconPath, List<String> shortPaths) {
         super(context, R.layout.adapter_videos, videoPath);
 
         this.context = context;
@@ -43,8 +43,9 @@ public class VideosAdapter extends ArrayAdapter {
         inflater = LayoutInflater.from(context);
     }
 
+    @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         if (null == convertView) {
             convertView = inflater.inflate(R.layout.adapter_videos, parent, false);
         }

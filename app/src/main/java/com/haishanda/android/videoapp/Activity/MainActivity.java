@@ -18,7 +18,6 @@ import android.util.Log;
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Fragement.BoatFragment;
 import com.haishanda.android.videoapp.Fragement.MonitorFragment;
@@ -27,15 +26,9 @@ import com.haishanda.android.videoapp.Fragement.PhotosIndexFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
-import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
-import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
-
-import org.greenrobot.greendao.DaoException;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 
@@ -69,11 +62,12 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
     Drawable myUnPick;
 
     private ArrayList<Fragment> fragments;
-    public static MainActivity instance;
+    private static MainActivity instance;
 
     private Handler handler;
     private EMErrorReceiver receiver;
     private boolean isRegistered;
+    private SharedPreferences alarmPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,22 +80,13 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         setDefaultFragment();
         navigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         navigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
-        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-        QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
-        AlarmNum alarmNum;
-        try {
-            alarmNum = queryBuilder.unique();
-        } catch (DaoException e) {
-            alarmNum = new AlarmNum(0);
-        }
-        if (alarmNum == null) {
-            alarmNum = new AlarmNum(0);
-        }
-        if (alarmNum.getAlarmNum() != 0) {
+        alarmPreferences = getSharedPreferences(Constant.ALARM_MESSAGE, MODE_PRIVATE);
+        int alarmNumber = alarmPreferences.getInt(Constant.ALARM_MESSAGE_NUMBER, 0);
+        if (alarmNumber != 0) {
             BadgeItem numberBadgeItem = new BadgeItem()
                     .setBorderWidth(5)
                     .setBackgroundColorResource(R.color.red)
-                    .setText(String.valueOf(alarmNum.getAlarmNum()))
+                    .setText(String.valueOf(alarmNumber))
                     .setHideOnSelect(true);
             navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
                     .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
@@ -132,6 +117,17 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         isRegistered = true;
     }
 
+    public static MainActivity getInstance() {
+        if (instance == null) {
+            synchronized (MainActivity.class) {
+                if (instance == null) {
+                    instance = new MainActivity();
+                }
+            }
+        }
+        return instance;
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -152,22 +148,12 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         @Override
         public void run() {
             navigationBar.clearAll();
-            AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-            QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
-            AlarmNum alarmNum;
-            try {
-                alarmNum = queryBuilder.unique();
-            } catch (DaoException e) {
-                alarmNum = new AlarmNum(0);
-            }
-            if (alarmNum == null) {
-                alarmNum = new AlarmNum(0);
-            }
-            if (alarmNum.getAlarmNum() != 0) {
+            int alarmNumber = alarmPreferences.getInt(Constant.ALARM_MESSAGE_NUMBER, 0);
+            if (alarmNumber != 0) {
                 BadgeItem numberBadgeItem = new BadgeItem()
                         .setBorderWidth(5)
                         .setBackgroundColorResource(R.color.red)
-                        .setText(String.valueOf(alarmNum.getAlarmNum()))
+                        .setText(String.valueOf(alarmNumber))
                         .setHideOnSelect(true);
                 navigationBar.addItem(new BottomNavigationItem(boatPick, "船舶").setActiveColorResource(R.color.textBlue))
                         .addItem(new BottomNavigationItem(photosPick, "相册").setActiveColorResource(R.color.textBlue))
@@ -268,14 +254,14 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         //监控数目重置
         AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
         alarmVoBeanDao.deleteAll();
-//        LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-//        lastIdDao.deleteAll();
         //清除监控配置信息
         MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
         monitorConfigBeanDao.deleteAll();
         //报警数目归零
-        AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-        alarmNumDao.deleteAll();
+        SharedPreferences alarmPreferences = getSharedPreferences(Constant.ALARM_MESSAGE, MODE_PRIVATE);
+        SharedPreferences.Editor alarmEditor = alarmPreferences.edit();
+        alarmEditor.remove(Constant.ALARM_MESSAGE_NUMBER);
+        alarmEditor.apply();
         //清除登录信息
         SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();

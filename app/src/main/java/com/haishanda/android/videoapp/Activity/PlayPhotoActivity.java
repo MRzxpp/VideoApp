@@ -3,6 +3,7 @@ package com.haishanda.android.videoapp.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -92,7 +93,7 @@ public class PlayPhotoActivity extends Activity {
     @SuppressLint("SetTextI18n")
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
-        String imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
+        String imageName = imagePath.substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
         imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
@@ -146,7 +147,7 @@ public class PlayPhotoActivity extends Activity {
         String boatName = extra.getString("boatName");
         String imageName;
         if (boatName != null && imagePath != null) {
-            imageName = imagePath.substring("/sdcard/VideoApp/".length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
+            imageName = imagePath.substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
             File file = new File(imagePath);
             if (file.exists()) {
                 file.delete();

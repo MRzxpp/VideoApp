@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +15,9 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.EditChangedListener;
-import com.haishanda.android.videoapp.Listener.FetchCodeListener;
-import com.haishanda.android.videoapp.Listener.LoginListener;
+import com.haishanda.android.videoapp.Fragement.VerifyCodeFragment;
+import com.haishanda.android.videoapp.Utils.Watcher.EditChangedWatcher;
+import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 
@@ -31,10 +34,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 登录界面点击忘记密码后获取验证码
  * Created by Zhongsz on 2016/10/10.
  */
 
-public class GetVerificationActivity extends Activity {
+public class ForgetPasswordActivity extends FragmentActivity {
     @BindView(R.id.mobileNo_get_veri_text)
     EditText phoneNum;
     @BindView(R.id.fetch_code_getveri_input)
@@ -43,9 +47,6 @@ public class GetVerificationActivity extends Activity {
     Button toResetPwdPage;
     @BindView(R.id.get_code_btn)
     Button getCodeBtn;
-
-    @BindColor(R.color.btnGrey)
-    int textGrey;
     @BindColor(R.color.white)
     int white;
     @BindDrawable(R.drawable.corners_blue_btn)
@@ -59,12 +60,12 @@ public class GetVerificationActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_getverification);
+        setContentView(R.layout.activity_forget_password);
         ButterKnife.bind(this);
         toResetPwdPage.setEnabled(false);
         getCodeBtn.setEnabled(false);
-        fetchCode.addTextChangedListener(new LoginListener(fetchCode, phoneNum, toResetPwdPage, blueBtn, greyBtn, white, white));
-        phoneNum.addTextChangedListener(new EditChangedListener(phoneNum, getCodeBtn, blueBtn, greyBtn, white, white));
+        fetchCode.addTextChangedListener(new LoginWatcher(fetchCode, phoneNum, toResetPwdPage, blueBtn, greyBtn, white, white));
+        phoneNum.addTextChangedListener(new EditChangedWatcher(phoneNum, getCodeBtn, blueBtn, greyBtn, white, white));
     }
 
     @OnClick(R.id.reset_password_btn)
@@ -89,10 +90,15 @@ public class GetVerificationActivity extends Activity {
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
                             Log.i(TAG, "validate success");
-                            Intent intent = new Intent(GetVerificationActivity.this, ResetPasswordActivity.class);
-                            intent.putExtra("mobileNo", GetVerificationActivity.this.mobileNo);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
+                            Bundle extra = new Bundle();
+                            extra.putString("moblieNo", mobileNo);
+                            ResetPasswordUnloginedFragment resetPasswordUnloginedFragment = new ResetPasswordUnloginedFragment();
+                            resetPasswordUnloginedFragment.setArguments(extra);
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
+                            fragmentTransaction.replace(R.id.forget_password_layout, resetPasswordUnloginedFragment);
+                            fragmentTransaction.commit();
                         } else {
                             Log.i(TAG, "validate failed");
                             Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "验证码输入错误", Toast.LENGTH_LONG)
@@ -150,7 +156,7 @@ public class GetVerificationActivity extends Activity {
 
     @OnClick(R.id.meet_problem)
     public void skipToProblemPage(View view) {
-        Intent intent = new Intent(GetVerificationActivity.this, ProblemActivity.class);
+        Intent intent = new Intent(ForgetPasswordActivity.this, ProblemActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }

@@ -14,9 +14,9 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.ClearBtnListener;
-import com.haishanda.android.videoapp.Listener.SignUpListener;
-import com.haishanda.android.videoapp.Listener.SignupCodeListener;
+import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
+import com.haishanda.android.videoapp.Utils.Watcher.SignUpWatcher;
+import com.haishanda.android.videoapp.Utils.Watcher.SignupCodeWatcher;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observer;
@@ -38,7 +37,7 @@ import rx.schedulers.Schedulers;
  * signup
  * Created by Zhongsz on 2016/10/9.
  */
-public class SignupActivity extends Activity {
+public class SignUpActivity extends Activity {
     @BindView(R.id.phonenumber)
     EditText phoneNumber;
     @BindView(R.id.password_signup_text)
@@ -77,10 +76,10 @@ public class SignupActivity extends Activity {
         signUpBtn.setEnabled(false);
         clear1.setVisibility(View.INVISIBLE);
         clear2.setVisibility(View.INVISIBLE);
-        password.addTextChangedListener(new ClearBtnListener(clear1, password));
-        rePassword.addTextChangedListener(new ClearBtnListener(clear2, rePassword));
-        rePassword.addTextChangedListener(new SignupCodeListener(phoneNumber, password, rePassword, getFetchCode, blueBtn, greyBtn, white, white));
-        code.addTextChangedListener(new SignUpListener(phoneNumber, password, rePassword, code, signUpBtn, blueBtn, greyBtn, white, white));
+        password.addTextChangedListener(new ClearBtnWatcher(clear1, password));
+        rePassword.addTextChangedListener(new ClearBtnWatcher(clear2, rePassword));
+        rePassword.addTextChangedListener(new SignupCodeWatcher(phoneNumber, password, rePassword, getFetchCode, blueBtn, greyBtn, white, white));
+        code.addTextChangedListener(new SignUpWatcher(phoneNumber, password, rePassword, code, signUpBtn, blueBtn, greyBtn, white, white));
     }
 
     @OnClick(R.id.back_to_login_btn)
@@ -96,25 +95,25 @@ public class SignupActivity extends Activity {
         Pattern phoneNumPattern = Pattern.compile("^[1][3578][0-9]{9}$");
         Matcher phoneNumMatcher = phoneNumPattern.matcher(phoneNumber.getText().toString());
         if (phoneNumber.getText().toString().equals("")) {
-            Toast.makeText(SignupActivity.this, "请输入手机号", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "请输入手机号", Toast.LENGTH_SHORT)
                     .show();
         } else if (!phoneNumMatcher.matches()) {
-            Toast.makeText(SignupActivity.this, "手机号格式不正确，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "手机号格式不正确，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().equals("") || rePassword.getText().toString().equals("")) {
-            Toast.makeText(SignupActivity.this, "请输入密码", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "请输入密码", Toast.LENGTH_SHORT)
                     .show();
         } else if (!password.getText().toString().equals(rePassword.getText().toString())) {
-            Toast.makeText(SignupActivity.this, "两次输入的密码不一致，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "两次输入的密码不一致，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().length() < 6) {
-            Toast.makeText(SignupActivity.this, "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().length() > 20) {
-            Toast.makeText(SignupActivity.this, "密码长度过长，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "密码长度过长，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (!passwordMatcher.matches()) {
-            Toast.makeText(SignupActivity.this, "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else {
             CountDownTimerUtil countDownTimerUtil = new CountDownTimerUtil(getFetchCode, 120000, 1000, blueBtn, greyBtn, white, white);
@@ -158,28 +157,28 @@ public class SignupActivity extends Activity {
         Pattern phoneNumPattern = Pattern.compile("^[1][3578][0-9]{9}$");
         Matcher phoneNumMatcher = phoneNumPattern.matcher(phoneNumber.getText().toString());
         if (phoneNumber.getText().toString().equals("")) {
-            Toast.makeText(SignupActivity.this, "请输入手机号", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "请输入手机号", Toast.LENGTH_SHORT)
                     .show();
         } else if (!phoneNumMatcher.matches()) {
-            Toast.makeText(SignupActivity.this, "手机号格式不正确，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "手机号格式不正确，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().equals("") || rePassword.getText().toString().equals("")) {
-            Toast.makeText(SignupActivity.this, "请输入密码", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "请输入密码", Toast.LENGTH_SHORT)
                     .show();
         } else if (!password.getText().toString().equals(rePassword.getText().toString())) {
-            Toast.makeText(SignupActivity.this, "两次输入的密码不一致，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "两次输入的密码不一致，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().length() < 6) {
-            Toast.makeText(SignupActivity.this, "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (password.getText().toString().length() > 20) {
-            Toast.makeText(SignupActivity.this, "密码长度过长，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "密码长度过长，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (!passwordMatcher.matches()) {
-            Toast.makeText(SignupActivity.this, "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (code.getText().toString().equals("")) {
-            Toast.makeText(SignupActivity.this, "请输入验证码", Toast.LENGTH_SHORT)
+            Toast.makeText(SignUpActivity.this, "请输入验证码", Toast.LENGTH_SHORT)
                     .show();
         } else {
             ApiManage.getInstence().getUserApiService().signupAction(phoneNumber.getText().toString(), password.getText().toString(), code.getText().toString())
@@ -201,15 +200,15 @@ public class SignupActivity extends Activity {
                             Log.i("info", String.valueOf(smartResult.getCode()));
                             Log.i("info", smartResult.getMsg());
                             if (smartResult.getCode() != 1) {
-                                Toast.makeText(SignupActivity.this, smartResult.getMsg() != null ? smartResult.getMsg() : "注册失败，请重试！", Toast.LENGTH_SHORT)
+                                Toast.makeText(SignUpActivity.this, smartResult.getMsg() != null ? smartResult.getMsg() : "注册失败，请重试！", Toast.LENGTH_SHORT)
                                         .show();
                             } else {
-                                Toast.makeText(SignupActivity.this, "注册成功，请登录", Toast.LENGTH_SHORT)
+                                Toast.makeText(SignUpActivity.this, "注册成功，请登录", Toast.LENGTH_SHORT)
                                         .show();
-                                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
-                                SignupActivity.this.finish();
+                                SignUpActivity.this.finish();
                             }
                         }
                     });

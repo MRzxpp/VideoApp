@@ -16,6 +16,7 @@ import com.haishanda.android.videoapp.Utils.ExpandableLayout;
 import java.util.List;
 
 /**
+ * 个人账户余额适配器
  * Created by Zhongsz on 2016/11/29.
  */
 
@@ -62,7 +63,9 @@ public class AccountBalanceAdapter extends ArrayAdapter {
         expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expandableLayout.show();
+                if (!expandableLayout.isOpened()) {
+                    expandableLayout.show();
+                }
                 expand.setClickable(false);
                 expand.setVisibility(View.INVISIBLE);
                 collapse.setClickable(true);
@@ -72,7 +75,9 @@ public class AccountBalanceAdapter extends ArrayAdapter {
         collapse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expandableLayout.hide();
+                if (expandableLayout.isOpened()) {
+                    expandableLayout.hide();
+                }
                 collapse.setClickable(false);
                 collapse.setVisibility(View.INVISIBLE);
                 expand.setClickable(true);
@@ -84,7 +89,9 @@ public class AccountBalanceAdapter extends ArrayAdapter {
         packup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expandableLayout.hide();
+                if (expandableLayout.isOpened()) {
+                    expandableLayout.hide();
+                }
                 collapse.setClickable(false);
                 collapse.setVisibility(View.INVISIBLE);
                 expand.setClickable(true);

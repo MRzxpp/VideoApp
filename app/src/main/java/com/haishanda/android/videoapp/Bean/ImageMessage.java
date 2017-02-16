@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
+ * 截图后保存的本地图片的信息
  * Created by Zhongsz on 2016/10/28.
  */
 @Entity

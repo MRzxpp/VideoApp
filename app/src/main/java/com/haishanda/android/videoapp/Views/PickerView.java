@@ -1,8 +1,10 @@
 package com.haishanda.android.videoapp.Views;
 
 /**
+ * 选取时间的View小控件
  * Created by Zhongsz on 2016/11/2.
  */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -19,8 +21,8 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-public class PickerView extends View
-{
+
+public class PickerView extends View {
 
     public static final String TAG = "PickerView";
     /**
@@ -60,17 +62,13 @@ public class PickerView extends View
     private Timer timer;
     private MyTimerTask mTask;
 
-    Handler updateHandler = new Handler()
-    {
+    Handler updateHandler = new Handler() {
 
         @Override
-        public void handleMessage(Message msg)
-        {
-            if (Math.abs(mMoveLen) < SPEED)
-            {
+        public void handleMessage(Message msg) {
+            if (Math.abs(mMoveLen) < SPEED) {
                 mMoveLen = 0;
-                if (mTask != null)
-                {
+                if (mTask != null) {
                     mTask.cancel();
                     mTask = null;
                     performSelect();
@@ -83,58 +81,49 @@ public class PickerView extends View
 
     };
 
-    public PickerView(Context context)
-    {
+    public PickerView(Context context) {
         super(context);
         init();
     }
 
-    public PickerView(Context context, AttributeSet attrs)
-    {
+    public PickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public void setOnSelectListener(onSelectListener listener)
-    {
+    public void setOnSelectListener(onSelectListener listener) {
         mSelectListener = listener;
     }
 
-    private void performSelect()
-    {
+    private void performSelect() {
         if (mSelectListener != null)
             mSelectListener.onSelect(mDataList.get(mCurrentSelected));
     }
 
-    public void setData(List<String> datas)
-    {
+    public void setData(List<String> datas) {
         mDataList = datas;
         mCurrentSelected = datas.size() / 2;
         invalidate();
     }
 
-    public void setSelected(int selected)
-    {
+    public void setSelected(int selected) {
         mCurrentSelected = selected;
     }
 
-    private void moveHeadToTail()
-    {
+    private void moveHeadToTail() {
         String head = mDataList.get(0);
         mDataList.remove(0);
         mDataList.add(head);
     }
 
-    private void moveTailToHead()
-    {
+    private void moveTailToHead() {
         String tail = mDataList.get(mDataList.size() - 1);
         mDataList.remove(mDataList.size() - 1);
         mDataList.add(0, tail);
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-    {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mViewHeight = getMeasuredHeight();
         mViewWidth = getMeasuredWidth();
@@ -145,10 +134,9 @@ public class PickerView extends View
         invalidate();
     }
 
-    private void init()
-    {
+    private void init() {
         timer = new Timer();
-        mDataList = new ArrayList<String>();
+        mDataList = new ArrayList<>();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Style.FILL);
         mPaint.setTextAlign(Align.CENTER);
@@ -156,16 +144,14 @@ public class PickerView extends View
     }
 
     @Override
-    protected void onDraw(Canvas canvas)
-    {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         // 根据index绘制view
         if (isInit)
             drawData(canvas);
     }
 
-    private void drawData(Canvas canvas)
-    {
+    private void drawData(Canvas canvas) {
         // 先绘制选中的text再往上往下绘制其余的text
         float scale = parabola(mViewHeight / 4.0f, mMoveLen);
         float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
@@ -179,28 +165,22 @@ public class PickerView extends View
 
         canvas.drawText(mDataList.get(mCurrentSelected), x, baseline, mPaint);
         // 绘制上方data
-        for (int i = 1; (mCurrentSelected - i) >= 0; i++)
-        {
+        for (int i = 1; (mCurrentSelected - i) >= 0; i++) {
             drawOtherText(canvas, i, -1);
         }
         // 绘制下方data
-        for (int i = 1; (mCurrentSelected + i) < mDataList.size(); i++)
-        {
+        for (int i = 1; (mCurrentSelected + i) < mDataList.size(); i++) {
             drawOtherText(canvas, i, 1);
         }
 
     }
 
     /**
-     * @param canvas
-     * @param position
-     *            距离mCurrentSelected的差值
-     * @param type
-     *            1表示向下绘制，-1表示向上绘制
+     * @param position 距离mCurrentSelected的差值
+     * @param type     1表示向下绘制，-1表示向上绘制
      */
-    private void drawOtherText(Canvas canvas, int position, int type)
-    {
-        float d = (float) (MARGIN_ALPHA * mMinTextSize * position + type
+    private void drawOtherText(Canvas canvas, int position, int type) {
+        float d = (MARGIN_ALPHA * mMinTextSize * position + type
                 * mMoveLen);
         float scale = parabola(mViewHeight / 4.0f, d);
         float size = (mMaxTextSize - mMinTextSize) * scale + mMinTextSize;
@@ -216,23 +196,18 @@ public class PickerView extends View
     /**
      * 抛物线
      *
-     * @param zero
-     *            零点坐标
-     * @param x
-     *            偏移量
+     * @param zero 零点坐标
+     * @param x    偏移量
      * @return scale
      */
-    private float parabola(float zero, float x)
-    {
+    private float parabola(float zero, float x) {
         float f = (float) (1 - Math.pow(x / zero, 2));
         return f < 0 ? 0 : f;
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        switch (event.getActionMasked())
-        {
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 doDown(event);
                 break;
@@ -246,28 +221,23 @@ public class PickerView extends View
         return true;
     }
 
-    private void doDown(MotionEvent event)
-    {
-        if (mTask != null)
-        {
+    private void doDown(MotionEvent event) {
+        if (mTask != null) {
             mTask.cancel();
             mTask = null;
         }
         mLastDownY = event.getY();
     }
 
-    private void doMove(MotionEvent event)
-    {
+    private void doMove(MotionEvent event) {
 
         mMoveLen += (event.getY() - mLastDownY);
 
-        if (mMoveLen > MARGIN_ALPHA * mMinTextSize / 2)
-        {
+        if (mMoveLen > MARGIN_ALPHA * mMinTextSize / 2) {
             // 往下滑超过离开距离
             moveTailToHead();
             mMoveLen = mMoveLen - MARGIN_ALPHA * mMinTextSize;
-        } else if (mMoveLen < -MARGIN_ALPHA * mMinTextSize / 2)
-        {
+        } else if (mMoveLen < -MARGIN_ALPHA * mMinTextSize / 2) {
             // 往上滑超过离开距离
             moveHeadToTail();
             mMoveLen = mMoveLen + MARGIN_ALPHA * mMinTextSize;
@@ -277,16 +247,13 @@ public class PickerView extends View
         invalidate();
     }
 
-    private void doUp(MotionEvent event)
-    {
+    private void doUp(MotionEvent event) {
         // 抬起手后mCurrentSelected的位置由当前位置move到中间选中位置
-        if (Math.abs(mMoveLen) < 0.0001)
-        {
+        if (Math.abs(mMoveLen) < 0.0001) {
             mMoveLen = 0;
             return;
         }
-        if (mTask != null)
-        {
+        if (mTask != null) {
             mTask.cancel();
             mTask = null;
         }
@@ -294,25 +261,21 @@ public class PickerView extends View
         timer.schedule(mTask, 0, 10);
     }
 
-    class MyTimerTask extends TimerTask
-    {
+    class MyTimerTask extends TimerTask {
         Handler handler;
 
-        public MyTimerTask(Handler handler)
-        {
+        MyTimerTask(Handler handler) {
             this.handler = handler;
         }
 
         @Override
-        public void run()
-        {
+        public void run() {
             handler.sendMessage(handler.obtainMessage());
         }
 
     }
 
-    public interface onSelectListener
-    {
+    public interface onSelectListener {
         void onSelect(String text);
     }
 }

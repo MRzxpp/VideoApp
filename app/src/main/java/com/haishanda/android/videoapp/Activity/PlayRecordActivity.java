@@ -2,7 +2,6 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;

@@ -21,6 +21,13 @@ import java.util.List;
  */
 
 public class DaoUtil {
+    /**
+     * 修改船名
+     *
+     * @param boatNewName      船舶的新名字
+     * @param originalBoatName 船舶之前的名字
+     * @param machineId        船舶id
+     */
     public static void renameBoat(String boatNewName, String originalBoatName, long machineId) {
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
@@ -54,6 +61,12 @@ public class DaoUtil {
         VideoApplication.getApplication().setCurrentBoatName(boatNewName);
     }
 
+    /**
+     * 删除与船舶相关的文件及数据库记录
+     *
+     * @param boatName 船舶名
+     */
+    //// TODO: 2017/2/16 应该根据船舶的id来进行删除操作
     public static void deleteBoatFile(String boatName) {
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();

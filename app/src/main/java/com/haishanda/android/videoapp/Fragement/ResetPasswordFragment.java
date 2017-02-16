@@ -1,6 +1,5 @@
 package com.haishanda.android.videoapp.Fragement;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,14 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Activity.LoginActivity;
-import com.haishanda.android.videoapp.Activity.MainActivity;
-import com.haishanda.android.videoapp.Activity.WelcomeActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.LoginListener;
+import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Service.LoginService;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,12 +29,14 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 在已登录的情况下重置密码
+ * 该页面为重置密码的页面
  * Created by Zhongsz on 2016/11/24.
  */
 
-public class ResetPasswordLoginedFragment2 extends Fragment {
+public class ResetPasswordFragment extends Fragment {
     @BindView(R.id.reset_password_text)
-    EditText resetPasswrodText;
+    EditText resetPasswordText;
     @BindView(R.id.save_new_password_btn_logined)
     Button saveNewPasswordBtnLogined;
     @BindColor(R.color.white)
@@ -54,27 +51,27 @@ public class ResetPasswordLoginedFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reset_password_with_token2, container, false);
+        View view = inflater.inflate(R.layout.fragment_reset_password, container, false);
         ButterKnife.bind(this, view);
-        resetPasswrodText.addTextChangedListener(new LoginListener(resetPasswrodText, resetPasswrodText, saveNewPasswordBtnLogined, blueBtn, greyBtn, white, white));
+        resetPasswordText.addTextChangedListener(new LoginWatcher(resetPasswordText, resetPasswordText, saveNewPasswordBtnLogined, blueBtn, greyBtn, white, white));
         return view;
     }
 
     @OnClick(R.id.save_new_password_btn_logined)
     public void saveNewPassword() {
         Pattern passwordPattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}$");
-        Matcher passwordMatcher = passwordPattern.matcher(resetPasswrodText.getText().toString());
-        if (resetPasswrodText.getText().toString().length() < 6) {
+        Matcher passwordMatcher = passwordPattern.matcher(resetPasswordText.getText().toString());
+        if (resetPasswordText.getText().toString().length() < 6) {
             Toast.makeText(getContext(), "密码长度不足6位，请重新输入", Toast.LENGTH_SHORT)
                     .show();
-        } else if (resetPasswrodText.getText().toString().length() > 20) {
+        } else if (resetPasswordText.getText().toString().length() > 20) {
             Toast.makeText(getContext(), "密码长度过长，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else if (!passwordMatcher.matches()) {
             Toast.makeText(getContext(), "密码过于简单，请重新输入", Toast.LENGTH_SHORT)
                     .show();
         } else {
-            ApiManage.getInstence().getUserApiServiceWithToken().resetPassword(resetPasswrodText.getText().toString())
+            ApiManage.getInstence().getUserApiServiceWithToken().resetPassword(resetPasswordText.getText().toString())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<SmartResult>() {

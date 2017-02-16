@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.widget.GridView;
 
 /**
+ * 取消GridView的滚动条来保证其可延展性
  * Created by Zhongsz on 2016/12/7.
  */
 

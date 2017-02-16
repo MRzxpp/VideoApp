@@ -21,7 +21,7 @@ import com.haishanda.android.videoapp.Activity.ProblemActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.LoginListener;
+import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 
@@ -36,10 +36,11 @@ import rx.schedulers.Schedulers;
 
 /**
  * 在已登录的情况下重置密码
+ * 该页面为获取及验证验证码的页面
  * Created by Zhongsz on 2016/11/24.
  */
 
-public class ResetPasswordLoginedFragment extends Fragment {
+public class VerifyCodeFragment extends Fragment {
     @BindView(R.id.logined_phonenum)
     TextView loginedPhoneNumber;
     @BindView(R.id.logined_code_input)
@@ -60,12 +61,12 @@ public class ResetPasswordLoginedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reset_password_with_token, container, false);
+        View view = inflater.inflate(R.layout.fragment_verify_code, container, false);
         ButterKnife.bind(this, view);
         SharedPreferences preferences = getActivity().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
         String phoneNumLogined = preferences.getString(Constant.USER_PREFERENCE_USERNAME, "");
         loginedPhoneNumber.setText("验证当前账号绑定的密保手机：" + confusePhoneNum(phoneNumLogined));
-        loginedCodeInput.addTextChangedListener(new LoginListener(loginedCodeInput, loginedCodeInput, toResetPwdWithToken2Btn, blueBtn, greyBtn, white, white));
+        loginedCodeInput.addTextChangedListener(new LoginWatcher(loginedCodeInput, loginedCodeInput, toResetPwdWithToken2Btn, blueBtn, greyBtn, white, white));
         return view;
     }
 
@@ -130,11 +131,11 @@ public class ResetPasswordLoginedFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
-                            ResetPasswordLoginedFragment2 resetPasswordLoginedFragment2 = new ResetPasswordLoginedFragment2();
+                            ResetPasswordFragment resetPasswordFragment = new ResetPasswordFragment();
                             FragmentManager fragmentManager = getFragmentManager();
                             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                             fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
-                            fragmentTransaction.replace(R.id.reset_password_with_token_layout, resetPasswordLoginedFragment2);
+                            fragmentTransaction.replace(R.id.reset_password_with_token_layout, resetPasswordFragment);
                             fragmentTransaction.commit();
                         } else {
                             Log.d(TAG, String.valueOf(smartResult.getCode()));

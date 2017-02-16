@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Listener.ClearBtnListener;
-import com.haishanda.android.videoapp.Listener.LoginListener;
+import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
+import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
@@ -66,8 +66,8 @@ public class LoginActivity extends Activity {
         dialog.setMessage("登录中…");
         clear3.setVisibility(View.INVISIBLE);
         loginBtn.setEnabled(false);
-        password.addTextChangedListener(new ClearBtnListener(clear3, password));
-        password.addTextChangedListener(new LoginListener(username, password, loginBtn, blueBtn, greyBtn, white, white));
+        password.addTextChangedListener(new ClearBtnWatcher(clear3, password));
+        password.addTextChangedListener(new LoginWatcher(username, password, loginBtn, blueBtn, greyBtn, white, white));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class LoginActivity extends Activity {
     @OnClick(R.id.fast_signup_btn)
     public void skipToSignupPage(View view) {
         Intent intent = new Intent();
-        intent.setClass(LoginActivity.this, SignupActivity.class);
+        intent.setClass(LoginActivity.this, SignUpActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }
@@ -125,7 +125,7 @@ public class LoginActivity extends Activity {
     @OnClick(R.id.forget_password_btn)
     public void skipToFindPasswordPage(View view) {
         Intent intent = new Intent();
-        intent.setClass(LoginActivity.this, GetVerificationActivity.class);
+        intent.setClass(LoginActivity.this, ForgetPasswordActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
     }

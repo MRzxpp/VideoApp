@@ -10,14 +10,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Fragement.ResetPasswordLoginedFragment;
+import com.haishanda.android.videoapp.Fragement.VerifyCodeFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
-import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
-import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
 
@@ -51,11 +49,11 @@ public class CommonSettingsActivity extends FragmentActivity {
 
     @OnClick(R.id.modify_password_layout)
     public void modifyPassword() {
-        ResetPasswordLoginedFragment resetPasswordLoginedFragment = new ResetPasswordLoginedFragment();
+        VerifyCodeFragment verifyCodeFragment = new VerifyCodeFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
-        fragmentTransaction.replace(R.id.common_settings_layout, resetPasswordLoginedFragment);
+        fragmentTransaction.replace(R.id.common_settings_layout, verifyCodeFragment);
         fragmentTransaction.commit();
 
     }
@@ -104,14 +102,14 @@ public class CommonSettingsActivity extends FragmentActivity {
                 //监控数目重置
                 AlarmVoBeanDao alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
                 alarmVoBeanDao.deleteAll();
-//                LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-//                lastIdDao.deleteAll();
                 //清除监控配置信息
                 MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
                 monitorConfigBeanDao.deleteAll();
                 //报警数目归零
-                AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-                alarmNumDao.deleteAll();
+                SharedPreferences alarmPreferences = getSharedPreferences(Constant.ALARM_MESSAGE, MODE_PRIVATE);
+                SharedPreferences.Editor alarmEditor = alarmPreferences.edit();
+                alarmEditor.remove(Constant.ALARM_MESSAGE_NUMBER);
+                alarmEditor.apply();
                 //清除登录信息
                 SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
@@ -131,7 +129,7 @@ public class CommonSettingsActivity extends FragmentActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
                 getCommonSettingsActivity().finish();
-                MainActivity.instance.finish();
+                MainActivity.getInstance().finish();
                 Intent serviceIntent = new Intent(getCommonSettingsActivity(), LoginService.class);
                 stopService(serviceIntent);
             }

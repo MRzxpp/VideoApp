@@ -20,7 +20,6 @@ import android.view.WindowManager;
 
 import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.AlarmNum;
 import com.haishanda.android.videoapp.Bean.UserBean;
 import com.haishanda.android.videoapp.Bean.UserMessageBean;
 import com.haishanda.android.videoapp.Config.Constant;
@@ -28,7 +27,6 @@ import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
@@ -38,8 +36,6 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.NetUtils;
-
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -74,7 +70,7 @@ public class LoginService extends Service {
     }
 
     static Timer warningTimer;
-    SharedPreferences preferences;
+    SharedPreferences userPreferences;
 
     @Override
     public void onCreate() {
@@ -83,7 +79,7 @@ public class LoginService extends Service {
         IntentFilter filter = new IntentFilter(ACTION_RECEIVE_TIMER);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new TimerTaskReceiver();
-        preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
+        userPreferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
         registerReceiver(receiver, filter);
         if (emMessageListener == null) {
             emMessageListener = new EMMessageListener() {
@@ -104,14 +100,14 @@ public class LoginService extends Service {
                             broadcastIntent.putExtra("message", messages.get(0).getBody().toString());
                             sendBroadcast(broadcastIntent);
                             //报警数目增加
-                            AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-                            QueryBuilder<AlarmNum> queryBuilder = alarmNumDao.queryBuilder();
-                            AlarmNum alarmNum = queryBuilder.unique();
-                            AlarmNum newAlarnNum = new AlarmNum(alarmNum.getAlarmNum() + 1);
-                            alarmNumDao.deleteAll();
-                            alarmNumDao.insert(newAlarnNum);
+                            SharedPreferences alarmPreferences = getSharedPreferences(Constant.ALARM_MESSAGE, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = alarmPreferences.edit();
+                            int originalAlarmNum = alarmPreferences.getInt(Constant.ALARM_MESSAGE_NUMBER, 0);
+                            int newAlarmNum = originalAlarmNum + 1;
+                            editor.putInt(Constant.ALARM_MESSAGE_NUMBER, newAlarmNum);
+                            editor.apply();
                             //小红点更新
-                            MainActivity.instance.refresh();
+                            MainActivity.getInstance().refresh();
                         }
                     } catch (HyphenateException e) {
                         Log.d(TAG, "环信消息出现错误" + e.toString());
@@ -200,10 +196,6 @@ public class LoginService extends Service {
                         Response<SmartResult<UserBean>> response = call.execute();
                         if (response.body().getCode() == 1) {
                             startForeground(12346, noti);
-//                            FirstLoginDao firstLoginDao = VideoApplication.getApplication().getDaoSession().getFirstLoginDao();
-//                            FirstLogin firstLogin = new FirstLogin(0);
-//                            firstLoginDao.deleteAll();
-//                            firstLoginDao.insertOrReplace(firstLogin);
                             UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
                             UserMessageBean userMessageBean = new UserMessageBean(response.body().getData().getName(), response.body().getData().getPortrait(), response.body().getData().getId());
                             userMessageBeanDao.insertOrReplace(userMessageBean);

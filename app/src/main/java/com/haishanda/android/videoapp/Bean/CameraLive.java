@@ -1,6 +1,7 @@
 package com.haishanda.android.videoapp.Bean;
 
 /**
+ * 每个摄像头所对应的播放地址
  * Created by Zhongsz on 2016/11/14.
  */
 

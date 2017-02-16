@@ -1,9 +1,5 @@
 package com.haishanda.android.videoapp.Views;
 
-/**
- * Created by Zhongsz on 2016/11/25.
- */
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +24,7 @@ import android.widget.TextView;
 
 
 /**
+ * google风格的对话框
  * Created by drakeet on 9/28/14.
  */
 public class MaterialDialog {

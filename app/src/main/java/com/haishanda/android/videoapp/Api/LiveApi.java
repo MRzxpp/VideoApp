@@ -10,6 +10,7 @@ import retrofit2.http.POST;
 import rx.Observable;
 
 /**
+ * 与摄像头相关的接口
  * Created by Zhongsz on 2016/11/14.
  */
 

@@ -4,6 +4,7 @@ package com.haishanda.android.videoapp.Bean;
 import java.math.BigDecimal;
 
 /**
+ * 套餐信息
  * Created by Zhongsz on 2016/11/29.
  */
 public class PackageVo {

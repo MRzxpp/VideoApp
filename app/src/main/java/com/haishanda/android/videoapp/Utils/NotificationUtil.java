@@ -1,6 +1,5 @@
 package com.haishanda.android.videoapp.Utils;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +9,8 @@ import android.support.v7.app.NotificationCompat;
 import com.haishanda.android.videoapp.R;
 
 /**
+ * 通知栏辅助类
+ * 完成初始化通知栏的工作
  * Created by Zhongsz on 2016/10/12.
  */
 

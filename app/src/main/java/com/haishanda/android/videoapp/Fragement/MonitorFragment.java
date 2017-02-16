@@ -2,6 +2,7 @@ package com.haishanda.android.videoapp.Fragement;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -25,19 +26,14 @@ import com.haishanda.android.videoapp.Activity.MainActivity;
 import com.haishanda.android.videoapp.Activity.MonitorConfigActivity;
 import com.haishanda.android.videoapp.Activity.PlayMonitorPhotoActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.AlarmNum;
-import com.haishanda.android.videoapp.Bean.AlarmVo;
 import com.haishanda.android.videoapp.Bean.AlarmVoBean;
-import com.haishanda.android.videoapp.Bean.LastId;
+import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.AlarmNumDao;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
-import com.haishanda.android.videoapp.greendao.gen.LastIdDao;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.text.SimpleDateFormat;
@@ -65,11 +61,11 @@ public class MonitorFragment extends Fragment {
     @BindView(R.id.edit_monitor_message_btns)
     RelativeLayout editBtns;
 
-    private int last;
     private final String TAG = "获取报警信息";
     public List<AlarmVoBean> list = new ArrayList<>();
     private List<AlarmVoBean> chosenList = new ArrayList<>();
     private AlarmVoBeanDao alarmVoBeanDao;
+    private SharedPreferences alarmPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,6 +74,7 @@ public class MonitorFragment extends Fragment {
         ButterKnife.bind(this, view);
         editBtns.setVisibility(View.INVISIBLE);
         editBtns.setEnabled(false);
+        alarmPreferences = getActivity().getSharedPreferences(Constant.ALARM_MESSAGE, Context.MODE_PRIVATE);
         alarmVoBeanDao = VideoApplication.getApplication().getDaoSession().getAlarmVoBeanDao();
         QueryBuilder<AlarmVoBean> queryBuilder = alarmVoBeanDao.queryBuilder();
         list = queryBuilder.list();
@@ -92,24 +89,6 @@ public class MonitorFragment extends Fragment {
             Log.d(TAG, "提醒关闭");
         }
 
-    }
-
-    private void initLastId() {
-        LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-        QueryBuilder<LastId> queryBuilder = lastIdDao.queryBuilder();
-        try {
-            LastId lastId = queryBuilder.unique();
-            if (lastId != null) {
-                last = lastId.getLastId();
-            } else {
-                last = 0;
-            }
-        } catch (DaoException e) {
-            e.printStackTrace();
-            last = 0;
-            LastId lastId = new LastId(0);
-            lastIdDao.insertOrReplace(lastId);
-        }
     }
 
     @OnClick(R.id.edit_monitor_message)
@@ -176,30 +155,22 @@ public class MonitorFragment extends Fragment {
     }
 
     private void resetMessagesUnreadNum() throws InterruptedException {
-        SqlThread sqlThread = new SqlThread();
-        sqlThread.start();
-        sqlThread.join();
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constant.ALARM_MESSAGE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(Constant.ALARM_MESSAGE_NUMBER, 0);
+        editor.apply();
         MainActivity mainActivity = (MainActivity) getActivity();
         mainActivity.refresh();
     }
 
-    class SqlThread extends Thread {
-        @Override
-        public void run() {
-            AlarmNumDao alarmNumDao = VideoApplication.getApplication().getDaoSession().getAlarmNumDao();
-            alarmNumDao.deleteAll();
-            AlarmNum alarmNum = new AlarmNum(0);
-            alarmNumDao.insert(alarmNum);
-        }
-    }
 
     private void initAlarms() {
-        initLastId();
+        int last = alarmPreferences.getInt(Constant.ALARM_MESSAGE_LAST_ID, 0);
         ApiManage.getInstence().getMonitorApiService().queryAlarms(last)
                 .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.newThread())
-                .subscribe(new Observer<SmartResult<List<AlarmVo>>>() {
+                .subscribe(new Observer<SmartResult<List<AlarmVoBean>>>() {
                     @Override
                     public void onCompleted() {
                         Log.d(TAG, "completed");
@@ -212,25 +183,18 @@ public class MonitorFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(SmartResult<List<AlarmVo>> listSmartResult) {
+                    public void onNext(SmartResult<List<AlarmVoBean>> listSmartResult) {
                         if (listSmartResult.getCode() == 1) {
-                            for (AlarmVo a : listSmartResult.getData()
+                            for (AlarmVoBean a : listSmartResult.getData()
                                     ) {
-                                AlarmVoBean alarmVoBean = new AlarmVoBean((long) a.getId(), a.getMachineName(), a.getUrls(), a.getAlarmTime());
+                                AlarmVoBean alarmVoBean = new AlarmVoBean(a.getId(), a.getMachineName(), a.getUrls(), a.getAlarmTime());
                                 alarmVoBeanDao.insertOrReplace(alarmVoBean);
                             }
-//                            list.addAll(listSmartResult.getData());
-                            LastIdDao lastIdDao = VideoApplication.getApplication().getDaoSession().getLastIdDao();
-                            QueryBuilder<LastId> queryBuilder = lastIdDao.queryBuilder();
-                            LastId lastId = queryBuilder.unique();
-                            if (lastId == null) {
-                                lastId = new LastId(0);
-                            }
+                            SharedPreferences.Editor editor = alarmPreferences.edit();
                             if (listSmartResult.getData().size() != 0) {
-                                lastId = new LastId(listSmartResult.getData().get(listSmartResult.getData().size() - 1).getId());
+                                editor.putInt(Constant.ALARM_MESSAGE_LAST_ID, (int) listSmartResult.getData().get(listSmartResult.getData().size() - 1).getId());
                             }
-                            lastIdDao.deleteAll();
-                            lastIdDao.insertOrReplace(lastId);
+                            editor.apply();
                             Log.d(TAG, "success");
                         } else {
                             Log.d(TAG, "failed");

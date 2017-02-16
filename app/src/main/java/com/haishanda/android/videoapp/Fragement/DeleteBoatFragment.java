@@ -22,8 +22,8 @@ import android.widget.Toast;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Listener.ClearBtnListener;
-import com.haishanda.android.videoapp.Listener.LoginListener;
+import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
+import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.ChangeVisiable;
 import com.haishanda.android.videoapp.Utils.DaoUtil;
@@ -80,8 +80,8 @@ public class DeleteBoatFragment extends Fragment {
         data = getArguments();
         boatName = data.getString("boatName");
         clear4.setVisibility(View.INVISIBLE);
-        boatPassword.addTextChangedListener(new ClearBtnListener(clear4, boatPassword));
-        boatPassword.addTextChangedListener(new LoginListener(boatPassword, boatPassword, nextStepBtn, blueBtn, greyBtn, white, white));
+        boatPassword.addTextChangedListener(new ClearBtnWatcher(clear4, boatPassword));
+        boatPassword.addTextChangedListener(new LoginWatcher(boatPassword, boatPassword, nextStepBtn, blueBtn, greyBtn, white, white));
         return view;
     }
 
