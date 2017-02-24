@@ -97,7 +97,6 @@ public class AddBoatActivity extends Activity {
     public void addBoat(View view) {
         String boatNum = boatNumber.getText().toString();
         String boatPwd = boatPassword.getText().toString();
-        //Todo add boat logic
         if (boatNum == "") {
             Toast.makeText(this, "请输入船舶序列号", Toast.LENGTH_LONG).show();
         } else if (boatPwd == "") {

@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 监控报警图片浏览器
  * Created by Zhongsz on 2016/12/12.
  */
 

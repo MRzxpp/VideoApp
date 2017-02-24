@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.haishanda.android.videoapp.Fragement.AboutBoatFragment;
 import com.haishanda.android.videoapp.Fragement.DeleteBoatFragment;
 import com.haishanda.android.videoapp.Fragement.RenameBoatFragment;
-import com.haishanda.android.videoapp.Fragement.ResetBoatPasswordFragment;
+import com.haishanda.android.videoapp.Fragement.ResetBoatBindingPasswordFragment;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
 
@@ -95,12 +95,12 @@ public class BoatConfigActivity extends FragmentActivity {
     public void skipToResetPwdBoatFragment() {
         Bundle data = new Bundle();
         data.putInt("machineId", machineId);
-        ResetBoatPasswordFragment resetBoatPasswordFragment = new ResetBoatPasswordFragment();
-        resetBoatPasswordFragment.setArguments(data);
+        ResetBoatBindingPasswordFragment resetBoatBindingPasswordFragment = new ResetBoatBindingPasswordFragment();
+        resetBoatBindingPasswordFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
-        fragmentTransaction.replace(R.id.boat_config_layout, resetBoatPasswordFragment);
+        fragmentTransaction.replace(R.id.boat_config_layout, resetBoatBindingPasswordFragment);
         fragmentTransaction.commit();
 
     }

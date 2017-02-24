@@ -206,7 +206,7 @@ public class LoginService extends Service {
                             editor.putString(Constant.USER_PREFERENCE_USERNAME, username);
                             editor.putInt(Constant.USER_PREFERENCE_ID, response.body().getData().getId());
                             editor.apply();
-                            //emclient login
+                            //EMClient login
                             EMClient.getInstance().login("appmonitor_" + String.valueOf(response.body().getData().getId()), username, new EMCallBack() {//回调
                                 @Override
                                 public void onSuccess() {

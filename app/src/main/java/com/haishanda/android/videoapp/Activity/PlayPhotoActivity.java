@@ -5,15 +5,19 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -29,6 +33,7 @@ import com.orhanobut.dialogplus.ViewHolder;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,14 +45,19 @@ import butterknife.OnClick;
  * Created by Zhongsz on 2016/11/2.
  */
 
+//TODO 翻页下方的导航,而且list中应当包含一艘船的所有图片
+
 public class PlayPhotoActivity extends Activity {
     Bundle extra;
     @BindView(R.id.photo_main)
-    ImageView photoMain;
+    ViewFlipper photoMain;
 
-    private String imagePath;
+    private ArrayList<String> imagePathList;
     private List<ImageMessage> imageMessage;
     private String boatName;
+    private GestureDetector gestureDetector;
+    private PlayPhotoActivity instance;
+    private int position = 0;
 
     private final static String TAG = "PlayPhotoActivity";
 
@@ -56,9 +66,14 @@ public class PlayPhotoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_photos);
         ButterKnife.bind(this);
+        if (instance == null) {
+            instance = this;
+        }
         extra = getIntent().getExtras();
-        imagePath = extra.getString("imagePath");
+        imagePathList = extra.getStringArrayList("imagePaths");
+        position = extra.getInt("position");
         boatName = extra.getString("boatName");
+        photoMain.setAutoStart(false);
         RequestListener<String, GlideDrawable> photoListener = new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -73,16 +88,85 @@ public class PlayPhotoActivity extends Activity {
                 return false;
             }
         };
-        Glide
-                .with(this)
-                .load(imagePath)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .listener(photoListener)
-                .into(photoMain);
+        for (int i = 0; i < imagePathList.size(); i++) {
+            ImageView imageView = new ImageView(instance);
+            Glide
+                    .with(this)
+                    .load(imagePathList.get(i))
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true)
+                    .listener(photoListener)
+                    .into(imageView);
+            photoMain.addView(imageView, i);
+        }
+        photoMain.setDisplayedChild(position);
+        gestureDetector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return false;
+            }
 
+            @Override
+            public void onShowPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float arg2,
+                                   float arg3) {
+                if (e2.getX() - e1.getX() > 120) { // 从左向右滑动（左进右出）
+                    Animation rInAnim = AnimationUtils.loadAnimation(instance,
+                            R.anim.slide_left_in); // 向右滑动左侧进入的渐变效果（alpha 0.1 -> 1.0）
+                    Animation rOutAnim = AnimationUtils.loadAnimation(instance,
+                            R.anim.slide_right_out); // 向右滑动右侧滑出的渐变效果（alpha 1.0 -> 0.1）
+
+                    photoMain.setInAnimation(rInAnim);
+                    photoMain.setOutAnimation(rOutAnim);
+                    photoMain.showPrevious();
+                    if (position > 0) {
+                        position--;
+                    }
+                    return true;
+                } else if (e2.getX() - e1.getX() < -120) { // 从右向左滑动（右进左出）
+                    Animation lInAnim = AnimationUtils.loadAnimation(instance,
+                            R.anim.slide_right_in); // 向左滑动左侧进入的渐变效果（alpha 0.1 -> 1.0）
+                    Animation lOutAnim = AnimationUtils.loadAnimation(instance,
+                            R.anim.slide_left_out); // 向左滑动右侧滑出的渐变效果（alpha 1.0 -> 0.1）
+
+                    photoMain.setInAnimation(lInAnim);
+                    photoMain.setOutAnimation(lOutAnim);
+                    photoMain.showNext();
+                    if (position < imagePathList.size()) {
+                        position++;
+                    }
+                    return true;
+                }
+                return true;
+            }
+
+        });
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO Auto-generated method stub
+        return gestureDetector.onTouchEvent(event); // 注册手势事件
+    }
 
     @OnClick(R.id.back_to_photos_btn)
     public void backToPhotos() {
@@ -93,7 +177,9 @@ public class PlayPhotoActivity extends Activity {
     @SuppressLint("SetTextI18n")
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
-        String imageName = imagePath.substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
+        String imageName = imagePathList.get(position)
+                .substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 2 + "yyyy年MM月dd日".length(),
+                        imagePathList.get(position).length());
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
         imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
@@ -113,7 +199,7 @@ public class PlayPhotoActivity extends Activity {
         TextView sizeView = (TextView) view.findViewById(R.id.image_info_size);
         nameView.setText("文件名称：" + imageName);
         addTimeView.setText("拍摄时间：" + im.getAddTime());
-        sizeView.setText("文件大小：" + FileUtil.getAutoFileOrFilesSize(imagePath));
+        sizeView.setText("文件大小：" + FileUtil.getAutoFileOrFilesSize(imagePathList.get(position)));
         dialogPlus.show();
     }
 
@@ -143,7 +229,7 @@ public class PlayPhotoActivity extends Activity {
     }
 
     private void deleteAction() {
-        String imagePath = extra.getString("imagePath");
+        String imagePath = imagePathList.get(position);
         String boatName = extra.getString("boatName");
         String imageName;
         if (boatName != null && imagePath != null) {

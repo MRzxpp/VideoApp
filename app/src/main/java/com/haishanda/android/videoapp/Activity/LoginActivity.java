@@ -20,7 +20,7 @@ import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
 import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Service.LoginService;
-import com.haishanda.android.videoapp.Utils.ChangeVisiable;
+import com.haishanda.android.videoapp.Utils.ViewUtil;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
 
 
@@ -132,7 +132,7 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.eye)
     public void setRePasswordVisiable(View view) {
-        ChangeVisiable.changeVisiable(Eye, password);
+        ViewUtil.changeVisiable(Eye, password);
     }
 
     @OnClick(R.id.clear3)

@@ -25,7 +25,7 @@ import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
 import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ChangeVisiable;
+import com.haishanda.android.videoapp.Utils.ViewUtil;
 import com.haishanda.android.videoapp.Utils.DaoUtil;
 import com.haishanda.android.videoapp.Utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
@@ -103,7 +103,7 @@ public class DeleteBoatFragment extends Fragment {
 
     @OnClick(R.id.eye4)
     public void setBoatPasswordVisiable() {
-        ChangeVisiable.changeVisiable(eye4, boatPassword);
+        ViewUtil.changeVisiable(eye4, boatPassword);
     }
 
     @OnClick(R.id.clear4)

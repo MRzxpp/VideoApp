@@ -18,7 +18,7 @@ import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
 import com.haishanda.android.videoapp.Utils.Watcher.SignUpWatcher;
 import com.haishanda.android.videoapp.Utils.Watcher.SignupCodeWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ChangeVisiable;
+import com.haishanda.android.videoapp.Utils.ViewUtil;
 import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
 
 import java.util.regex.Matcher;
@@ -219,11 +219,11 @@ public class SignUpActivity extends Activity {
     public void setPasswordVisiable(View view) {
         switch (view.getId()) {
             case R.id.eye1: {
-                ChangeVisiable.changeVisiable(Eye1, password);
+                ViewUtil.changeVisiable(Eye1, password);
                 break;
             }
             case R.id.eye2: {
-                ChangeVisiable.changeVisiable(Eye2, rePassword);
+                ViewUtil.changeVisiable(Eye2, rePassword);
                 break;
             }
             default:

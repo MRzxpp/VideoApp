@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.haishanda.android.videoapp.Bean.PackageVo;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ExpandableLayout;
+import com.haishanda.android.videoapp.Views.ExpandableLayout;
 
 import java.util.List;
 

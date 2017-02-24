@@ -53,6 +53,8 @@ import rx.schedulers.Schedulers;
  * Created by Zhongsz on 2016/10/14.
  */
 
+//Todo 报警信息过多时的分页处理
+
 public class MonitorFragment extends Fragment {
     @BindView(R.id.monitor_messages)
     ListView monitorMessages;

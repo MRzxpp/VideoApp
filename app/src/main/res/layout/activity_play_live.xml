@@ -47,14 +47,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/play_live_title">
 
-        <io.vov.vitamio.widget.VideoView
-            android:id="@+id/play_live"
-            android:layout_width="360dp"
-            android:layout_height="270dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <io.vov.vitamio.widget.VideoView
+                android:id="@+id/play_live"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="270dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@color/transparent">
 
             <ImageView
@@ -62,8 +70,8 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerInParent="true" />
-        </RelativeLayout>
 
+        </RelativeLayout>
 
     </FrameLayout>
 

@@ -18,7 +18,7 @@ import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.Constant;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ExpandableLayout;
+import com.haishanda.android.videoapp.Views.ExpandableLayout;
 import com.haishanda.android.videoapp.Views.PickerView;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.orhanobut.dialogplus.DialogPlus;

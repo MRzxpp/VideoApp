@@ -10,7 +10,7 @@ import android.widget.TextView;
  * Created by Zhongsz on 2016/10/13.
  */
 
-public class ChangeVisiable {
+public class ViewUtil {
     public static void changeVisiable(TextView textView, EditText editText) {
         if (textView.getText() != "隐藏密码") {
             textView.setText("隐藏密码");

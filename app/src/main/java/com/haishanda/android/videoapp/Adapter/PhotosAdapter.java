@@ -14,6 +14,9 @@ import com.bumptech.glide.Glide;
 import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 /**
  * 相册界面的图标适配器
@@ -26,14 +29,14 @@ class PhotosAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
 
-    private String[] imagePath;
+    private String[] imagePaths;
     private String boatName;
 
-    PhotosAdapter(Context context, String[] imagePath, String boatName) {
-        super(context, R.layout.adapter_photos, imagePath);
+    PhotosAdapter(Context context, String[] imagePaths, String boatName) {
+        super(context, R.layout.adapter_photos, imagePaths);
 
         this.context = context;
-        this.imagePath = imagePath;
+        this.imagePaths = imagePaths;
         this.boatName = boatName;
 
         inflater = LayoutInflater.from(context);
@@ -48,14 +51,15 @@ class PhotosAdapter extends ArrayAdapter {
 
         Glide
                 .with(context)
-                .load(imagePath[position])
+                .load(imagePaths[position])
                 .into((ImageView) convertView.findViewById(R.id.photo_adapter));
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra("imagePath", imagePath[position]);
+                intent.putParcelableArrayListExtra("imagePaths", new ArrayList(Arrays.asList(imagePaths)));
+                intent.putExtra("position", position);
                 intent.putExtra("boatName", boatName);
                 intent.setClass(context, PlayPhotoActivity.class);
                 context.startActivity(intent);

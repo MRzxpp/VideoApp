@@ -9,13 +9,13 @@ public class QueryCameras {
 
     /**
      * id : 2
-     * machineId : 2
+     * owner : 2
      * icon : null
      * status : 0
      */
 
     private long id;
-    private int machineId;
+    private int owner;
 
     public long getId() {
         return id;
@@ -25,11 +25,11 @@ public class QueryCameras {
         this.id = id;
     }
 
-    public int getMachineId() {
-        return machineId;
+    public int getOwner() {
+        return owner;
     }
 
-    public void setMachineId(int machineId) {
-        this.machineId = machineId;
+    public void setOwner(int owner) {
+        this.owner = owner;
     }
 }

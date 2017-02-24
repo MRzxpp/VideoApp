@@ -5,9 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.AddBoatActivity;
 import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
-import com.haishanda.android.videoapp.Activity.LoginActivity;
 import com.haishanda.android.videoapp.Adapter.LiveAdapter;
 import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Bean.BoatMessage;
@@ -61,7 +59,7 @@ import retrofit2.Response;
 
 public class BoatFragment extends Fragment {
     @BindView(R.id.spinner_index_choices)
-    NiceSpinner mySpinner;
+    NiceSpinner boatSpinner;
     @BindView(R.id.live_adapter_fields)
     GridView liveAdapterFields;
     @BindColor(R.color.titleBlue)
@@ -77,10 +75,12 @@ public class BoatFragment extends Fragment {
     private String globalId;
     private Map<String, Integer> boatInfos;
     private Map<String, String> boatGlobalIds;
-    private Map<Integer, String> supportMap;
+    private SparseArray<String> supportArray;
     private List<String> boatLists;
     LiveAdapter adapter;
     private BoatMessageDao boatMessageDao;
+    private List<Long> cameraList;
+    private String[] cameraIconsPaths;
 
 
     @Override
@@ -95,24 +95,11 @@ public class BoatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshPage();
+        handleSpinner();
+        handleLiveAdapter();
     }
 
-    private void refreshPage() {
-        dealSpinner();
-        setLiveAdapter();
-    }
-
-    class BoatThread extends Thread {
-        @Override
-        public void run() {
-            Looper.prepare();
-            boatInfos = getBoatInfos();
-        }
-    }
-
-
-    private void dealSpinner() {
+    private void handleSpinner() {
         BoatThread boatThread = new BoatThread();
         boatThread.start();
         try {
@@ -126,6 +113,7 @@ public class BoatFragment extends Fragment {
             list.add(entry.getKey());
         }
         list.add(list.size(), ADD_BOAT);
+        //设置当前船舶名称
         if (VideoApplication.getApplication().getCurrentBoatName() == null) {
             VideoApplication.getApplication().setCurrentBoatName(list.get(0));
         }
@@ -137,20 +125,42 @@ public class BoatFragment extends Fragment {
             }
         }
 
-        this.boatLists = list;
+        boatLists = list;
 
+        //如果船舶列表不只是包括“添加船舶”，则不显示无船舶的背景图
         if (list.size() > 1) {
             for (View view : views) {
                 view.setVisibility(View.INVISIBLE);
                 view.setEnabled(false);
             }
         }
-        mySpinner.attachDataSource(list);
-        mySpinner.setSelectedIndex(VideoApplication.getApplication().getSelectedId());
-        mySpinner.setBackgroundColor(titleBlue);
-        mySpinner.setTextColor(Color.WHITE);
-        mySpinner.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        initSpinner();
+        if (supportArray != null) {
+            String localBoatName = VideoApplication.getApplication().getCurrentBoatName();
+            String remoteBoatName = supportArray.get(VideoApplication.getApplication().getCurrentMachineId());
+            if (!localBoatName.equals(remoteBoatName) && remoteBoatName != null) {
+                if (!localBoatName.equals(ADD_BOAT)) {
+                    Toast.makeText(getContext(), "服务器数据发生变化，数据更新中", Toast.LENGTH_LONG).show();
+                    DaoUtil.renameBoat(remoteBoatName, localBoatName, VideoApplication.getApplication().getCurrentMachineId());
+                    VideoApplication.getApplication().setCurrentBoatName(remoteBoatName);
+                }
+            }
+        }
+        try {
+            machineId = boatInfos.get(boatSpinner.getText().toString());
+            globalId = boatGlobalIds.get(boatSpinner.getText().toString());
+        } catch (NullPointerException e) {
+            Log.d(Tag, e.toString());
+        }
+    }
+
+    private void initSpinner() {
+        boatSpinner.attachDataSource(boatLists);
+        boatSpinner.setSelectedIndex(VideoApplication.getApplication().getSelectedId());
+        boatSpinner.setBackgroundColor(titleBlue);
+        boatSpinner.setTextColor(Color.WHITE);
+        boatSpinner.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        boatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 1) {
@@ -160,7 +170,7 @@ public class BoatFragment extends Fragment {
                         VideoApplication.getApplication().setCurrentBoatName(boatLists.get(position));
                         VideoApplication.getApplication().setCurrentMachineId(machineId);
                         VideoApplication.getApplication().setSelectedId(position);
-                        setLiveAdapter();
+                        handleLiveAdapter();
                     } else {
                         Intent intent = new Intent(getActivity(), AddBoatActivity.class);
                         startActivity(intent);
@@ -172,7 +182,7 @@ public class BoatFragment extends Fragment {
                         VideoApplication.getApplication().setCurrentBoatName(boatLists.get(position));
                         VideoApplication.getApplication().setCurrentMachineId(machineId);
                         VideoApplication.getApplication().setSelectedId(position);
-                        setLiveAdapter();
+                        handleLiveAdapter();
                     } else {
                         Intent intent = new Intent(getActivity(), AddBoatActivity.class);
                         startActivity(intent);
@@ -185,23 +195,6 @@ public class BoatFragment extends Fragment {
 
             }
         });
-        if (supportMap != null) {
-            String localBoatName = VideoApplication.getApplication().getCurrentBoatName();
-            String remoteBoatName = supportMap.get(VideoApplication.getApplication().getCurrentMachineId());
-            if (!localBoatName.equals(remoteBoatName) && remoteBoatName != null) {
-                if (!localBoatName.equals(ADD_BOAT)) {
-                    Toast.makeText(getContext(), "服务器数据发生变化，数据更新中", Toast.LENGTH_LONG).show();
-                    DaoUtil.renameBoat(remoteBoatName, localBoatName, VideoApplication.getApplication().getCurrentMachineId());
-                    VideoApplication.getApplication().setCurrentBoatName(remoteBoatName);
-                }
-            }
-        }
-        try {
-            machineId = boatInfos.get(mySpinner.getText().toString());
-            globalId = boatGlobalIds.get(mySpinner.getText().toString());
-        } catch (NullPointerException e) {
-            Log.d(Tag, e.toString());
-        }
     }
 
     @OnClick({R.id.add_boat_btn, R.id.add_boat_btn_big})
@@ -226,15 +219,9 @@ public class BoatFragment extends Fragment {
     private Map<String, Integer> getBoatInfos() {
         Map<String, Integer> boatInfos = new HashMap<>();
         Map<String, String> boatGlobalIds = new HashMap<>();
-        Map<Integer, String> supportMap = new HashMap<>();
+        SparseArray<String> array = new SparseArray<>();
         Call<SmartResult<List<QueryMachines>>> call = ApiManage.getInstence().getBoatApiService().queryMachinesCopy();
         try {
-            TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
-            TimeBean timeBean;
-            int beginHour;
-            int beginMinute;
-            int endHour;
-            int endMinute;
             Response<SmartResult<List<QueryMachines>>> response = call.execute();
             if (response.body().getData() != null && response.body().getCode() == 1) {
                 for (QueryMachines queryMachines : response.body().getData()
@@ -251,23 +238,13 @@ public class BoatFragment extends Fragment {
                     //计算监控时间段
                     int begin = (Integer.valueOf(queryMachines.getBegin()));
                     int span = (Integer.valueOf(queryMachines.getSpan()));
-                    beginHour = begin / 60;
-                    beginMinute = begin - 60 * beginHour;
-                    if (begin + span < 1440) {
-                        endHour = (begin + span) / 60;
-                        endMinute = begin + span - (60 * endHour);
-                    } else {
-                        endHour = (begin + span - 1440) / 60;
-                        endMinute = (begin + span - 1440) - (60 * endHour);
-                    }
-                    timeBean = new TimeBean(beginHour, beginMinute, endHour, endMinute, queryMachines.getId());
-                    timeBeanDao.insertOrReplace(timeBean);
+                    setMonitorTime(begin, span, queryMachines);
                     boatInfos.put(queryMachines.getName(), queryMachines.getId());
                     boatGlobalIds.put(queryMachines.getName(), queryMachines.getGlobalId());
-                    supportMap.put(queryMachines.getId(), queryMachines.getName());
+                    array.put(queryMachines.getId(), queryMachines.getName());
                 }
                 this.boatGlobalIds = boatGlobalIds;
-                this.supportMap = supportMap;
+                this.supportArray = array;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -275,7 +252,27 @@ public class BoatFragment extends Fragment {
         return boatInfos;
     }
 
-    public List<Long> getCameraList() {
+    private void setMonitorTime(int begin, int span, QueryMachines queryMachines) {
+        TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
+        TimeBean timeBean;
+        int beginHour;
+        int beginMinute;
+        int endHour;
+        int endMinute;
+        beginHour = begin / 60;
+        beginMinute = begin - 60 * beginHour;
+        if (begin + span < 1440) {
+            endHour = (begin + span) / 60;
+            endMinute = begin + span - (60 * endHour);
+        } else {
+            endHour = (begin + span - 1440) / 60;
+            endMinute = (begin + span - 1440) - (60 * endHour);
+        }
+        timeBean = new TimeBean(beginHour, beginMinute, endHour, endMinute, queryMachines.getId());
+        timeBeanDao.insertOrReplace(timeBean);
+    }
+
+    private List<Long> getCameraList() {
         List<Long> cameraIds = new ArrayList<>();
         int machineId = this.machineId;
         Call<SmartResult<List<QueryCameras>>> call = ApiManage.getInstence().getBoatApiService().queryCamerasCopy(machineId);
@@ -301,13 +298,13 @@ public class BoatFragment extends Fragment {
         List<BoatMessage> boats = builder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
         if (boats.size() == 0) {
             for (int i = 0; i < cameraIds.size(); i++) {
-                boatMessage = new BoatMessage(machineId, mySpinner.getText().toString(), cameraIds.get(i), "default", str, null);
+                boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), cameraIds.get(i), "default", str, null);
                 boatMessageDao.insertOrReplace(boatMessage);
             }
         }
         if (boats.size() < cameraIds.size()) {
             for (int i = boats.size(); i < cameraIds.size(); i++) {
-                boatMessage = new BoatMessage(machineId, mySpinner.getText().toString(), cameraIds.get(i), "default", str, null);
+                boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), cameraIds.get(i), "default", str, null);
                 boatMessageDao.insertOrReplace(boatMessage);
             }
         }
@@ -315,10 +312,7 @@ public class BoatFragment extends Fragment {
         return cameraIds;
     }
 
-    private List<Long> cameraList;
-    private String[] cameraIconsPaths;
-
-    public void setLiveAdapter() {
+    private void handleLiveAdapter() {
         AdapterThread adapterThread = new AdapterThread();
         adapterThread.start();
         try {
@@ -332,6 +326,16 @@ public class BoatFragment extends Fragment {
         liveAdapterFields.setAdapter(adapter);
     }
 
+    private String[] getCameraImagePaths() {
+        QueryBuilder<BoatMessage> queryBuilder = boatMessageDao.queryBuilder();
+        List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
+        List<String> cameraImagePathsCopy = new ArrayList<>();
+        for (int i = 0; i < cameraDetails.size(); i++) {
+            cameraImagePathsCopy.add(cameraDetails.get(i).getCameraImagePath() != null ? cameraDetails.get(i).getCameraImagePath() : "default");
+        }
+        return cameraImagePathsCopy.toArray(new String[cameraImagePathsCopy.size()]);
+    }
+
     class AdapterThread extends Thread {
         @Override
         public void run() {
@@ -341,14 +345,12 @@ public class BoatFragment extends Fragment {
         }
     }
 
-    private String[] getCameraImagePaths() {
-        QueryBuilder<BoatMessage> queryBuilder = boatMessageDao.queryBuilder();
-        List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
-        List<String> cameraImagePathsCopy = new ArrayList<>();
-        for (int i = 0; i < cameraDetails.size(); i++) {
-            cameraImagePathsCopy.add(cameraDetails.get(i).getCameraImagePath() != null ? cameraDetails.get(i).getCameraImagePath() : "default");
+    class BoatThread extends Thread {
+        @Override
+        public void run() {
+            Looper.prepare();
+            boatInfos = getBoatInfos();
         }
-        return cameraImagePathsCopy.toArray(new String[cameraImagePathsCopy.size()]);
     }
 
 }

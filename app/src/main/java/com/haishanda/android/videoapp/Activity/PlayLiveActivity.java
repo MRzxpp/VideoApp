@@ -2,6 +2,7 @@ package com.haishanda.android.videoapp.Activity;
 
 import android.app.Activity;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
@@ -16,7 +17,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -32,8 +32,8 @@ import com.haishanda.android.videoapp.Bean.CameraLive;
 import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.CustomMediaController;
-import com.haishanda.android.videoapp.Utils.LiveLandMediaController;
+import com.haishanda.android.videoapp.Utils.MediaController.LiveLandMediaController;
+import com.haishanda.android.videoapp.Utils.MediaController.LiveMediaController;
 import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.Views.MaterialDialog;
@@ -72,17 +72,17 @@ public class PlayLiveActivity extends Activity {
     @BindView(R.id.play_live)
     VideoView videoView;
     @BindView(R.id.vocal_is_in)
-    public ImageView vocalGif;
+    ImageView vocalGif;
     @BindView(R.id.voice_start)
-    public ImageView voiceStart;
+    ImageView voiceStart;
     @BindView(R.id.toggle_fullscreen)
-    public ImageView toggleFullscreen;
+    ImageView toggleFullscreen;
     @BindView(R.id.stop_record_btn)
-    public ImageView stopRecordBtn;
+    ImageView stopRecordBtn;
     @BindView(R.id.record_btn)
-    public ImageView recordBtn;
+    ImageView recordBtn;
     @BindView(R.id.loading)
-    public ImageView loadingPic;
+    ImageView loadingPic;
     @BindView(R.id.printscreen_btn)
     ImageView printScreenBtn;
     @BindView(R.id.back_to_boat_btn)
@@ -156,9 +156,6 @@ public class PlayLiveActivity extends Activity {
             }
         };
         getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION), true, rotationObserver);
-//        //全屏键不可用
-//        toggleFullscreen.setVisibility(View.INVISIBLE);
-//        toggleFullscreen.setEnabled(false);
         Glide.with(this)
                 .load(R.drawable.voice_is_in)
                 .asGif()
@@ -181,7 +178,12 @@ public class PlayLiveActivity extends Activity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+        //测试地址开关
+        SharedPreferences preferences = getSharedPreferences("TEST_PATH", MODE_PRIVATE);
+        boolean isPath = preferences.getBoolean("TEST_PATH_ON", true);
+        if (isPath) {
+            path = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+        }
     }
 
     class NetThread implements Runnable {
@@ -195,9 +197,9 @@ public class PlayLiveActivity extends Activity {
     @OnClick(R.id.toggle_fullscreen)
     public void toggleScreenOrientation() {
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         }
     }
 
@@ -216,16 +218,11 @@ public class PlayLiveActivity extends Activity {
             //设置全屏即隐藏状态栏
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            //横屏 视频充满全屏
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoView.getLayoutParams();
-//            layoutParams.height = FrameLayout.LayoutParams.MATCH_PARENT;
-            layoutParams.height = videoView.getVideoHeight();
-            layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
-            videoView.setLayoutParams(layoutParams);
+            videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
-//            mCustomMediaController.show(5000);
-//            videoView.setMediaController(mCustomMediaController);
+            LiveMediaController liveMediaController = new LiveMediaController(this, videoView, this);
+            liveMediaController.show(5000);
+            videoView.setMediaController(liveMediaController);
             //恢复标题栏
             playLiveTitle.setVisibility(View.VISIBLE);
             //恢复状态栏
@@ -233,11 +230,7 @@ public class PlayLiveActivity extends Activity {
             attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getWindow().setAttributes(attrs);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            //竖屏 视频显示固定大小
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoView.getLayoutParams();
-            layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-            layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
-            videoView.setLayoutParams(layoutParams);
+            videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
         }
     }
 
@@ -253,17 +246,21 @@ public class PlayLiveActivity extends Activity {
             if (path != null) {
                 videoView.setVideoPath(path);//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                    CustomMediaController mCustomMediaController = new CustomMediaController(this, videoView, this);
-//                    mCustomMediaController.show(5000);
-//                    videoView.setMediaController(mCustomMediaController);//绑定控制器
+                    LiveMediaController liveMediaController = new LiveMediaController(this, videoView, this);
+                    liveMediaController.show(5000);
+                    videoView.setMediaController(liveMediaController);//绑定控制器
+                    videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
                 } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    //设置全屏即隐藏状态栏
+                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     //隐藏标题栏
                     playLiveTitle.setVisibility(View.GONE);
                     LiveLandMediaController landMediaController = new LiveLandMediaController(this, videoView, this);
                     landMediaController.show(5000);//控制器显示5s后自动隐藏
                     videoView.setMediaController(landMediaController);
+                    videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
                 }
-                videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);//设定缩放参数
                 videoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);//设置播放画质 高画质
                 videoView.requestFocus();//取得焦点
                 videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -686,12 +683,6 @@ public class PlayLiveActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        catch (NullPointerException e) {
-//            e.printStackTrace();
-//            Toast.makeText(this, "请重新登录", Toast.LENGTH_LONG).show();
-//            Intent intent = new Intent(PlayLiveActivity.this, LoginActivity.class);
-//            startActivity(intent);
-//        }
         this.liveId = liveIdCopy[0];
         return liveUrlCopy[0];
     }

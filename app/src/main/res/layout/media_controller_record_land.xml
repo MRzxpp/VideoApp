@@ -9,6 +9,7 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
+            android:id="@+id/record_title_layout"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@color/transparent">
@@ -74,19 +75,17 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:layout_below="@id/support"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@null">
+            android:background="#66000000">
 
             <ImageView
                 android:id="@+id/media_controller_play_pause"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
-                android:src="@drawable/play_video" />
+                android:src="@drawable/stop_video" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -103,6 +102,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="4dp" />
 
+                <TextView
+                    android:id="@+id/video_total_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="4dp" />
 
                 <SeekBar
                     android:id="@+id/video_seekbar"
@@ -111,25 +117,17 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="4dp"
                     android:layout_toEndOf="@id/video_current_time"
-                    android:max="100" />
-
-                <TextView
-                    android:id="@+id/video_total_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="4dp"
-                    android:layout_toEndOf="@id/video_seekbar" />
+                    android:layout_toStartOf="@id/video_total_time" />
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/toggle_volume"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:id="@+id/toggle_fullscreen"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="20dp"
-                android:src="@drawable/volumn_on" />
+                android:src="@drawable/not_fullscreen" />
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

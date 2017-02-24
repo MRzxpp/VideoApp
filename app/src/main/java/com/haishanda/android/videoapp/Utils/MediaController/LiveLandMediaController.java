@@ -1,7 +1,7 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.Utils.MediaController;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
@@ -15,36 +15,43 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
+
+import java.io.File;
 
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
- * 播放本地视频时的控制器
+ * 直播界面下的mediacontroller，包含有对讲，截屏和录像的功能
  * Created by Zhongsz on 2016/11/2.
  */
 
-public class CustomLandMediaController extends MediaController {
+public class LiveLandMediaController extends MediaController {
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
-    private static final String TAG = "本地视频播放";
+    private static final String TAG = "LiveController";
 
     private GestureDetector mGestureDetector;
     private VideoView videoView;
-    private Activity activity;
+    private PlayLiveActivity activity;
     private Context context;
     private int controllerWidth = 0;//设置mediaController高度为了使横屏时top显示在屏幕顶端
 
-
     private View mVolumeBrightnessLayout;//提示窗口
     private ImageView mOperationBg;//提示图片
+    private ImageView mPrintScreenBtn;
+    private ImageView mRecordVideoBtn;
+    private ImageView mStopRecordVideoBtn;
+    private ImageView mTalkServiceBtn;
+    private ImageView backBtn;
+    private ImageView toggleFullscrrenBtn;
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
-    private ImageView backBtn;
-    private ImageView deleteVideoBtn;
+    private ImageView playOrPauseBtn;
+    private TextView cameraTitle;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -54,7 +61,7 @@ public class CustomLandMediaController extends MediaController {
     //当前亮度
     private float mBrightness = -1f;
 
-    public CustomLandMediaController(Context context, AttributeSet attrs) {
+    public LiveLandMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -86,7 +93,6 @@ public class CustomLandMediaController extends MediaController {
     private Handler myHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            long pos;
             switch (msg.what) {
                 case HIDEFRAM://隐藏提示窗口
                     mVolumeBrightnessLayout.setVisibility(View.GONE);
@@ -96,7 +102,7 @@ public class CustomLandMediaController extends MediaController {
         }
     };
 
-    public CustomLandMediaController(Context context, VideoView videoView, Activity activity) {
+    public LiveLandMediaController(Context context, VideoView videoView, PlayLiveActivity activity) {
         super(context);
         this.context = context;
         this.videoView = videoView;
@@ -108,13 +114,20 @@ public class CustomLandMediaController extends MediaController {
 
     @Override
     protected View makeControllerView() {
-        //此处的   mymediacontroller  为我们自定义控制器的布局文件名称
-        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_custom_land", "layout", getContext().getPackageName()), this);
+        //此处的   media_controller_live_land  为我们自定义控制器的布局文件名称
+        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_live_land", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
         volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
-        backBtn = (ImageView) v.findViewById(R.id.back_to_videos_btn);
-        deleteVideoBtn = (ImageView) v.findViewById(R.id.delete_video);
+        mPrintScreenBtn = (ImageView) v.findViewById(R.id.printscreen_btn);
+        mRecordVideoBtn = (ImageView) v.findViewById(R.id.record_btn);
+        mStopRecordVideoBtn = (ImageView) v.findViewById(R.id.stop_record_btn);
+        mTalkServiceBtn = (ImageView) v.findViewById(R.id.voice_start);
+        backBtn = (ImageView) v.findViewById(R.id.back_to_boat_btn);
+        toggleFullscrrenBtn = (ImageView) v.findViewById(R.id.toggle_fullscreen);
+        playOrPauseBtn = (ImageView) v.findViewById(R.id.media_controller_play_pause);
+        cameraTitle = (TextView) v.findViewById(R.id.camera_title);
+        cameraTitle.setText("摄像头" + activity.cameraId);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
@@ -122,13 +135,104 @@ public class CustomLandMediaController extends MediaController {
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
         //注册事件监听
-        volumeToggle.setOnClickListener(volumnListener);
-        backBtn.setOnClickListener(backListener);
-        deleteVideoBtn.setOnClickListener(new OnClickListener() {
+        playOrPauseBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "删除了一个视频");
+                if (videoView.isPlaying()) {
+                    videoView.pause();
+                } else {
+                    videoView.start();
+                }
+            }
+        });
+        volumeToggle.setOnClickListener(volumnListener);
+        backBtn.setOnClickListener(backListener);
+        mPrintScreenBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.printScreen();
+            }
+        });
+        //录音键
+        mTalkServiceBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.startRecordVoice();
+                            }
+                        }).start();
+                        backBtn.setEnabled(false);
+                        toggleFullscrrenBtn.setEnabled(false);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        try {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    activity.stopRecordVoice();
+                                }
+                            }).start();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "record voice failed");
+                        }
+                        backBtn.setEnabled(true);
+                        toggleFullscrrenBtn.setEnabled(true);
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.stopVoiceRecorder();
+                                File voiceFile = new File(activity.mFileNameFull);
+                                try {
+                                    voiceFile.delete();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                        backBtn.setEnabled(true);
+                        toggleFullscrrenBtn.setEnabled(true);
+                        Log.d(TAG, "record voice cancel");
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+        //全屏键
+        toggleFullscrrenBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+        });
+        //录像键
+        mRecordVideoBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.recordVideo();
+                mRecordVideoBtn.setVisibility(View.INVISIBLE);
+                mRecordVideoBtn.setEnabled(false);
+                mStopRecordVideoBtn.setVisibility(View.VISIBLE);
+                mStopRecordVideoBtn.setEnabled(true);
+            }
+        });
+        mStopRecordVideoBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.terminateRecord();
+                mRecordVideoBtn.setVisibility(View.VISIBLE);
+                mRecordVideoBtn.setEnabled(true);
+                mStopRecordVideoBtn.setVisibility(View.INVISIBLE);
+                mStopRecordVideoBtn.setEnabled(false);
             }
         });
         return v;
@@ -177,8 +281,6 @@ public class CustomLandMediaController extends MediaController {
          * 所以 原来的单机隐藏会失效，作为代替，
          * 在手势监听中onSingleTapConfirmed（）添加自定义的隐藏/显示，
          *
-         * @param e
-         * @return
          */
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -225,7 +327,6 @@ public class CustomLandMediaController extends MediaController {
     /**
      * 滑动改变声音大小
      *
-     * @param percent
      */
     private void onVolumeSlide(float percent) {
         if (mVolume == -1) {
@@ -262,7 +363,6 @@ public class CustomLandMediaController extends MediaController {
     /**
      * 滑动改变亮度
      *
-     * @param percent
      */
     private void onBrightnessSlide(float percent) {
         if (mBrightness < 0) {

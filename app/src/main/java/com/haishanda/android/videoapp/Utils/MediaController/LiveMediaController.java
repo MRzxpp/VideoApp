@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.Utils.MediaController;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -12,10 +12,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
+import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
 
 import io.vov.vitamio.widget.MediaController;
@@ -26,12 +25,12 @@ import io.vov.vitamio.widget.VideoView;
  * Created by Zhongsz on 2016/11/2.
  */
 
-public class CustomMediaController extends MediaController {
+public class LiveMediaController extends MediaController {
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
 
     private GestureDetector mGestureDetector;
     private VideoView videoView;
-    private PlayRecordActivity activity;
+    private PlayLiveActivity activity;
     private Context context;
     private int controllerWidth = 0;//设置mediaController高度为了使横屏时top显示在屏幕顶端
 
@@ -40,9 +39,6 @@ public class CustomMediaController extends MediaController {
     private ImageView mOperationBg;//提示图片
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
-    private TextView videoCurrenttTime;
-    private TextView videoTotalTime;
-    private SeekBar videoSeekBar;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -52,18 +48,18 @@ public class CustomMediaController extends MediaController {
     //当前亮度
     private float mBrightness = -1f;
 
-    public CustomMediaController(Context context, AttributeSet attrs) {
+    public LiveMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     //返回监听
-    private View.OnClickListener backListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            if (activity != null) {
-                activity.finish();
-            }
-        }
-    };
+//    private View.OnClickListener backListener = new View.OnClickListener() {
+//        public void onClick(View v) {
+//            if (activity != null) {
+//                activity.finish();
+//            }
+//        }
+//    };
 
     private View.OnClickListener volumnListener = new View.OnClickListener() {
 
@@ -94,7 +90,7 @@ public class CustomMediaController extends MediaController {
         }
     };
 
-    public CustomMediaController(Context context, VideoView videoView, PlayRecordActivity activity) {
+    public LiveMediaController(Context context, VideoView videoView, PlayLiveActivity activity) {
         super(context);
         this.context = context;
         this.videoView = videoView;
@@ -106,14 +102,10 @@ public class CustomMediaController extends MediaController {
 
     @Override
     protected View makeControllerView() {
-        //此处的   mymediacontroller  为我们自定义控制器的布局文件名称
-        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_custom", "layout", getContext().getPackageName()), this);
+        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_live", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
         volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
-        videoCurrenttTime = (TextView) v.findViewById(R.id.video_current_time);
-        videoTotalTime = (TextView) v.findViewById(R.id.video_total_time);
-        videoSeekBar = (SeekBar) v.findViewById(R.id.video_seekbar);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
@@ -123,28 +115,6 @@ public class CustomMediaController extends MediaController {
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         //注册事件监听
         volumeToggle.setOnClickListener(volumnListener);
-        videoTotalTime.setText(getVideoDuration(activity.getVideoDuration()));
-        videoCurrenttTime.setText("00:00");
-        videoSeekBar.setMax(1000);
-        videoSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int process = seekBar.getProgress();
-                if (videoView != null && videoView.isPlaying()) {
-                    videoView.seekTo(process);
-                }
-            }
-        });
         return v;
     }
 
@@ -191,8 +161,7 @@ public class CustomMediaController extends MediaController {
          * 所以 原来的单机隐藏会失效，作为代替，
          * 在手势监听中onSingleTapConfirmed（）添加自定义的隐藏/显示，
          *
-         * @param e
-         * @return
+         * @param e 滑动事件
          */
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -357,16 +326,4 @@ public class CustomMediaController extends MediaController {
             }
     }
 
-    private String getVideoDuration(long videoDuration) {
-        int totalSeconds = (int) videoDuration / 1000;
-        String minute;
-        String second;
-        if (totalSeconds / 60 < 10) {
-            minute = "0" + totalSeconds / 60;
-        } else {
-            minute = String.valueOf(totalSeconds / 60);
-        }
-        second = (totalSeconds - 60 * Integer.valueOf(minute)) < 10 ? "0" + String.valueOf(totalSeconds - 60 * Integer.valueOf(minute)) : String.valueOf(totalSeconds - 60 * Integer.valueOf(minute));
-        return minute + ":" + second;
-    }
 }

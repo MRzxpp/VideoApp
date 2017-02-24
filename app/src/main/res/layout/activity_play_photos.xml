@@ -39,7 +39,7 @@
         </RelativeLayout>
 
 
-        <ImageView
+        <ViewFlipper
             android:id="@+id/photo_main"
             android:layout_width="360dp"
             android:layout_height="270dp"

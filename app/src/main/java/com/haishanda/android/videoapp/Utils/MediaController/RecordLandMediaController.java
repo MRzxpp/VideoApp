@@ -1,12 +1,12 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.Utils.MediaController;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -15,43 +15,42 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
+import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
 import com.haishanda.android.videoapp.R;
 
-import java.io.File;
-
+import io.vov.vitamio.utils.StringUtils;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
- * 直播界面下的mediacontroller，包含有对讲，截屏和录像的功能
+ * 播放本地视频时的控制器
  * Created by Zhongsz on 2016/11/2.
  */
 
-public class LiveLandMediaController extends MediaController {
+public class RecordLandMediaController extends MediaController {
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
-    private static final String TAG = "LiveController";
+    private static final String TAG = "本地视频播放";
+    private static final int FADE_OUT = 1;
+    private static final int SHOW_PROGRESS = 2;
 
     private GestureDetector mGestureDetector;
     private VideoView videoView;
-    private PlayLiveActivity activity;
+    private PlayRecordActivity activity;
     private Context context;
     private int controllerWidth = 0;//设置mediaController高度为了使横屏时top显示在屏幕顶端
 
+
     private View mVolumeBrightnessLayout;//提示窗口
     private ImageView mOperationBg;//提示图片
-    private ImageView mPrintScreenBtn;
-    private ImageView mRecordVideoBtn;
-    private ImageView mStopRecordVideoBtn;
-    private ImageView mTalkServiceBtn;
-    private ImageView backBtn;
-    private ImageView toggleFullscrrenBtn;
     private TextView mOperationTv;//提示文字
-    private ImageView volumeToggle;
-    private ImageView playOrPauseBtn;
-    private TextView cameraTitle;
+    private TextView videoCurrentTime;
+    private TextView videoTotalTime;
+    private SeekBar videoSeekBar;
+    private ImageView playOrPause;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -61,7 +60,13 @@ public class LiveLandMediaController extends MediaController {
     //当前亮度
     private float mBrightness = -1f;
 
-    public LiveLandMediaController(Context context, AttributeSet attrs) {
+
+    private long mDuration;
+    private boolean mShowing;
+    private boolean mDragging;
+    private boolean mInstantSeeking = false;
+
+    public RecordLandMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -74,35 +79,106 @@ public class LiveLandMediaController extends MediaController {
         }
     };
 
-    private View.OnClickListener volumnListener = new View.OnClickListener() {
-
+    private View.OnClickListener fullscreenListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            if (mVolume != 0) {
-                volumnState = mVolume;
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-                volumeToggle.setImageResource(R.drawable.volumn_off);
-            } else {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumnState, 0);
-                volumeToggle.setImageResource(R.drawable.volumn_on);
-            }
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+            activity.getDeleteVideo().setVisibility(VISIBLE);
+            activity.getDeleteVideo().setEnabled(true);
         }
     };
 
+    private View.OnClickListener pauseListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            playOrPause();
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onStartTrackingTouch(SeekBar bar) {
+            mDragging = true;
+            show(3600000);
+            myHandler.removeMessages(SHOW_PROGRESS);
+            if (mInstantSeeking)
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
+            if (!fromuser)
+                return;
+
+            long newposition = (mDuration * progress) / 1000;
+            String time = StringUtils.generateTime(newposition);
+            if (mInstantSeeking)
+                videoView.seekTo(newposition);
+            if (videoCurrentTime != null)
+                videoCurrentTime.setText(time);
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar bar) {
+            if (!mInstantSeeking)
+                videoView.seekTo((mDuration * bar.getProgress()) / 1000);
+            show(3000);
+            myHandler.removeMessages(SHOW_PROGRESS);
+            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
+            mDragging = false;
+            myHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
+        }
+    };
+    @SuppressLint("HandlerLeak")
     private Handler myHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            long pos;
             switch (msg.what) {
                 case HIDEFRAM://隐藏提示窗口
                     mVolumeBrightnessLayout.setVisibility(View.GONE);
                     mOperationTv.setVisibility(View.GONE);
                     break;
+                case FADE_OUT:
+                    hide();
+                    break;
+                case SHOW_PROGRESS:
+                    pos = setProgress();
+                    if (!mDragging && mShowing) {
+                        msg = obtainMessage(SHOW_PROGRESS);
+                        sendMessageDelayed(msg, 1000 - (pos % 1000));
+                    }
+                    break;
             }
         }
     };
 
-    public LiveLandMediaController(Context context, VideoView videoView, PlayLiveActivity activity) {
+    private long setProgress() {
+        if (videoView == null || mDragging)
+            return 0;
+
+        long position = videoView.getCurrentPosition();
+        long duration = videoView.getDuration();
+        if (videoSeekBar != null) {
+            if (duration > 0) {
+                long pos = 1000L * position / duration;
+                videoSeekBar.setProgress((int) pos);
+            }
+            int percent = videoView.getBufferPercentage();
+            videoSeekBar.setSecondaryProgress(percent * 10);
+        }
+
+        mDuration = duration;
+
+        if (videoTotalTime != null)
+            videoTotalTime.setText(StringUtils.generateTime(mDuration));
+        if (videoCurrentTime != null)
+            videoCurrentTime.setText(StringUtils.generateTime(position));
+
+        return position;
+    }
+
+    public RecordLandMediaController(Context context, VideoView videoView, PlayRecordActivity activity) {
         super(context);
         this.context = context;
         this.videoView = videoView;
@@ -114,20 +190,17 @@ public class LiveLandMediaController extends MediaController {
 
     @Override
     protected View makeControllerView() {
-        //此处的   media_controller_live_land  为我们自定义控制器的布局文件名称
-        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_live_land", "layout", getContext().getPackageName()), this);
+        mShowing = true;
+        View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_record_land", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
-        volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
-        mPrintScreenBtn = (ImageView) v.findViewById(R.id.printscreen_btn);
-        mRecordVideoBtn = (ImageView) v.findViewById(R.id.record_btn);
-        mStopRecordVideoBtn = (ImageView) v.findViewById(R.id.stop_record_btn);
-        mTalkServiceBtn = (ImageView) v.findViewById(R.id.voice_start);
-        backBtn = (ImageView) v.findViewById(R.id.back_to_boat_btn);
-        toggleFullscrrenBtn = (ImageView) v.findViewById(R.id.toggle_fullscreen);
-        playOrPauseBtn = (ImageView) v.findViewById(R.id.media_controller_play_pause);
-        cameraTitle = (TextView) v.findViewById(R.id.camera_title);
-        cameraTitle.setText("摄像头" + activity.cameraId);
+        ImageView toggleFullscreenBtn = (ImageView) v.findViewById(R.id.toggle_fullscreen);
+        ImageView backBtn = (ImageView) v.findViewById(R.id.back_to_videos_btn);
+        ImageView deleteVideoBtn = (ImageView) v.findViewById(R.id.delete_video);
+        videoCurrentTime = (TextView) v.findViewById(R.id.video_current_time);
+        videoTotalTime = (TextView) v.findViewById(R.id.video_total_time);
+        videoSeekBar = (SeekBar) v.findViewById(R.id.video_seekbar);
+        playOrPause = (ImageView) v.findViewById(R.id.media_controller_play_pause);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
@@ -135,112 +208,24 @@ public class LiveLandMediaController extends MediaController {
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
         //注册事件监听
-        playOrPauseBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (videoView.isPlaying()) {
-                    videoView.pause();
-                } else {
-                    videoView.start();
-                }
-            }
-        });
-        volumeToggle.setOnClickListener(volumnListener);
+        toggleFullscreenBtn.setOnClickListener(fullscreenListener);
         backBtn.setOnClickListener(backListener);
-        mPrintScreenBtn.setOnClickListener(new OnClickListener() {
+        deleteVideoBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.printScreen();
+                activity.deleteVideo();
             }
         });
-        //录音键
-        mTalkServiceBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.startRecordVoice();
-                            }
-                        }).start();
-                        backBtn.setEnabled(false);
-                        toggleFullscrrenBtn.setEnabled(false);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        try {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    activity.stopRecordVoice();
-                                }
-                            }).start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d(TAG, "record voice failed");
-                        }
-                        backBtn.setEnabled(true);
-                        toggleFullscrrenBtn.setEnabled(true);
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.stopVoiceRecorder();
-                                File voiceFile = new File(activity.mFileNameFull);
-                                try {
-                                    voiceFile.delete();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                        backBtn.setEnabled(true);
-                        toggleFullscrrenBtn.setEnabled(true);
-                        Log.d(TAG, "record voice cancel");
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
-        //全屏键
-        toggleFullscrrenBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-        });
-        //录像键
-        mRecordVideoBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.recordVideo();
-                mRecordVideoBtn.setVisibility(View.INVISIBLE);
-                mRecordVideoBtn.setEnabled(false);
-                mStopRecordVideoBtn.setVisibility(View.VISIBLE);
-                mStopRecordVideoBtn.setEnabled(true);
-            }
-        });
-        mStopRecordVideoBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.terminateRecord();
-                mRecordVideoBtn.setVisibility(View.VISIBLE);
-                mRecordVideoBtn.setEnabled(true);
-                mStopRecordVideoBtn.setVisibility(View.INVISIBLE);
-                mStopRecordVideoBtn.setEnabled(false);
-            }
-        });
+        playOrPause.setOnClickListener(pauseListener);
+        videoSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        videoSeekBar.setMax(1000);
+        myHandler.sendEmptyMessage(SHOW_PROGRESS);
         return v;
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        System.out.println("MYApp-MyMediaController-dispatchKeyEvent");
         return true;
     }
 
@@ -280,7 +265,6 @@ public class LiveLandMediaController extends MediaController {
          * 因为点击事件被控制器拦截，无法传递到下层的VideoView，
          * 所以 原来的单机隐藏会失效，作为代替，
          * 在手势监听中onSingleTapConfirmed（）添加自定义的隐藏/显示，
-         *
          */
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -326,7 +310,6 @@ public class LiveLandMediaController extends MediaController {
 
     /**
      * 滑动改变声音大小
-     *
      */
     private void onVolumeSlide(float percent) {
         if (mVolume == -1) {
@@ -362,7 +345,6 @@ public class LiveLandMediaController extends MediaController {
 
     /**
      * 滑动改变亮度
-     *
      */
     private void onBrightnessSlide(float percent) {
         if (mBrightness < 0) {
@@ -427,8 +409,10 @@ public class LiveLandMediaController extends MediaController {
     private void toggleMediaControlsVisiblity() {
         if (isShowing()) {
             hide();
+            mShowing = false;
         } else {
             show();
+            mShowing = true;
         }
     }
 
@@ -439,8 +423,10 @@ public class LiveLandMediaController extends MediaController {
         if (videoView != null)
             if (videoView.isPlaying()) {
                 videoView.pause();
+                playOrPause.setImageResource(R.drawable.play_video);
             } else {
                 videoView.start();
+                playOrPause.setImageResource(R.drawable.stop_video);
             }
     }
 }

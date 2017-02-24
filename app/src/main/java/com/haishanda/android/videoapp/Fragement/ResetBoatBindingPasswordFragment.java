@@ -21,20 +21,20 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 修改船舶绑定密码
  * Created by Zhongsz on 2016/10/26.
  */
 
-public class ResetBoatPasswordFragment extends Fragment {
+public class ResetBoatBindingPasswordFragment extends Fragment {
     private final String TAG = "重置船舶密码";
     private int machineId;
-    private Bundle data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reset_boat_pwd, container, false);
         ButterKnife.bind(this, view);
-        data = this.getArguments();
+        Bundle data = this.getArguments();
         machineId = data.getInt("machineId");
         return view;
     }
@@ -63,16 +63,17 @@ public class ResetBoatPasswordFragment extends Fragment {
                     public void onError(Throwable e) {
                         Log.i(TAG, "reset failed");
                         e.printStackTrace();
-                        Toast.makeText(getContext(), "网络错误", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "网络错误", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onNext(SmartResult smartResult) {
                         if (smartResult.getCode() == 1) {
-                            Toast.makeText(getContext(), "已发送", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity().getApplicationContext(), "已发送", Toast.LENGTH_SHORT).show();
+                            backToAboutBoatFragment();
                         } else {
                             Log.i(TAG, smartResult.getMsg());
-                            Toast.makeText(getContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "发送失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity().getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : "发送失败", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

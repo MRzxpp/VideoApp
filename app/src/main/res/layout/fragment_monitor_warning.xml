@@ -33,7 +33,7 @@
             android:src="@drawable/back" />
     </RelativeLayout>
 
-    <com.haishanda.android.videoapp.Utils.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
+    <com.haishanda.android.videoapp.Views.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
         android:id="@+id/notification_open"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         expandable:contentLayout="@layout/view_content"
         expandable:headerLayout="@layout/view_header">
 
-    </com.haishanda.android.videoapp.Utils.ExpandableLayout>
+    </com.haishanda.android.videoapp.Views.ExpandableLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

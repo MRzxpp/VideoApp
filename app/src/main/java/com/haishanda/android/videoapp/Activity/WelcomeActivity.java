@@ -71,6 +71,12 @@ public class WelcomeActivity extends Activity {
         EMClient.getInstance().init(this, options);
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+
+        //测试地址开关
+        SharedPreferences preferences = getSharedPreferences("TEST_PATH", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("TEST_PATH_ON", true);
+        editor.apply();
     }
 
     @Override

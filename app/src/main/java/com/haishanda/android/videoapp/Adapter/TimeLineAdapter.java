@@ -24,7 +24,7 @@ import java.util.List;
  * 相册照片时间线适配器
  * Created by Zhongsz on 2016/12/7.
  */
-
+//Todo 当照片或视频过多时的分页处理
 public class TimeLineAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
@@ -62,6 +62,19 @@ public class TimeLineAdapter extends ArrayAdapter {
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
         List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.AddTime.eq(date)).where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
+        String[] imageUrls;
+        List<String> imageUrlsCopy = new ArrayList<>();
+        for (int i = 0; i < imagePaths.size(); i++) {
+            imageUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + date + "/" + imagePaths.get(i).getImgPath());
+        }
+        imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
+        return imageUrls;
+    }
+
+    private String[] loadAllImagePaths(String date) {
+        ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
+        QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
+        List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
         String[] imageUrls;
         List<String> imageUrlsCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {

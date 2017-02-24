@@ -24,7 +24,6 @@ public class HelpActivity extends Activity {
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
 
         // 自定义摇一摇的灵敏度，默认为950，数值越小灵敏度越高。
@@ -42,7 +41,6 @@ public class HelpActivity extends Activity {
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
         PgyFeedbackShakeManager.unregister();
     }

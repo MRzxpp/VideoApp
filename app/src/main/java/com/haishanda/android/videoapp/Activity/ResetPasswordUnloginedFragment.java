@@ -19,7 +19,7 @@ import com.haishanda.android.videoapp.Api.ApiManage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.Utils.Watcher.EditChangedWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ChangeVisiable;
+import com.haishanda.android.videoapp.Utils.ViewUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,7 +78,7 @@ public class ResetPasswordUnloginedFragment extends Fragment {
 
     @OnClick(R.id.eye3)
     public void setRePasswordVisiable() {
-        ChangeVisiable.changeVisiable(Eye3, resetPassword);
+        ViewUtil.changeVisiable(Eye3, resetPassword);
     }
 
     @OnClick(R.id.save_new_password_btn)
