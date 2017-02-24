@@ -1,7 +1,6 @@
 package com.haishanda.android.videoapp.Fragement;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,21 +15,11 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.Activity.BoatConfigActivity;
 import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.BoatMessage;
-import com.haishanda.android.videoapp.Bean.ImageMessage;
-import com.haishanda.android.videoapp.Bean.VideoMessage;
 import com.haishanda.android.videoapp.Config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.Utils.DaoUtil;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
-import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
-import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
-import org.greenrobot.greendao.query.QueryBuilder;
-
-import java.io.File;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

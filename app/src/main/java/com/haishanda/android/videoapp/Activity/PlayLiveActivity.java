@@ -72,17 +72,17 @@ public class PlayLiveActivity extends Activity {
     @BindView(R.id.play_live)
     VideoView videoView;
     @BindView(R.id.vocal_is_in)
-    public ImageView vocalGif;
+    ImageView vocalGif;
     @BindView(R.id.voice_start)
-    public ImageView voiceStart;
+    ImageView voiceStart;
     @BindView(R.id.toggle_fullscreen)
-    public ImageView toggleFullscreen;
+    ImageView toggleFullscreen;
     @BindView(R.id.stop_record_btn)
-    public ImageView stopRecordBtn;
+    ImageView stopRecordBtn;
     @BindView(R.id.record_btn)
-    public ImageView recordBtn;
+    ImageView recordBtn;
     @BindView(R.id.loading)
-    public ImageView loadingPic;
+    ImageView loadingPic;
     @BindView(R.id.printscreen_btn)
     ImageView printScreenBtn;
     @BindView(R.id.back_to_boat_btn)
@@ -156,9 +156,6 @@ public class PlayLiveActivity extends Activity {
             }
         };
         getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION), true, rotationObserver);
-//        //全屏键不可用
-//        toggleFullscreen.setVisibility(View.INVISIBLE);
-//        toggleFullscreen.setEnabled(false);
         Glide.with(this)
                 .load(R.drawable.voice_is_in)
                 .asGif()

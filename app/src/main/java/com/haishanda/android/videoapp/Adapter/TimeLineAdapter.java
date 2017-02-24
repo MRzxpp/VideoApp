@@ -61,11 +61,11 @@ public class TimeLineAdapter extends ArrayAdapter {
     private String[] loadDateImagePaths(String date) {
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
-        List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.AddTime.eq(date)).where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
+        List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.AddDate.eq(date)).where(ImageMessageDao.Properties.BoatName.eq(boatName)).list();
         String[] imageUrls;
         List<String> imageUrlsCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {
-            imageUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + date + "/" + imagePaths.get(i).getImgPath());
+            imageUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + imagePaths.get(i).getImageName());
         }
         imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
         return imageUrls;

@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * 相册模块
  * Created by Zhongsz on 2016/10/25.
  */
 
@@ -64,11 +65,11 @@ public class PhotosFragment extends Fragment {
 //        this.boatName = boatName;
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
-        List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
+        List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.BoatName.eq(boatName)).list();
         String[] dates;
         List<String> datesCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {
-            datesCopy.add(i, imagePaths.get(i).getAddTime());
+            datesCopy.add(i, imagePaths.get(i).getAddDate());
         }
         dates = datesCopy.toArray(new String[datesCopy.size()]);
         if (dates.length != 0) {
@@ -80,10 +81,10 @@ public class PhotosFragment extends Fragment {
 
     public String[] removeRepeatedDate(String[] dates) {
         String[] datesCorrect;
-        ArrayList<String> datesList = new ArrayList<String>();
-        for (int i = 0; i < dates.length; i++) {
-            if (!datesList.contains(dates[i]))
-                datesList.add(dates[i]);
+        ArrayList<String> datesList = new ArrayList<>();
+        for (String date : dates) {
+            if (!datesList.contains(date))
+                datesList.add(date);
         }
         datesCorrect = datesList.toArray(new String[datesList.size()]);
         return datesCorrect;
