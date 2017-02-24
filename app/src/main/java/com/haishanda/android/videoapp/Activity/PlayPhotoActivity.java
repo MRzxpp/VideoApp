@@ -182,7 +182,7 @@ public class PlayPhotoActivity extends Activity {
                         imagePathList.get(position).length());
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
-        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
+        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImageName.eq(imageName)).list();
         ImageMessage im = imageMessage.get(0);
         ViewHolder viewHolder = new ViewHolder(R.layout.adapter_image_info);
         DialogPlus dialogPlus = DialogPlus.newDialog(this)
@@ -198,7 +198,7 @@ public class PlayPhotoActivity extends Activity {
         TextView addTimeView = (TextView) view.findViewById(R.id.image_info_addtime);
         TextView sizeView = (TextView) view.findViewById(R.id.image_info_size);
         nameView.setText("文件名称：" + imageName);
-        addTimeView.setText("拍摄时间：" + im.getAddTime());
+        addTimeView.setText("拍摄时间：" + im.getAddDate());
         sizeView.setText("文件大小：" + FileUtil.getAutoFileOrFilesSize(imagePathList.get(position)));
         dialogPlus.show();
     }
@@ -240,7 +240,7 @@ public class PlayPhotoActivity extends Activity {
             }
             ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
             QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
-            imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImgPath.eq(imageName)).list();
+            imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImageName.eq(imageName)).list();
             ImageMessage im = imageMessage.get(0);
             imageMessageDao.delete(im);
             Log.d("PhotoAction", "删除成功");

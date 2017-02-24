@@ -36,7 +36,7 @@ public class DaoUtil {
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
         QueryBuilder<VideoMessage> videoMessageQueryBuilder = videoMessageDao.queryBuilder();
         List<BoatMessage> boatMessages = boatQuery.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
-        List<ImageMessage> imageMessageList = queryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(originalBoatName)).list();
+        List<ImageMessage> imageMessageList = queryBuilder.where(ImageMessageDao.Properties.BoatName.eq(originalBoatName)).list();
         List<VideoMessage> videoMessageList = videoMessageQueryBuilder.where(VideoMessageDao.Properties.ParentDir.eq(originalBoatName)).list();
         for (BoatMessage boatMessage : boatMessages
                 ) {
@@ -47,7 +47,7 @@ public class DaoUtil {
         }
         for (ImageMessage imageMessage : imageMessageList
                 ) {
-            imageMessage.setParentDir(boatNewName);
+            imageMessage.setBoatName(boatNewName);
             imageMessageDao.update(imageMessage);
         }
         for (VideoMessage videoMessage : videoMessageList
@@ -75,7 +75,7 @@ public class DaoUtil {
         QueryBuilder<ImageMessage> imageMessageQueryBuilder = imageMessageDao.queryBuilder();
         QueryBuilder<VideoMessage> videoMessageQueryBuilder = videoMessageDao.queryBuilder();
         List<BoatMessage> boatMessageList = boatMessageQueryBuilder.where(BoatMessageDao.Properties.Name.eq(boatName)).list();
-        List<ImageMessage> imageMessageList = imageMessageQueryBuilder.where(ImageMessageDao.Properties.ParentDir.eq(boatName)).list();
+        List<ImageMessage> imageMessageList = imageMessageQueryBuilder.where(ImageMessageDao.Properties.BoatName.eq(boatName)).list();
         List<VideoMessage> videoMessageList = videoMessageQueryBuilder.where(VideoMessageDao.Properties.ParentDir.eq(boatName)).list();
         for (BoatMessage b : boatMessageList
                 ) {

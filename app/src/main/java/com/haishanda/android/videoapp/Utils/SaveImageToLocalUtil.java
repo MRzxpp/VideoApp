@@ -38,13 +38,9 @@ public class SaveImageToLocalUtil {
             boatDir.mkdir();
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
-        File dateDir = new File(boatDir + "/" + dateFormat.format(System.currentTimeMillis()));
-        if (!dateDir.exists()) {
-            dateDir.mkdir();
-        }
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒", Locale.CHINA);
-        String imgName = boatName + "_" + timeFormat.format(System.currentTimeMillis()) + ".jpg";
-        File file = new File(dateDir, imgName);
+        String imgName = timeFormat.format(System.currentTimeMillis()) + ".jpg";
+        File file = new File(boatDir, imgName);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             img.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);

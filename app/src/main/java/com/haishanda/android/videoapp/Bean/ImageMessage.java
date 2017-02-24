@@ -13,17 +13,17 @@ import org.greenrobot.greendao.annotation.Generated;
 public class ImageMessage {
     @Id(autoincrement = true)
     private Long id;
-    private String parentDir;
-    private String imgPath;
-    private String addTime;
+    private String boatName;
+    private String imageName;
+    private String addDate;
     private String updateTime;
-    @Generated(hash = 257556371)
-    public ImageMessage(Long id, String parentDir, String imgPath, String addTime,
+    @Generated(hash = 1929080583)
+    public ImageMessage(Long id, String boatName, String imageName, String addDate,
             String updateTime) {
         this.id = id;
-        this.parentDir = parentDir;
-        this.imgPath = imgPath;
-        this.addTime = addTime;
+        this.boatName = boatName;
+        this.imageName = imageName;
+        this.addDate = addDate;
         this.updateTime = updateTime;
     }
     @Generated(hash = 48598060)
@@ -35,23 +35,23 @@ public class ImageMessage {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getParentDir() {
-        return this.parentDir;
+    public String getBoatName() {
+        return this.boatName;
     }
-    public void setParentDir(String parentDir) {
-        this.parentDir = parentDir;
+    public void setBoatName(String boatName) {
+        this.boatName = boatName;
     }
-    public String getImgPath() {
-        return this.imgPath;
+    public String getImageName() {
+        return this.imageName;
     }
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
-    public String getAddTime() {
-        return this.addTime;
+    public String getAddDate() {
+        return this.addDate;
     }
-    public void setAddTime(String addTime) {
-        this.addTime = addTime;
+    public void setAddDate(String addDate) {
+        this.addDate = addDate;
     }
     public String getUpdateTime() {
         return this.updateTime;
@@ -59,5 +59,4 @@ public class ImageMessage {
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
-
 }
