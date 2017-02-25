@@ -14,7 +14,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.1.0"
         ndk {
             abiFilters "arm64-v8a", "x86", "armeabi", "armeabi-v7a"
         }
@@ -92,7 +92,7 @@ dependencies {
     compile 'com.writingminds:FFmpegAndroid:0.3.2'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.bigkoo:alertview:1.0.3'
-    compile 'com.pgyersdk:sdk:2.4.5'
+    compile 'com.pgyersdk:sdk:2.5.4'
     compile 'cn.yipianfengye.android:zxing-library:2.1'
     compile project(':vitamio')
     compile files('libs/HwPush_SDK_V2705.jar')

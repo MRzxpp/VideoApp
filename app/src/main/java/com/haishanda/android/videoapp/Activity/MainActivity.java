@@ -29,6 +29,7 @@ import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;
+import com.pgyersdk.feedback.PgyFeedbackShakeManager;
 
 import java.util.ArrayList;
 
@@ -115,6 +116,17 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         receiver = new EMErrorReceiver();
         registerReceiver(receiver, filter);
         isRegistered = true;
+        // 自定义摇一摇的灵敏度，默认为950，数值越小灵敏度越高。
+        PgyFeedbackShakeManager.setShakingThreshold(1000);
+
+        // 以对话框的形式弹出
+        PgyFeedbackShakeManager.register(MainActivity.this);
+
+        // 以Activity的形式打开，这种情况下必须在AndroidManifest.xml配置FeedbackActivity
+        // 打开沉浸式,默认为false
+        // FeedbackActivity.setBarImmersive(true);
+        // PgyFeedbackShakeManager.register(HelpActivity.this, false);
+
     }
 
     public static MainActivity getInstance() {
@@ -134,6 +146,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         if (isRegistered) {
             unregisterReceiver(receiver);
         }
+        PgyFeedbackShakeManager.unregister();
     }
 
     public void refresh() {

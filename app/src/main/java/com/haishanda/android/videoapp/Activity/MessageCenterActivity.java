@@ -27,7 +27,7 @@ public class MessageCenterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_center);
         ButterKnife.bind(this);
-        PgyUpdateManager.register(this);
+        PgyUpdateManager.register(this,"video app provider file");
     }
 
     @OnClick(R.id.back_to_my_btn)

@@ -125,7 +125,7 @@
                 android:layout_height="45dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
-                android:src="@drawable/play_video" />
+                android:src="@drawable/stop_video" />
 
             <ImageView
                 android:id="@+id/toggle_volume"

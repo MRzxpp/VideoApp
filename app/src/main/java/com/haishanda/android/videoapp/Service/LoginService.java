@@ -90,14 +90,15 @@ public class LoginService extends Service {
                     Log.d("receive message", "success");
                     NotificationUtil notificationUtil = new NotificationUtil(LoginService.this);
                     NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    notificationManager.notify(i, notificationUtil.initNotify(messages.get(0).getBody().toString()).build());
+                    String messageText = messages.get(0).getBody().toString().substring(5, messages.get(0).getBody().toString().length() - 1);
+                    notificationManager.notify(i, notificationUtil.initNotify(messageText).build());
                     try {
                         if (messages.get(0).getStringAttribute("type").equals("alarm")) {
                             //如果收到的消息是船舶报警则唤醒振动
                             Intent broadcastIntent = new Intent();
                             broadcastIntent.setAction(ACTION_RECEIVE_TIMER);
                             broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                            broadcastIntent.putExtra("message", messages.get(0).getBody().toString());
+                            broadcastIntent.putExtra("message", messageText);
                             sendBroadcast(broadcastIntent);
                             //报警数目增加
                             SharedPreferences alarmPreferences = getSharedPreferences(Constant.ALARM_MESSAGE, MODE_PRIVATE);

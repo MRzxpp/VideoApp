@@ -13,15 +13,6 @@
         android:textColor="#333333"
         android:textSize="16sp" />
 
-    <!--<ImageView-->
-        <!--android:id="@+id/close_image_details_btn"-->
-        <!--android:layout_width="17dp"-->
-        <!--android:layout_height="17dp"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_marginRight="20dp"-->
-        <!--android:layout_marginTop="20dp"-->
-        <!--android:src="@drawable/image_details_cancel" />-->
-
     <ImageView
         android:id="@+id/image_details_icon"
         android:layout_width="172dp"
@@ -55,10 +46,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_info_addtime"
+        android:layout_marginBottom="15dp"
         android:layout_marginStart="22.5dp"
         android:layout_marginTop="15dp"
         android:textColor="@color/textBlack"
         android:textSize="14sp" />
-
 
 </RelativeLayout>

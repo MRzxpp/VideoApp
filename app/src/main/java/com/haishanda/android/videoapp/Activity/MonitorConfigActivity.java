@@ -63,7 +63,6 @@ public class MonitorConfigActivity extends FragmentActivity {
     public MonitorConfigActivity() {
     }
 
-    //Todo 监控报警音的配置，服务器端传来的船舶属性当中也应当有监控报警音的属性
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -40,16 +40,16 @@
 
 
         <ViewFlipper
-            android:id="@+id/photo_main"
+            android:id="@+id/monitor_photo_main"
             android:layout_width="360dp"
             android:layout_height="270dp"
             android:layout_centerInParent="true" />
 
         <TextView
-            android:id="@+id/photo_serial"
+            android:id="@+id/monitor_photo_serial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/photo_main"
+            android:layout_below="@id/monitor_photo_main"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp" />
 

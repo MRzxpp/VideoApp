@@ -62,7 +62,6 @@ public class PhotosFragment extends Fragment {
     }
 
     public String[] loadDatesPaths(String boatName) {
-//        this.boatName = boatName;
         imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
         List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.BoatName.eq(boatName)).list();

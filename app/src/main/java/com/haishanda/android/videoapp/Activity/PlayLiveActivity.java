@@ -1,9 +1,11 @@
 package com.haishanda.android.videoapp.Activity;
 
+import android.Manifest;
 import android.app.Activity;
 
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.media.MediaRecorder;
@@ -13,6 +15,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -68,6 +73,8 @@ import rx.schedulers.Schedulers;
  * Created by Zhongsz on 2016/10/19.
  */
 
+//Todo 播放直播时横屏控制器的对讲ui问题
+
 public class PlayLiveActivity extends Activity {
     @BindView(R.id.play_live)
     VideoView videoView;
@@ -90,6 +97,7 @@ public class PlayLiveActivity extends Activity {
     @BindView(R.id.play_live_title)
     RelativeLayout playLiveTitle;
 
+    private PlayLiveActivity instance;
     private static final String TAG = "PlayLiveActivity";
     private int liveId = -1;
     private String boatName;
@@ -113,6 +121,13 @@ public class PlayLiveActivity extends Activity {
         setContentView(R.layout.activity_play_live);
         Vitamio.isInitialized(getApplicationContext());
         ButterKnife.bind(this);
+        if (instance == null) {
+            synchronized (PlayLiveActivity.class) {
+                if (instance == null) {
+                    instance = new PlayLiveActivity();
+                }
+            }
+        }
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         ffmpeg = FFmpeg.getInstance(this);
         stopRecordBtn.setVisibility(View.INVISIBLE);
@@ -313,6 +328,7 @@ public class PlayLiveActivity extends Activity {
         super.onDestroy();
         videoView.stopPlayback();
         getContentResolver().unregisterContentObserver(rotationObserver);
+        instance = null;
     }
 
     @Override
@@ -468,59 +484,88 @@ public class PlayLiveActivity extends Activity {
         Log.d(TAG, "record finish");
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "录音权限开启");
+            } else {
+                // Permission Denied
+                Toast.makeText(instance, "您拒绝开启对讲功能", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void onTalkStart() {
+        voiceStart.setImageResource(R.drawable.interphone_pick);
+        vocalGif.setVisibility(View.VISIBLE);
+        backBtn.setEnabled(false);
+        toggleFullscreen.setEnabled(false);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                startRecordVoice();
+//            }
+//        }).start();
+        startRecordVoice();
+
+    }
+
     public void initTalkService() {
         voiceStart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        voiceStart.setImageResource(R.drawable.interphone_pick);
-                        vocalGif.setVisibility(View.VISIBLE);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                startRecordVoice();
-                            }
-                        }).start();
-                        backBtn.setEnabled(false);
-                        toggleFullscreen.setEnabled(false);
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(instance, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                        } else {
+                            onTalkStart();
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
-                        voiceStart.setEnabled(false);
-                        vocalGif.setVisibility(View.INVISIBLE);
-                        try {
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_DENIED) {
+                            voiceStart.setEnabled(false);
+                            vocalGif.setVisibility(View.INVISIBLE);
+                            try {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        stopRecordVoice();
+                                    }
+                                }).start();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d(TAG, "record voice failed");
+                            }
+                            voiceStart.setEnabled(true);
+                            backBtn.setEnabled(true);
+                            toggleFullscreen.setEnabled(true);
+                        }
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_DENIED) {
+                            voiceStart.setEnabled(false);
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    stopRecordVoice();
+                                    stopVoiceRecorder();
+                                    File voiceFile = new File(mFileNameFull);
+                                    try {
+                                        voiceFile.delete();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }).start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.d(TAG, "record voice failed");
+                            voiceStart.setEnabled(true);
+                            backBtn.setEnabled(true);
+                            toggleFullscreen.setEnabled(true);
+                            Log.d(TAG, "record voice cancel");
                         }
-                        voiceStart.setEnabled(true);
-                        backBtn.setEnabled(true);
-                        toggleFullscreen.setEnabled(true);
                         break;
-                    case MotionEvent.ACTION_CANCEL:
-                        voiceStart.setEnabled(false);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                stopVoiceRecorder();
-                                File voiceFile = new File(mFileNameFull);
-                                try {
-                                    voiceFile.delete();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                        voiceStart.setEnabled(true);
-                        backBtn.setEnabled(true);
-                        toggleFullscreen.setEnabled(true);
-                        Log.d(TAG, "record voice cancel");
                     default:
                         break;
                 }

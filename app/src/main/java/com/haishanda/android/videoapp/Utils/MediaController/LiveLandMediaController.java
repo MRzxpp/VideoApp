@@ -26,7 +26,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 /**
- * 直播界面下的mediacontroller，包含有对讲，截屏和录像的功能
+ * 直播界面下的media controller，包含有对讲，截屏和录像的功能
  * Created by Zhongsz on 2016/11/2.
  */
 
@@ -34,6 +34,7 @@ public class LiveLandMediaController extends MediaController {
     private static final int HIDEFRAM = 0;//控制提示窗口的显示
     private static final String TAG = "LiveController";
 
+    private LiveLandMediaController controller;
     private GestureDetector mGestureDetector;
     private VideoView videoView;
     private PlayLiveActivity activity;
@@ -78,7 +79,7 @@ public class LiveLandMediaController extends MediaController {
 
         @Override
         public void onClick(View v) {
-            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
             if (mVolume != 0) {
                 volumnState = mVolume;
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
@@ -87,6 +88,13 @@ public class LiveLandMediaController extends MediaController {
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumnState, 0);
                 volumeToggle.setImageResource(R.drawable.volumn_on);
             }
+        }
+    };
+
+    private OnClickListener playOrPauseListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            playOrPause();
         }
     };
 
@@ -109,7 +117,9 @@ public class LiveLandMediaController extends MediaController {
         this.activity = activity;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         controllerWidth = wm.getDefaultDisplay().getWidth();
-        mGestureDetector = new GestureDetector(context, new MyGestureListener());
+        if (controller == null) {
+            controller = this;
+        }
     }
 
     @Override
@@ -118,7 +128,7 @@ public class LiveLandMediaController extends MediaController {
         View v = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(getResources().getIdentifier("media_controller_live_land", "layout", getContext().getPackageName()), this);
         v.setMinimumHeight(controllerWidth);
         //获取控件
-        volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
+        volumeToggle = (ImageView) v.findViewById(R.id.toggle_volume);
         mPrintScreenBtn = (ImageView) v.findViewById(R.id.printscreen_btn);
         mRecordVideoBtn = (ImageView) v.findViewById(R.id.record_btn);
         mStopRecordVideoBtn = (ImageView) v.findViewById(R.id.stop_record_btn);
@@ -134,19 +144,13 @@ public class LiveLandMediaController extends MediaController {
         mOperationTv = (TextView) v.findViewById(R.id.operation_tv);
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
+        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+        if (mVolume == 0) {
+            volumeToggle.setImageResource(R.drawable.volumn_off);
+        }
         //注册事件监听
-        playOrPauseBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (videoView.isPlaying()) {
-                    videoView.pause();
-                } else {
-                    videoView.start();
-                }
-            }
-        });
+        mGestureDetector = new GestureDetector(context, new MyGestureListener());
+        playOrPauseBtn.setOnClickListener(playOrPauseListener);
         volumeToggle.setOnClickListener(volumnListener);
         backBtn.setOnClickListener(backListener);
         mPrintScreenBtn.setOnClickListener(new OnClickListener() {
@@ -165,6 +169,7 @@ public class LiveLandMediaController extends MediaController {
                             @Override
                             public void run() {
                                 activity.startRecordVoice();
+                                controller.show(3600000);
                             }
                         }).start();
                         backBtn.setEnabled(false);
@@ -280,7 +285,6 @@ public class LiveLandMediaController extends MediaController {
          * 因为点击事件被控制器拦截，无法传递到下层的VideoView，
          * 所以 原来的单机隐藏会失效，作为代替，
          * 在手势监听中onSingleTapConfirmed（）添加自定义的隐藏/显示，
-         *
          */
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -326,7 +330,6 @@ public class LiveLandMediaController extends MediaController {
 
     /**
      * 滑动改变声音大小
-     *
      */
     private void onVolumeSlide(float percent) {
         if (mVolume == -1) {
@@ -362,7 +365,6 @@ public class LiveLandMediaController extends MediaController {
 
     /**
      * 滑动改变亮度
-     *
      */
     private void onBrightnessSlide(float percent) {
         if (mBrightness < 0) {
@@ -439,8 +441,10 @@ public class LiveLandMediaController extends MediaController {
         if (videoView != null)
             if (videoView.isPlaying()) {
                 videoView.pause();
+                playOrPauseBtn.setImageResource(R.drawable.play_video);
             } else {
                 videoView.start();
+                playOrPauseBtn.setImageResource(R.drawable.stop_video);
             }
     }
 }

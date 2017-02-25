@@ -38,6 +38,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -218,6 +219,7 @@ public class MonitorFragment extends Fragment {
         Boolean isAllSelected;
         Boolean isNoneSelected;
         private List<AlarmVoBean> alarmVos;
+        private String[] monitorUrls;
 
         MonitorAdapter(Context context, List<AlarmVoBean> alarmVos, Boolean isCheckBoxOn, Boolean isAllSelected, Boolean isNoneSelected) {
             super(context, R.layout.adapter_monitor, alarmVos);
@@ -248,12 +250,11 @@ public class MonitorFragment extends Fragment {
 
             String urls = alarmVos.get(position).getUrls();
             final String[] urlArray = convertUrlsToFourUrl(urls);
+            monitorUrls = urlArray;
             ImageView warningImg1 = viewHolder.warningImg1;
             ImageView warningImg2 = viewHolder.warningImg2;
             ImageView warningImg3 = viewHolder.warningImg3;
             ImageView warningImg4 = viewHolder.warningImg4;
-
-
             if (urlArray.length > 0) {
                 if (urlArray[0] != null) {
                     Glide
@@ -264,7 +265,7 @@ public class MonitorFragment extends Fragment {
                     warningImg1.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            playMonitorPhoto(position, urlArray[0]);
+                            playMonitorPhoto(position);
                         }
                     });
                 }
@@ -278,7 +279,7 @@ public class MonitorFragment extends Fragment {
                         warningImg2.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                playMonitorPhoto(position, urlArray[1]);
+                                playMonitorPhoto(position);
                             }
                         });
                     }
@@ -292,7 +293,7 @@ public class MonitorFragment extends Fragment {
                             warningImg3.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    playMonitorPhoto(position, urlArray[2]);
+                                    playMonitorPhoto(position);
                                 }
                             });
                         }
@@ -306,7 +307,7 @@ public class MonitorFragment extends Fragment {
                                 warningImg4.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        playMonitorPhoto(position, urlArray[3]);
+                                        playMonitorPhoto(position);
                                     }
                                 });
                             }
@@ -374,13 +375,14 @@ public class MonitorFragment extends Fragment {
             CheckBox isMessageChoosen;
         }
 
-        void playMonitorPhoto(int position, String imagePath) {
+        void playMonitorPhoto(int position) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日   hh:mm:ss", Locale.CHINA);
             Intent intent = new Intent(getActivity(), PlayMonitorPhotoActivity.class);
             Bundle extra = new Bundle();
-            extra.putString("imagePath", imagePath);
+            extra.putParcelableArrayList("imagePaths", new ArrayList(Arrays.asList((monitorUrls))));
             extra.putString("boatName", alarmVos.get(position).getMachineName());
             extra.putString("monitorTime", format.format(alarmVos.get(position).getAlarmTime()));
+            extra.putInt("position", position);
             intent.putExtras(extra);
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);

@@ -39,6 +39,7 @@ public class LiveMediaController extends MediaController {
     private ImageView mOperationBg;//提示图片
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
+    private ImageView playOrPauseBtn;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -52,28 +53,26 @@ public class LiveMediaController extends MediaController {
         super(context, attrs);
     }
 
-    //返回监听
-//    private View.OnClickListener backListener = new View.OnClickListener() {
-//        public void onClick(View v) {
-//            if (activity != null) {
-//                activity.finish();
-//            }
-//        }
-//    };
-
     private View.OnClickListener volumnListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
             if (mVolume != 0) {
                 volumnState = mVolume;
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
                 volumeToggle.setImageResource(R.drawable.volumn_off);
             } else {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumnState, 0);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, volumnState, 0);
                 volumeToggle.setImageResource(R.drawable.volumn_on);
             }
+        }
+    };
+
+    private OnClickListener playOrPauseListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            playOrPause();
         }
     };
 
@@ -97,7 +96,6 @@ public class LiveMediaController extends MediaController {
         this.activity = activity;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         controllerWidth = wm.getDefaultDisplay().getWidth();
-        mGestureDetector = new GestureDetector(context, new MyGestureListener());
     }
 
     @Override
@@ -106,15 +104,21 @@ public class LiveMediaController extends MediaController {
         v.setMinimumHeight(controllerWidth);
         //获取控件
         volumeToggle = (ImageView) v.findViewById(getResources().getIdentifier("toggle_volume", "id", context.getPackageName()));
+        playOrPauseBtn = (ImageView) v.findViewById(R.id.media_controller_play_pause);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
         mOperationTv = (TextView) v.findViewById(R.id.operation_tv);
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+        if (mVolume == 0) {
+            volumeToggle.setImageResource(R.drawable.volumn_off);
+        }
         //注册事件监听
+        mGestureDetector = new GestureDetector(context, new MyGestureListener());
         volumeToggle.setOnClickListener(volumnListener);
+        playOrPauseBtn.setOnClickListener(playOrPauseListener);
         return v;
     }
 
@@ -321,8 +325,10 @@ public class LiveMediaController extends MediaController {
         if (videoView != null)
             if (videoView.isPlaying()) {
                 videoView.pause();
+                playOrPauseBtn.setImageResource(R.drawable.play_video);
             } else {
                 videoView.start();
+                playOrPauseBtn.setImageResource(R.drawable.stop_video);
             }
     }
 

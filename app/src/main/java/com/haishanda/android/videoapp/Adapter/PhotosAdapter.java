@@ -29,14 +29,14 @@ class PhotosAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
 
-    private String[] imagePaths;
+    private String[] dailyImagePaths;
     private String boatName;
 
-    PhotosAdapter(Context context, String[] imagePaths, String boatName) {
-        super(context, R.layout.adapter_photos, imagePaths);
+    PhotosAdapter(Context context, String[] dailyImagePaths, String boatName) {
+        super(context, R.layout.adapter_photos, dailyImagePaths);
 
         this.context = context;
-        this.imagePaths = imagePaths;
+        this.dailyImagePaths = dailyImagePaths;
         this.boatName = boatName;
 
         inflater = LayoutInflater.from(context);
@@ -51,19 +51,18 @@ class PhotosAdapter extends ArrayAdapter {
 
         Glide
                 .with(context)
-                .load(imagePaths[position])
+                .load(dailyImagePaths[position])
                 .into((ImageView) convertView.findViewById(R.id.photo_adapter));
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putParcelableArrayListExtra("imagePaths", new ArrayList(Arrays.asList(imagePaths)));
+                intent.putParcelableArrayListExtra("dailyImagePaths", new ArrayList(Arrays.asList(dailyImagePaths)));
                 intent.putExtra("position", position);
                 intent.putExtra("boatName", boatName);
                 intent.setClass(context, PlayPhotoActivity.class);
                 context.startActivity(intent);
-
             }
         });
 

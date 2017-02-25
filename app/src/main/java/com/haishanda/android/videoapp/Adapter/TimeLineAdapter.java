@@ -71,14 +71,14 @@ public class TimeLineAdapter extends ArrayAdapter {
         return imageUrls;
     }
 
-    private String[] loadAllImagePaths(String date) {
+    private String[] loadAllImagePaths() {
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder queryBuilder = imageMessageDao.queryBuilder();
         List<ImageMessage> imagePaths = queryBuilder.where(ImageMessageDao.Properties.BoatName.eq(boatName)).list();
         String[] imageUrls;
         List<String> imageUrlsCopy = new ArrayList<>();
         for (int i = 0; i < imagePaths.size(); i++) {
-            imageUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + date + "/" + imagePaths.get(i).getImageName());
+            imageUrlsCopy.add(i, Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatName + "/" + imagePaths.get(i).getImageName());
         }
         imageUrls = imageUrlsCopy.toArray(new String[imageUrlsCopy.size()]);
         return imageUrls;

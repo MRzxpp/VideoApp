@@ -14,6 +14,7 @@ import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -68,19 +69,28 @@ public class SaveImageToLocalUtil {
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日" + "hh时mm分ss秒", Locale.CHINA);
         String imgName = format.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(boatDir, imgName);
+        FileOutputStream fileOutputStream = null;
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            img.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-            BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
-            BoatMessage boatMessage;
-            QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();
-            boatMessage = builder.where(BoatMessageDao.Properties.CameraId.eq(cameraId)).unique();
+            fileOutputStream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        img.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+        try {
+            if (fileOutputStream != null) {
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BoatMessageDao boatMessageDao = VideoApplication.getApplication().getDaoSession().getBoatMessageDao();
+        BoatMessage boatMessage;
+        QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();
+        boatMessage = builder.where(BoatMessageDao.Properties.CameraId.eq(cameraId)).unique();
+        if (boatMessage != null) {
             boatMessage.setCameraImagePath(boatDir + "/" + imgName);
             boatMessageDao.insertOrReplace(boatMessage);
-        } catch (Throwable e) {
-            e.printStackTrace();
         }
     }
 
@@ -105,7 +115,7 @@ public class SaveImageToLocalUtil {
             iconDir.mkdir();
         }
         SimpleDateFormat hourFormat = new SimpleDateFormat("hh:mm:ss", Locale.CHINA);
-        String imgName = "videoicon_" + boatName + "_" + time + hourFormat.format(System.currentTimeMillis()) + ".jpg";
+        String imgName = "videoicon_" + time + hourFormat.format(System.currentTimeMillis()) + ".jpg";
         File file = new File(iconDir, imgName);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);

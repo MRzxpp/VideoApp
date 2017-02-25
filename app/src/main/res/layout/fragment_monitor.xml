@@ -72,57 +72,60 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/edit_monitor_message_btns"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/titleBlue">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/monitor_fragment_middle">
 
-        <TextView
-            android:id="@+id/selectNone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="取消全选"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
+        <ListView
+            android:id="@+id/monitor_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp" />
 
-        <TextView
-            android:id="@+id/selectAll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="60dp"
-            android:layout_toLeftOf="@id/selectNone"
-            android:text="全选"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
+        <RelativeLayout
+            android:id="@+id/edit_monitor_message_btns"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom"
+            android:background="@color/titleBlue">
+
+            <TextView
+                android:id="@+id/selectNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="取消全选"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/selectAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="60dp"
+                android:layout_toLeftOf="@id/selectNone"
+                android:text="全选"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
 
 
-        <TextView
-            android:id="@+id/delete_selected_messages"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="60dp"
-            android:layout_toRightOf="@id/selectNone"
-            android:text="删除"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-    </RelativeLayout>
-
-    <ListView
-        android:id="@+id/monitor_messages"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/edit_monitor_message_btns"
-        android:layout_below="@id/monitor_fragment_middle"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/white"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp" />
+            <TextView
+                android:id="@+id/delete_selected_messages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="60dp"
+                android:layout_toRightOf="@id/selectNone"
+                android:text="删除"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </FrameLayout>
 
 
 </RelativeLayout>

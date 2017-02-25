@@ -27,6 +27,8 @@ import rx.schedulers.Schedulers;
  * Created by Zhongsz on 2017/2/8.
  */
 
+//Todo 服务器传来的船舶信息中应当加入voice字段
+
 public class MonitorVoiceFragment extends Fragment {
     int selectedVoiceId;
     long machineId;

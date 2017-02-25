@@ -34,7 +34,6 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,15 +44,16 @@ import butterknife.OnClick;
  * Created by Zhongsz on 2016/11/2.
  */
 
-//TODO 翻页下方的导航,而且list中应当包含一艘船的所有图片
+//TODO 翻页时可以翻阅所有截图而不只是某一天的
 
 public class PlayPhotoActivity extends Activity {
     Bundle extra;
-    @BindView(R.id.photo_main)
+    @BindView(R.id.monitor_photo_main)
     ViewFlipper photoMain;
+    @BindView(R.id.monitor_photo_serial)
+    TextView photoSerial;
 
     private ArrayList<String> imagePathList;
-    private List<ImageMessage> imageMessage;
     private String boatName;
     private GestureDetector gestureDetector;
     private PlayPhotoActivity instance;
@@ -70,9 +70,14 @@ public class PlayPhotoActivity extends Activity {
             instance = this;
         }
         extra = getIntent().getExtras();
-        imagePathList = extra.getStringArrayList("imagePaths");
+        imagePathList = extra.getStringArrayList("dailyImagePaths");
         position = extra.getInt("position");
         boatName = extra.getString("boatName");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         photoMain.setAutoStart(false);
         RequestListener<String, GlideDrawable> photoListener = new RequestListener<String, GlideDrawable>() {
             @Override
@@ -93,8 +98,6 @@ public class PlayPhotoActivity extends Activity {
             Glide
                     .with(this)
                     .load(imagePathList.get(i))
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .skipMemoryCache(true)
                     .listener(photoListener)
                     .into(imageView);
             photoMain.addView(imageView, i);
@@ -138,8 +141,14 @@ public class PlayPhotoActivity extends Activity {
                     photoMain.setInAnimation(rInAnim);
                     photoMain.setOutAnimation(rOutAnim);
                     photoMain.showPrevious();
+                    if (position == 0) {
+                        position = imagePathList.size() - 1;
+                        photoSerial.setText((position + 1) + "/" + imagePathList.size());
+                        return true;
+                    }
                     if (position > 0) {
                         position--;
+                        photoSerial.setText((position + 1) + "/" + imagePathList.size());
                     }
                     return true;
                 } else if (e2.getX() - e1.getX() < -120) { // 从右向左滑动（右进左出）
@@ -151,8 +160,14 @@ public class PlayPhotoActivity extends Activity {
                     photoMain.setInAnimation(lInAnim);
                     photoMain.setOutAnimation(lOutAnim);
                     photoMain.showNext();
-                    if (position < imagePathList.size()) {
+                    if (position == imagePathList.size() - 1) {
+                        position = 0;
+                        photoSerial.setText((position + 1) + "/" + imagePathList.size());
+                        return true;
+                    }
+                    if (position < imagePathList.size() - 1) {
                         position++;
+                        photoSerial.setText((position + 1) + "/" + imagePathList.size());
                     }
                     return true;
                 }
@@ -160,11 +175,11 @@ public class PlayPhotoActivity extends Activity {
             }
 
         });
+        photoSerial.setText((position + 1) + "/" + imagePathList.size());
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
         return gestureDetector.onTouchEvent(event); // 注册手势事件
     }
 
@@ -178,12 +193,11 @@ public class PlayPhotoActivity extends Activity {
     @OnClick(R.id.show_image_info)
     public void showImgInfo() {
         String imageName = imagePathList.get(position)
-                .substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 2 + "yyyy年MM月dd日".length(),
+                .substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 1,
                         imagePathList.get(position).length());
         ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
         QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
-        imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImageName.eq(imageName)).list();
-        ImageMessage im = imageMessage.get(0);
+        ImageMessage imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImageName.eq(imageName)).unique();
         ViewHolder viewHolder = new ViewHolder(R.layout.adapter_image_info);
         DialogPlus dialogPlus = DialogPlus.newDialog(this)
                 .setContentHolder(viewHolder)
@@ -198,7 +212,7 @@ public class PlayPhotoActivity extends Activity {
         TextView addTimeView = (TextView) view.findViewById(R.id.image_info_addtime);
         TextView sizeView = (TextView) view.findViewById(R.id.image_info_size);
         nameView.setText("文件名称：" + imageName);
-        addTimeView.setText("拍摄时间：" + im.getAddDate());
+        addTimeView.setText("拍摄时间：" + imageMessage.getAddDate());
         sizeView.setText("文件大小：" + FileUtil.getAutoFileOrFilesSize(imagePathList.get(position)));
         dialogPlus.show();
     }
@@ -233,16 +247,15 @@ public class PlayPhotoActivity extends Activity {
         String boatName = extra.getString("boatName");
         String imageName;
         if (boatName != null && imagePath != null) {
-            imageName = imagePath.substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 2 + "yyyy年MM月dd日".length(), imagePath.length());
+            imageName = imagePath.substring((Environment.getExternalStorageDirectory().getPath() + "/VideoApp/").length() + boatName.length() + 1, imagePath.length());
             File file = new File(imagePath);
             if (file.exists()) {
                 file.delete();
             }
             ImageMessageDao imageMessageDao = VideoApplication.getApplication().getDaoSession().getImageMessageDao();
             QueryBuilder<ImageMessage> queryBuilder = imageMessageDao.queryBuilder();
-            imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImageName.eq(imageName)).list();
-            ImageMessage im = imageMessage.get(0);
-            imageMessageDao.delete(im);
+            ImageMessage imageMessage = queryBuilder.where(ImageMessageDao.Properties.ImageName.eq(imageName)).unique();
+            imageMessageDao.delete(imageMessage);
             Log.d("PhotoAction", "删除成功");
         } else {
             Log.d("PhotoAction", "删除失败");
