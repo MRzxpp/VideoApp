@@ -1,7 +1,7 @@
-package com.haishanda.android.videoapp.Api;
+package com.haishanda.android.videoapp.api;
 
-import com.haishanda.android.videoapp.Bean.CameraLive;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.bean.CameraLive;
+import com.haishanda.android.videoapp.config.SmartResult;
 
 import retrofit2.Call;
 import retrofit2.http.Field;

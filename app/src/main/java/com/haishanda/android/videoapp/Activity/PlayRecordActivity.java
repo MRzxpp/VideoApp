@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -8,14 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import com.haishanda.android.videoapp.Bean.VideoMessage;
+import com.haishanda.android.videoapp.bean.VideoMessage;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.MediaController.RecordLandMediaController;
-import com.haishanda.android.videoapp.Utils.MediaController.RecordMediaController;
+import com.haishanda.android.videoapp.utils.mediacontroller.RecordLandMediaController;
+import com.haishanda.android.videoapp.utils.mediacontroller.RecordMediaController;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;

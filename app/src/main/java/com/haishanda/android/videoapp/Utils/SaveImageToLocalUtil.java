@@ -1,11 +1,11 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.utils;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
 
-import com.haishanda.android.videoapp.Bean.BoatMessage;
-import com.haishanda.android.videoapp.Bean.ImageMessage;
-import com.haishanda.android.videoapp.Bean.VideoMessage;
+import com.haishanda.android.videoapp.bean.BoatMessage;
+import com.haishanda.android.videoapp.bean.ImageMessage;
+import com.haishanda.android.videoapp.bean.VideoMessage;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;

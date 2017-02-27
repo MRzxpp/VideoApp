@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -32,16 +32,16 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.CameraLive;
-import com.haishanda.android.videoapp.Bean.VideoMessage;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.bean.CameraLive;
+import com.haishanda.android.videoapp.bean.VideoMessage;
+import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.MediaController.LiveLandMediaController;
-import com.haishanda.android.videoapp.Utils.MediaController.LiveMediaController;
-import com.haishanda.android.videoapp.Utils.SaveImageToLocalUtil;
+import com.haishanda.android.videoapp.utils.mediacontroller.LiveLandMediaController;
+import com.haishanda.android.videoapp.utils.mediacontroller.LiveMediaController;
+import com.haishanda.android.videoapp.utils.SaveImageToLocalUtil;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 
@@ -235,7 +235,7 @@ public class PlayLiveActivity extends Activity {
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
             videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE, 0);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            LiveMediaController liveMediaController = new LiveMediaController(this, videoView, this);
+            LiveMediaController liveMediaController = new LiveMediaController(this, videoView);
             liveMediaController.show(5000);
             videoView.setMediaController(liveMediaController);
             //恢复标题栏
@@ -261,7 +261,7 @@ public class PlayLiveActivity extends Activity {
             if (path != null) {
                 videoView.setVideoPath(path);//设置播放地址
                 if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    LiveMediaController liveMediaController = new LiveMediaController(this, videoView, this);
+                    LiveMediaController liveMediaController = new LiveMediaController(this, videoView);
                     liveMediaController.show(5000);
                     videoView.setMediaController(liveMediaController);//绑定控制器
                     videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);

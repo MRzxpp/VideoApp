@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Adapter;
+package com.haishanda.android.videoapp.adapter;
 
 import android.content.Context;
 import android.os.Environment;
@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Bean.VideoMessage;
+import com.haishanda.android.videoapp.bean.VideoMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.NoScrollGridView;
+import com.haishanda.android.videoapp.views.NoScrollGridView;
 import com.haishanda.android.videoapp.greendao.gen.VideoMessageDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -26,12 +26,12 @@ import java.util.List;
  */
 
 public class VideoTimeLineAdapter extends ArrayAdapter {
-    private Context context;
-    private LayoutInflater inflater;
-    private String[] times;
-    private String boatName;
-    private String[] dates;
-    private List<String> shortPaths = new ArrayList<>();
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final String[] times;
+    private final String boatName;
+    private final String[] dates;
+    private final List<String> shortPaths = new ArrayList<>();
 
     public VideoTimeLineAdapter(Context context, String[] dates, String boatName, String[] times) {
         super(context, R.layout.adapter_timeline, dates);

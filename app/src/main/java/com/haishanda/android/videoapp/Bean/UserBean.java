@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Bean;
+package com.haishanda.android.videoapp.bean;
 
 /**
  * 登录用户的信息

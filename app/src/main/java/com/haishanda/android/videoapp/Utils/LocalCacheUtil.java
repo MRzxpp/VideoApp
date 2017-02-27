@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.utils;
 
 /*  * 文 件 名:  DataCleanManager.java  * 描    述:  主要功能有清除内/外缓存，清除数据库，清除sharedPreference，清除files和清除自定义目录  */
 

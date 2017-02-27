@@ -1,6 +1,5 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,13 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Fragement.VerifyCodeFragment;
-import com.haishanda.android.videoapp.Utils.Watcher.EditChangedWatcher;
-import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.config.SmartResult;
+import com.haishanda.android.videoapp.utils.textwatcher.EditChangedWatcher;
+import com.haishanda.android.videoapp.utils.textwatcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
+import com.haishanda.android.videoapp.utils.CountDownTimerUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

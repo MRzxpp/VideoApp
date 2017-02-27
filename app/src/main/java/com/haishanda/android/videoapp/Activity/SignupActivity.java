@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,14 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
-import com.haishanda.android.videoapp.Utils.Watcher.SignUpWatcher;
-import com.haishanda.android.videoapp.Utils.Watcher.SignupCodeWatcher;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.config.SmartResult;
+import com.haishanda.android.videoapp.utils.textwatcher.ClearBtnWatcher;
+import com.haishanda.android.videoapp.utils.textwatcher.SignUpWatcher;
+import com.haishanda.android.videoapp.utils.textwatcher.SignupCodeWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ViewUtil;
-import com.haishanda.android.videoapp.Utils.CountDownTimerUtil;
+import com.haishanda.android.videoapp.utils.ViewUtil;
+import com.haishanda.android.videoapp.utils.CountDownTimerUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

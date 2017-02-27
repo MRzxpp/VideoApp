@@ -123,7 +123,7 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <com.haishanda.android.videoapp.Views.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
+    <com.haishanda.android.videoapp.views.ExpandableLayout xmlns:expandable="http://schemas.android.com/apk/res-auto"
         android:id="@+id/balance_detail_open"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
         expandable:contentLayout="@layout/balance_detail_content"
         expandable:headerLayout="@layout/balance_detail_header">
 
-    </com.haishanda.android.videoapp.Views.ExpandableLayout>
+    </com.haishanda.android.videoapp.views.ExpandableLayout>
 
 
 </RelativeLayout>

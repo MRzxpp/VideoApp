@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -21,11 +21,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.haishanda.android.videoapp.Bean.ImageMessage;
+import com.haishanda.android.videoapp.bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.FileUtil;
+import com.haishanda.android.videoapp.utils.FileUtil;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;

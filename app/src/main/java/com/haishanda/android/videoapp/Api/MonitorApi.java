@@ -1,7 +1,7 @@
-package com.haishanda.android.videoapp.Api;
+package com.haishanda.android.videoapp.api;
 
-import com.haishanda.android.videoapp.Bean.AlarmVoBean;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.bean.AlarmVoBean;
+import com.haishanda.android.videoapp.config.SmartResult;
 
 import java.util.List;
 

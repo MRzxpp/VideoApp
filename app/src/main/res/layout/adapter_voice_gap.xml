@@ -13,7 +13,7 @@
         android:textColor="#333333"
         android:textSize="15sp" />
 
-    <com.haishanda.android.videoapp.Views.PickerView
+    <com.haishanda.android.videoapp.views.PickerView
         android:id="@+id/voice_gap_picker"
         android:layout_width="40dp"
         android:layout_height="100dp"

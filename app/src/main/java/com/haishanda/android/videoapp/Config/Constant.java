@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Config;
+package com.haishanda.android.videoapp.config;
 
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -34,7 +34,7 @@ public class Constant {
     public static final String HSDERROR_NETERROR = "连接服务器失败";
     public static final String SYSTEM_ERROR = "系统错误";
 
-    public static final String ACTION_RECEIVE_MSG = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_MESSAGE";
+    public static final String ACTION_RECEIVE_MSG = "com.haishanda.android.videoapp.service.LoginService.RECEIVE_MESSAGE";
 
     //ButterKnife工具类，改变ButterKnife绑定的View的可用性
     public static final ButterKnife.Setter<View, Boolean> ENABLED = new ButterKnife.Setter<View, Boolean>() {

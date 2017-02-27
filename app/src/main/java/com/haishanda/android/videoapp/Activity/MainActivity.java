@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 
 import android.content.BroadcastReceiver;
@@ -18,13 +18,14 @@ import android.util.Log;
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Fragement.BoatFragment;
-import com.haishanda.android.videoapp.Fragement.MonitorFragment;
-import com.haishanda.android.videoapp.Fragement.MyFragment;
-import com.haishanda.android.videoapp.Fragement.PhotosIndexFragment;
+import com.haishanda.android.videoapp.config.Constant;
+
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Service.LoginService;
+import com.haishanda.android.videoapp.fragment.BoatFragment;
+import com.haishanda.android.videoapp.fragment.MonitorFragment;
+import com.haishanda.android.videoapp.fragment.MyFragment;
+import com.haishanda.android.videoapp.fragment.PhotosIndexFragment;
+import com.haishanda.android.videoapp.service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
@@ -157,7 +158,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
         }.start();
     }
 
-    Runnable updateUI = new Runnable() {
+    final Runnable updateUI = new Runnable() {
         @Override
         public void run() {
             navigationBar.clearAll();

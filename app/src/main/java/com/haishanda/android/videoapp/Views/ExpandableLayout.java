@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Views;
+package com.haishanda.android.videoapp.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,12 +16,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.UserBean;
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.bean.UserBean;
+import com.haishanda.android.videoapp.config.Constant;
+import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Service.LoginService;
+import com.haishanda.android.videoapp.service.LoginService;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 

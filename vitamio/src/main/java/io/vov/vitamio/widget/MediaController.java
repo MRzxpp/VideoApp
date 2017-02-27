@@ -52,25 +52,25 @@ import io.vov.vitamio.utils.StringUtils;
  * The way to use this class is to a) instantiate it programatically or b)
  * create it in your xml layout.
  * <p/>
- * a) The MediaController will create a default set of controls and put them in
+ * a) The mediacontroller will create a default set of controls and put them in
  * a window floating above your application. Specifically, the controls will
  * float above the view specified with setAnchorView(). By default, the window
  * will disappear if left idle for three seconds and reappear when the user
- * touches the anchor view. To customize the MediaController's style, layout and
- * controls you should extend MediaController and override the {#link
+ * touches the anchor view. To customize the mediacontroller's style, layout and
+ * controls you should extend mediacontroller and override the {#link
  * {@link #makeControllerView()} method.
  * <p/>
- * b) The MediaController is a FrameLayout, you can put it in your layout xml
+ * b) The mediacontroller is a FrameLayout, you can put it in your layout xml
  * and get it through {@link #findViewById(int)}.
  * <p/>
- * NOTES: In each way, if you want customize the MediaController, the SeekBar's
+ * NOTES: In each way, if you want customize the mediacontroller, the SeekBar's
  * id must be mediacontroller_progress, the Play/Pause's must be
  * mediacontroller_pause, current time's must be mediacontroller_time_current,
  * total time's must be mediacontroller_time_total, file name's must be
  * mediacontroller_file_name. And your resources must have a pause_button
  * drawable and a play_button drawable.
  * <p/>
- * Functions like show() and hide() have no effect when MediaController is
+ * Functions like show() and hide() have no effect when mediacontroller is
  * created in an xml layout.
  */
 public class MediaController extends FrameLayout {
@@ -213,7 +213,7 @@ public class MediaController extends FrameLayout {
 
     /**
      * Set the view that acts as the anchor for the control view. This can for
-     * example be a VideoView, or your Activity's main view.
+     * example be a VideoView, or your activity's main view.
      *
      * @param view The view to which to anchor the controller when it is visible.
      */
@@ -291,7 +291,7 @@ public class MediaController extends FrameLayout {
 
     /**
      * Set the View to hold some information when interact with the
-     * MediaController
+     * mediacontroller
      *
      * @param v
      */
@@ -370,7 +370,7 @@ public class MediaController extends FrameLayout {
                 else
                     mWindow.dismiss();
             } catch (IllegalArgumentException ex) {
-                Log.d("MediaController already removed");
+                Log.d("mediacontroller already removed");
             }
             mShowing = false;
             if (mHiddenListener != null)

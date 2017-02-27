@@ -23,7 +23,7 @@
                 android:layout_centerVertical="true"
                 android:text="@string/config"
                 android:textColor="#ffffff"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/back_to_boat_fragment_btn"

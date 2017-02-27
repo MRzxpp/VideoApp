@@ -1,7 +1,8 @@
-package com.haishanda.android.videoapp.Utils.MediaController;
+package com.haishanda.android.videoapp.utils.mediacontroller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
@@ -17,10 +18,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
+import com.haishanda.android.videoapp.activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
@@ -43,16 +45,13 @@ public class LiveLandMediaController extends MediaController {
 
     private View mVolumeBrightnessLayout;//提示窗口
     private ImageView mOperationBg;//提示图片
-    private ImageView mPrintScreenBtn;
     private ImageView mRecordVideoBtn;
     private ImageView mStopRecordVideoBtn;
-    private ImageView mTalkServiceBtn;
     private ImageView backBtn;
     private ImageView toggleFullscrrenBtn;
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
     private ImageView playOrPauseBtn;
-    private TextView cameraTitle;
     private AudioManager mAudioManager;
     //最大声音
     private int mMaxVolume;
@@ -67,7 +66,7 @@ public class LiveLandMediaController extends MediaController {
     }
 
     //返回监听
-    private View.OnClickListener backListener = new View.OnClickListener() {
+    private final View.OnClickListener backListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (activity != null) {
                 activity.finish();
@@ -75,11 +74,11 @@ public class LiveLandMediaController extends MediaController {
         }
     };
 
-    private View.OnClickListener volumnListener = new View.OnClickListener() {
+    private final View.OnClickListener volumnListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             if (mVolume != 0) {
                 volumnState = mVolume;
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
@@ -91,24 +90,35 @@ public class LiveLandMediaController extends MediaController {
         }
     };
 
-    private OnClickListener playOrPauseListener = new OnClickListener() {
+    private final OnClickListener playOrPauseListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             playOrPause();
         }
     };
 
-    private Handler myHandler = new Handler() {
+    private static class LiveLandHandler extends Handler {
+        private final WeakReference<LiveLandMediaController> controllerWeakReference;
+
+        LiveLandHandler(LiveLandMediaController controller) {
+            controllerWeakReference = new WeakReference<>(controller);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case HIDEFRAM://隐藏提示窗口
-                    mVolumeBrightnessLayout.setVisibility(View.GONE);
-                    mOperationTv.setVisibility(View.GONE);
-                    break;
+            LiveLandMediaController liveLandMediaController = controllerWeakReference.get();
+            if (liveLandMediaController != null) {
+                switch (msg.what) {
+                    case HIDEFRAM://隐藏提示窗口
+                        liveLandMediaController.mVolumeBrightnessLayout.setVisibility(View.GONE);
+                        liveLandMediaController.mOperationTv.setVisibility(View.GONE);
+                        break;
+                }
             }
         }
-    };
+    }
+
+    private final LiveLandHandler liveLandHandler = new LiveLandHandler(this);
 
     public LiveLandMediaController(Context context, VideoView videoView, PlayLiveActivity activity) {
         super(context);
@@ -116,7 +126,10 @@ public class LiveLandMediaController extends MediaController {
         this.videoView = videoView;
         this.activity = activity;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        controllerWidth = wm.getDefaultDisplay().getWidth();
+        Display display = wm.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        controllerWidth = point.x;
         if (controller == null) {
             controller = this;
         }
@@ -129,14 +142,14 @@ public class LiveLandMediaController extends MediaController {
         v.setMinimumHeight(controllerWidth);
         //获取控件
         volumeToggle = (ImageView) v.findViewById(R.id.toggle_volume);
-        mPrintScreenBtn = (ImageView) v.findViewById(R.id.printscreen_btn);
+        ImageView mPrintScreenBtn = (ImageView) v.findViewById(R.id.printscreen_btn);
         mRecordVideoBtn = (ImageView) v.findViewById(R.id.record_btn);
         mStopRecordVideoBtn = (ImageView) v.findViewById(R.id.stop_record_btn);
-        mTalkServiceBtn = (ImageView) v.findViewById(R.id.voice_start);
+        ImageView mTalkServiceBtn = (ImageView) v.findViewById(R.id.voice_start);
         backBtn = (ImageView) v.findViewById(R.id.back_to_boat_btn);
         toggleFullscrrenBtn = (ImageView) v.findViewById(R.id.toggle_fullscreen);
         playOrPauseBtn = (ImageView) v.findViewById(R.id.media_controller_play_pause);
-        cameraTitle = (TextView) v.findViewById(R.id.camera_title);
+        TextView cameraTitle = (TextView) v.findViewById(R.id.camera_title);
         cameraTitle.setText("摄像头" + activity.cameraId);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
@@ -144,7 +157,7 @@ public class LiveLandMediaController extends MediaController {
         mOperationTv = (TextView) v.findViewById(R.id.operation_tv);
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         if (mVolume == 0) {
             volumeToggle.setImageResource(R.drawable.volumn_off);
         }
@@ -268,8 +281,9 @@ public class LiveLandMediaController extends MediaController {
         mVolume = -1;
         mBrightness = -1f;
         // 隐藏
-        myHandler.removeMessages(HIDEFRAM);
-        myHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
+        liveLandHandler.removeMessages(HIDEFRAM);
+        liveLandHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
+
     }
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -305,8 +319,10 @@ public class LiveLandMediaController extends MediaController {
             int y = (int) e2.getRawY();
             int x = (int) e2.getRawX();
             Display disp = activity.getWindowManager().getDefaultDisplay();
-            int windowWidth = disp.getWidth();
-            int windowHeight = disp.getHeight();
+            Point point = new Point();
+            disp.getSize(point);
+            int windowWidth = point.x;
+            int windowHeight = point.y;
             if (mOldX > windowWidth * 3.0 / 4.0) {// 右边滑动 屏幕 3/4
                 onVolumeSlide((mOldY - y) / windowHeight);
             } else if (mOldX < windowWidth * 1.0 / 4.0) {// 左边滑动 屏幕 1/4

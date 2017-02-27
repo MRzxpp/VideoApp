@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Adapter;
+package com.haishanda.android.videoapp.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,9 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Bean.PackageVo;
+import com.haishanda.android.videoapp.bean.PackageVo;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Views.ExpandableLayout;
+import com.haishanda.android.videoapp.views.ExpandableLayout;
 
 import java.util.List;
 
@@ -21,9 +21,9 @@ import java.util.List;
  */
 
 public class AccountBalanceAdapter extends ArrayAdapter {
-    private Context context;
-    private LayoutInflater inflater;
-    private List<PackageVo> packageVoList;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final List<PackageVo> packageVoList;
 
     public AccountBalanceAdapter(Context context, List<PackageVo> packageVoList) {
         super(context, R.layout.adapter_account_balance, packageVoList);

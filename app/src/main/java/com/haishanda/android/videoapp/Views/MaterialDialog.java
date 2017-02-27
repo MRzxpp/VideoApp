@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Views;
+package com.haishanda.android.videoapp.views;
 
 import android.app.AlertDialog;
 import android.content.Context;

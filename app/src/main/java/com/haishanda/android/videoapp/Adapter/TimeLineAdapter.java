@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Adapter;
+package com.haishanda.android.videoapp.adapter;
 
 import android.content.Context;
 import android.os.Environment;
@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Bean.ImageMessage;
+import com.haishanda.android.videoapp.bean.ImageMessage;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.NoScrollGridView;
+import com.haishanda.android.videoapp.views.NoScrollGridView;
 import com.haishanda.android.videoapp.greendao.gen.ImageMessageDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -26,10 +26,10 @@ import java.util.List;
  */
 //Todo 当照片或视频过多时的分页处理
 public class TimeLineAdapter extends ArrayAdapter {
-    private Context context;
-    private LayoutInflater inflater;
-    private String[] dates;
-    private String boatName;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final String[] dates;
+    private final String boatName;
 
     public TimeLineAdapter(Context context, String[] dates, String boatName) {
         super(context, R.layout.adapter_timeline, dates);

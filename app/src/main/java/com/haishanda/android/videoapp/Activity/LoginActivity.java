@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -15,13 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Utils.Watcher.ClearBtnWatcher;
-import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
+import com.haishanda.android.videoapp.config.Constant;
+import com.haishanda.android.videoapp.utils.textwatcher.ClearBtnWatcher;
+import com.haishanda.android.videoapp.utils.textwatcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Service.LoginService;
-import com.haishanda.android.videoapp.Utils.ViewUtil;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.service.LoginService;
+import com.haishanda.android.videoapp.utils.ViewUtil;
+import com.haishanda.android.videoapp.views.MaterialDialog;
 
 
 import butterknife.BindColor;
@@ -149,7 +149,7 @@ public class LoginActivity extends Activity {
             boolean loginFromToken = intent.getBooleanExtra("loginFromToken", false);
             // 如果登录成功
             if (loginStatus && !loginFromToken) {
-                // 启动Main Activity
+                // 启动Main activity
                 if (dialog != null) {
                     dialog.dismiss();
                 }

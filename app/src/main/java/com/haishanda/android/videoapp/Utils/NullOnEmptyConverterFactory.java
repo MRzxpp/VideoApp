@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.utils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

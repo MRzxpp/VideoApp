@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Config;
+package com.haishanda.android.videoapp.config;
 
 import java.io.Serializable;
 

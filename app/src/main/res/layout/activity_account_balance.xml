@@ -17,7 +17,7 @@
             android:layout_centerVertical="true"
             android:text="账户余额"
             android:textColor="@color/textBlack"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/back_to_my_btn"

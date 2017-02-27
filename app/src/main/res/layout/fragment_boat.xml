@@ -22,7 +22,7 @@
             android:background="@color/titleBlue"
             android:src="@drawable/addboat" />
 
-        <com.haishanda.android.videoapp.Views.niceSpinner.NiceSpinner
+        <com.haishanda.android.videoapp.views.spinner.NiceSpinner
             android:id="@+id/spinner_index_choices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

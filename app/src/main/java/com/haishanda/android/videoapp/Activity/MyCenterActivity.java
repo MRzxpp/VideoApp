@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Bean.UserMessageBean;
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Fragement.SetNicknameFragment;
-import com.haishanda.android.videoapp.Fragement.SetPortraitFragment;
+import com.haishanda.android.videoapp.bean.UserMessageBean;
+import com.haishanda.android.videoapp.config.Constant;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.fragment.SetNicknameFragment;
+import com.haishanda.android.videoapp.fragment.SetPortraitFragment;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;

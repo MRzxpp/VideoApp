@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.utils;
 
 import android.text.InputType;
 import android.widget.EditText;

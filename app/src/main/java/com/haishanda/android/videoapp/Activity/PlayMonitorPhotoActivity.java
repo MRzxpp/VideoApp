@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -59,7 +58,7 @@ public class PlayMonitorPhotoActivity extends Activity {
     private int position = 0;
 
     private final static String TAG = "MonitorPhotoActivity";
-    RequestListener<String, GlideDrawable> photoListener = new RequestListener<String, GlideDrawable>() {
+    final RequestListener<String, GlideDrawable> photoListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
             Log.d(TAG, "Glide load error:" + e.toString());

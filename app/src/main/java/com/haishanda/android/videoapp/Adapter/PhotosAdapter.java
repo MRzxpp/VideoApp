@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Adapter;
+package com.haishanda.android.videoapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Activity.PlayPhotoActivity;
+import com.haishanda.android.videoapp.activity.PlayPhotoActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.ArrayList;
@@ -26,11 +26,11 @@ import java.util.Arrays;
 class PhotosAdapter extends ArrayAdapter {
 
 
-    private Context context;
-    private LayoutInflater inflater;
+    private final Context context;
+    private final LayoutInflater inflater;
 
-    private String[] dailyImagePaths;
-    private String boatName;
+    private final String[] dailyImagePaths;
+    private final String boatName;
 
     PhotosAdapter(Context context, String[] dailyImagePaths, String boatName) {
         super(context, R.layout.adapter_photos, dailyImagePaths);

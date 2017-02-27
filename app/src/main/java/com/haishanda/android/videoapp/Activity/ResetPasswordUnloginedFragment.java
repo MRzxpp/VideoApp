@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -15,11 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Utils.Watcher.EditChangedWatcher;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.config.SmartResult;
+import com.haishanda.android.videoapp.utils.textwatcher.EditChangedWatcher;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.ViewUtil;
+import com.haishanda.android.videoapp.utils.ViewUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,7 +53,7 @@ public class ResetPasswordUnloginedFragment extends Fragment {
     Drawable greyBtn;
 
     private String mobileNo;
-    private String TAG = "保存新密码";
+    private final String TAG = "保存新密码";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

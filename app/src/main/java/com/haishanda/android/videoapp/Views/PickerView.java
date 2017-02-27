@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Views;
+package com.haishanda.android.videoapp.views;
 
 /**
  * 选取时间的View小控件

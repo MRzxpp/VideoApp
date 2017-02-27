@@ -28,7 +28,7 @@
         android:layout_marginTop="42dp"
         android:background="@color/textBlue" />
 
-    <com.haishanda.android.videoapp.Views.NoScrollGridView
+    <com.haishanda.android.videoapp.views.NoScrollGridView
         android:id="@+id/timeline_gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

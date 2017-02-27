@@ -105,7 +105,7 @@
         <!--android:textColor="@color/white"-->
         <!--android:textSize="12sp" />-->
 
-        <com.haishanda.android.videoapp.Views.PickerView
+        <com.haishanda.android.videoapp.views.PickerView
             android:id="@+id/starttime_hour"
             android:layout_width="36dp"
             android:layout_height="96dp"
@@ -121,14 +121,14 @@
             android:textColor="#333333"
             android:textSize="32sp" />
 
-        <com.haishanda.android.videoapp.Views.PickerView
+        <com.haishanda.android.videoapp.views.PickerView
             android:id="@+id/starttime_minute"
             android:layout_width="36dp"
             android:layout_height="96dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="110dp" />
 
-        <com.haishanda.android.videoapp.Views.PickerView
+        <com.haishanda.android.videoapp.views.PickerView
             android:id="@+id/endtime_hour"
             android:layout_width="36dp"
             android:layout_height="96dp"
@@ -147,7 +147,7 @@
             android:textColor="#333333"
             android:textSize="32sp" />
 
-        <com.haishanda.android.videoapp.Views.PickerView
+        <com.haishanda.android.videoapp.views.PickerView
             android:id="@+id/endtime_minute"
             android:layout_width="36dp"
             android:layout_height="96dp"

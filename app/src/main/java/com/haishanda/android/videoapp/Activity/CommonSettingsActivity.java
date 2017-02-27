@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,12 +9,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Fragement.VerifyCodeFragment;
+import com.haishanda.android.videoapp.config.Constant;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Service.LoginService;
+import com.haishanda.android.videoapp.fragment.VerifyCodeFragment;
+import com.haishanda.android.videoapp.service.LoginService;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.Views.MaterialDialog;
+import com.haishanda.android.videoapp.views.MaterialDialog;
 import com.haishanda.android.videoapp.greendao.gen.AlarmVoBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.hyphenate.chat.EMClient;

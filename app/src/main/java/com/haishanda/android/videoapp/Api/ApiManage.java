@@ -1,11 +1,11 @@
-package com.haishanda.android.videoapp.Api;
+package com.haishanda.android.videoapp.api;
 
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Utils.NullOnEmptyConverterFactory;
+import com.haishanda.android.videoapp.config.Constant;
+import com.haishanda.android.videoapp.utils.NullOnEmptyConverterFactory;
 import com.haishanda.android.videoapp.VideoApplication;
 
 import java.io.IOException;
@@ -28,8 +28,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class ApiManage {
 
     private static ApiManage apiManage;
-    private Object zhihuMonitor = new Object();
-    private SharedPreferences preferences = VideoApplication.getApplication().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
+    private final Object zhihuMonitor = new Object();
+    private final SharedPreferences preferences = VideoApplication.getApplication().getSharedPreferences(Constant.USER_PREFERENCE, Context.MODE_PRIVATE);
 
     public static ApiManage getInstence() {
         if (apiManage == null) {

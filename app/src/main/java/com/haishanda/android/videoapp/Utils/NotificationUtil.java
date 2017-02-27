@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.utils;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -15,7 +15,7 @@ import com.haishanda.android.videoapp.R;
  */
 
 public class NotificationUtil {
-    private Context context;
+    private final Context context;
 
     public NotificationUtil(Context context) {
         this.context = context;

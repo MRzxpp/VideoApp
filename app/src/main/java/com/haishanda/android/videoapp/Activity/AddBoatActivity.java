@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Utils.Watcher.LoginWatcher;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.config.SmartResult;
+import com.haishanda.android.videoapp.utils.textwatcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;

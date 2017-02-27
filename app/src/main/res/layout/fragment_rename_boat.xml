@@ -19,7 +19,7 @@
             android:layout_centerVertical="true"
             android:text="修改船舶名称"
             android:textColor="#ffffff"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/back_to_boat_config_btn"

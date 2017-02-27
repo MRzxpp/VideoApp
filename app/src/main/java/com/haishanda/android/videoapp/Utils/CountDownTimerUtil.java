@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Utils;
+package com.haishanda.android.videoapp.utils;
 
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -11,11 +11,11 @@ import android.widget.Button;
  * Created by Jackie on 2015/11/30.
  */
 public class CountDownTimerUtil extends CountDownTimer {
-    private Button button;
-    private Drawable grey;
-    private Drawable blue;
-    private int white;
-    private int textgrey;
+    private final Button button;
+    private final Drawable grey;
+    private final Drawable blue;
+    private final int white;
+    private final int textgrey;
 
     /**
      * @param button            The TextView

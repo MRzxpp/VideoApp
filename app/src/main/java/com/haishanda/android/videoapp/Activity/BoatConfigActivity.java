@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -7,12 +7,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Fragement.AboutBoatFragment;
-import com.haishanda.android.videoapp.Fragement.DeleteBoatFragment;
-import com.haishanda.android.videoapp.Fragement.RenameBoatFragment;
-import com.haishanda.android.videoapp.Fragement.ResetBoatBindingPasswordFragment;
+
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.fragment.AboutBoatFragment;
+import com.haishanda.android.videoapp.fragment.DeleteBoatFragment;
+import com.haishanda.android.videoapp.fragment.RenameBoatFragment;
+import com.haishanda.android.videoapp.fragment.ResetBoatBindingPasswordFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +24,6 @@ import butterknife.OnClick;
  */
 
 public class BoatConfigActivity extends FragmentActivity {
-    private Bundle extra;
     private String boatName;
     private int machineId;
     private String globalId;
@@ -40,7 +40,7 @@ public class BoatConfigActivity extends FragmentActivity {
         setContentView(R.layout.activity_boat_config);
         ButterKnife.bind(this);
         instance = this;
-        extra = getIntent().getExtras();
+        Bundle extra = getIntent().getExtras();
         boatName = extra.getString("boatName");
         machineId = extra.getInt("machineId");
         globalId = extra.getString("globalId");

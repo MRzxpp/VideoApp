@@ -58,7 +58,7 @@
 -keep class com.google.gson.stream.** { *; }
 # 使用Gson时需要配置Gson的解析对象及变量都不混淆。不然Gson会找不到变量。
 # 将下面替换成自己的实体类
--keep class com.haishanda.android.videoapp.Bean.** { *; }
+-keep class bean.** { *; }
 
 
 # Jackson

@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Service;
+package com.haishanda.android.videoapp.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,14 +18,14 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.haishanda.android.videoapp.Activity.MainActivity;
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.UserBean;
-import com.haishanda.android.videoapp.Bean.UserMessageBean;
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.activity.MainActivity;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.bean.UserBean;
+import com.haishanda.android.videoapp.bean.UserMessageBean;
+import com.haishanda.android.videoapp.config.Constant;
+import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.Utils.NotificationUtil;
+import com.haishanda.android.videoapp.utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
 import com.hyphenate.EMCallBack;
@@ -54,7 +54,7 @@ import retrofit2.Response;
 
 public class LoginService extends Service {
 
-    public static final String ACTION_RECEIVE_TIMER = "com.haishanda.android.videoapp.Service.LoginService.RECEIVE_TIMER";
+    public static final String ACTION_RECEIVE_TIMER = "com.haishanda.android.videoapp.service.LoginService.RECEIVE_TIMER";
 
     private final static String TAG = "LoginService";
     TimerTaskReceiver receiver;
@@ -355,7 +355,7 @@ public class LoginService extends Service {
 
     private class MyConnectionListener implements EMConnectionListener {
 
-        private boolean loginFromToken;
+        private final boolean loginFromToken;
 
         MyConnectionListener(boolean loginFromToken) {
             this.loginFromToken = loginFromToken;

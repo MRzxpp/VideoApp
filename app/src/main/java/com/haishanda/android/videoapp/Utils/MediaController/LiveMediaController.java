@@ -1,10 +1,12 @@
-package com.haishanda.android.videoapp.Utils.MediaController;
+package com.haishanda.android.videoapp.utils.mediacontroller;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -14,8 +16,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
+
+import java.lang.ref.WeakReference;
 
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
@@ -30,72 +33,78 @@ public class LiveMediaController extends MediaController {
 
     private GestureDetector mGestureDetector;
     private VideoView videoView;
-    private PlayLiveActivity activity;
     private Context context;
     private int controllerWidth = 0;//设置mediaController高度为了使横屏时top显示在屏幕顶端
 
 
     private View mVolumeBrightnessLayout;//提示窗口
-    private ImageView mOperationBg;//提示图片
     private TextView mOperationTv;//提示文字
     private ImageView volumeToggle;
     private ImageView playOrPauseBtn;
     private AudioManager mAudioManager;
-    //最大声音
-    private int mMaxVolume;
     // 当前声音
     private int mVolume = -1;
     private int volumnState = 0;
-    //当前亮度
-    private float mBrightness = -1f;
 
     public LiveMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    private View.OnClickListener volumnListener = new View.OnClickListener() {
+    private final View.OnClickListener volumnListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             if (mVolume != 0) {
                 volumnState = mVolume;
-                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
                 volumeToggle.setImageResource(R.drawable.volumn_off);
             } else {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, volumnState, 0);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumnState, 0);
                 volumeToggle.setImageResource(R.drawable.volumn_on);
             }
         }
     };
 
-    private OnClickListener playOrPauseListener = new OnClickListener() {
+    private final OnClickListener playOrPauseListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             playOrPause();
         }
     };
 
-    private Handler myHandler = new Handler() {
+    private static class LiveHandler extends Handler {
+        private final WeakReference<LiveMediaController> controllerWeakReference;
+
+        LiveHandler(LiveMediaController controller) {
+            controllerWeakReference = new WeakReference<>(controller);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            long pos;
-            switch (msg.what) {
-                case HIDEFRAM://隐藏提示窗口
-                    mVolumeBrightnessLayout.setVisibility(View.GONE);
-                    mOperationTv.setVisibility(View.GONE);
-                    break;
+            LiveMediaController liveMediaController = controllerWeakReference.get();
+            if (liveMediaController != null) {
+                switch (msg.what) {
+                    case HIDEFRAM://隐藏提示窗口
+                        liveMediaController.mVolumeBrightnessLayout.setVisibility(View.GONE);
+                        liveMediaController.mOperationTv.setVisibility(View.GONE);
+                        break;
+                }
             }
         }
-    };
+    }
 
-    public LiveMediaController(Context context, VideoView videoView, PlayLiveActivity activity) {
+    private final LiveHandler liveHandler = new LiveHandler(this);
+
+    public LiveMediaController(Context context, VideoView videoView) {
         super(context);
         this.context = context;
         this.videoView = videoView;
-        this.activity = activity;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        controllerWidth = wm.getDefaultDisplay().getWidth();
+        Display display = wm.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        controllerWidth = point.x;
     }
 
     @Override
@@ -107,11 +116,11 @@ public class LiveMediaController extends MediaController {
         playOrPauseBtn = (ImageView) v.findViewById(R.id.media_controller_play_pause);
         //声音控制
         mVolumeBrightnessLayout = v.findViewById(R.id.operation_volume_brightness);
-        mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
+//        ImageView mOperationBg = (ImageView) v.findViewById(R.id.operation_bg);
         mOperationTv = (TextView) v.findViewById(R.id.operation_tv);
         mOperationTv.setVisibility(View.GONE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+//        int mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         if (mVolume == 0) {
             volumeToggle.setImageResource(R.drawable.volumn_off);
         }
@@ -145,10 +154,10 @@ public class LiveMediaController extends MediaController {
      */
     private void endGesture() {
         mVolume = -1;
-        mBrightness = -1f;
+//        float mBrightness = -1f;
         // 隐藏
-        myHandler.removeMessages(HIDEFRAM);
-        myHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
+        liveHandler.removeMessages(HIDEFRAM);
+        liveHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
     }
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {

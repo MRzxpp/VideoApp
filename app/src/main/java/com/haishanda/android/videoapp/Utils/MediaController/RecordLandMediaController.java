@@ -1,8 +1,8 @@
-package com.haishanda.android.videoapp.Utils.MediaController;
+package com.haishanda.android.videoapp.utils.mediacontroller;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
@@ -15,12 +15,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
+import com.haishanda.android.videoapp.activity.PlayRecordActivity;
 import com.haishanda.android.videoapp.R;
+
+import java.lang.ref.WeakReference;
 
 import io.vov.vitamio.utils.StringUtils;
 import io.vov.vitamio.widget.MediaController;
@@ -64,14 +65,14 @@ public class RecordLandMediaController extends MediaController {
     private long mDuration;
     private boolean mShowing;
     private boolean mDragging;
-    private boolean mInstantSeeking = false;
+    private final boolean mInstantSeeking = false;
 
     public RecordLandMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     //返回监听
-    private View.OnClickListener backListener = new View.OnClickListener() {
+    private final View.OnClickListener backListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (activity != null) {
                 activity.finish();
@@ -79,7 +80,7 @@ public class RecordLandMediaController extends MediaController {
         }
     };
 
-    private View.OnClickListener fullscreenListener = new OnClickListener() {
+    private final View.OnClickListener fullscreenListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
@@ -88,19 +89,19 @@ public class RecordLandMediaController extends MediaController {
         }
     };
 
-    private View.OnClickListener pauseListener = new OnClickListener() {
+    private final View.OnClickListener pauseListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             playOrPause();
         }
     };
 
-    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private final SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onStartTrackingTouch(SeekBar bar) {
             mDragging = true;
             show(3600000);
-            myHandler.removeMessages(SHOW_PROGRESS);
+            recordLandHandler.removeMessages(SHOW_PROGRESS);
             if (mInstantSeeking)
                 mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
         }
@@ -123,35 +124,46 @@ public class RecordLandMediaController extends MediaController {
             if (!mInstantSeeking)
                 videoView.seekTo((mDuration * bar.getProgress()) / 1000);
             show(3000);
-            myHandler.removeMessages(SHOW_PROGRESS);
+            recordLandHandler.removeMessages(SHOW_PROGRESS);
             mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
             mDragging = false;
-            myHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
+            recordLandHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
         }
     };
-    @SuppressLint("HandlerLeak")
-    private Handler myHandler = new Handler() {
+
+    private static class RecordLandHandler extends Handler {
+        private final WeakReference<RecordLandMediaController> controllerWeakReference;
+
+        RecordLandHandler(RecordLandMediaController controller) {
+            controllerWeakReference = new WeakReference<>(controller);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            long pos;
-            switch (msg.what) {
-                case HIDEFRAM://隐藏提示窗口
-                    mVolumeBrightnessLayout.setVisibility(View.GONE);
-                    mOperationTv.setVisibility(View.GONE);
-                    break;
-                case FADE_OUT:
-                    hide();
-                    break;
-                case SHOW_PROGRESS:
-                    pos = setProgress();
-                    if (!mDragging && mShowing) {
-                        msg = obtainMessage(SHOW_PROGRESS);
-                        sendMessageDelayed(msg, 1000 - (pos % 1000));
-                    }
-                    break;
+            RecordLandMediaController recordLandMediaController = controllerWeakReference.get();
+            if (recordLandMediaController != null) {
+                long pos;
+                switch (msg.what) {
+                    case HIDEFRAM://隐藏提示窗口
+                        recordLandMediaController.mVolumeBrightnessLayout.setVisibility(View.GONE);
+                        recordLandMediaController.mOperationTv.setVisibility(View.GONE);
+                        break;
+                    case FADE_OUT:
+                        recordLandMediaController.hide();
+                        break;
+                    case SHOW_PROGRESS:
+                        pos = recordLandMediaController.setProgress();
+                        if (!recordLandMediaController.mDragging && recordLandMediaController.mShowing) {
+                            msg = obtainMessage(SHOW_PROGRESS);
+                            sendMessageDelayed(msg, 1000 - (pos % 1000));
+                        }
+                        break;
+                }
             }
         }
-    };
+    }
+
+    private final RecordLandHandler recordLandHandler = new RecordLandHandler(this);
 
     private long setProgress() {
         if (videoView == null || mDragging)
@@ -184,7 +196,10 @@ public class RecordLandMediaController extends MediaController {
         this.videoView = videoView;
         this.activity = activity;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        controllerWidth = wm.getDefaultDisplay().getWidth();
+        Display display = wm.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        controllerWidth = point.x;
         mGestureDetector = new GestureDetector(context, new MyGestureListener());
     }
 
@@ -220,7 +235,7 @@ public class RecordLandMediaController extends MediaController {
         playOrPause.setOnClickListener(pauseListener);
         videoSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         videoSeekBar.setMax(1000);
-        myHandler.sendEmptyMessage(SHOW_PROGRESS);
+        recordLandHandler.sendEmptyMessage(SHOW_PROGRESS);
         return v;
     }
 
@@ -248,8 +263,8 @@ public class RecordLandMediaController extends MediaController {
         mVolume = -1;
         mBrightness = -1f;
         // 隐藏
-        myHandler.removeMessages(HIDEFRAM);
-        myHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
+        recordLandHandler.removeMessages(HIDEFRAM);
+        recordLandHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
     }
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -285,8 +300,10 @@ public class RecordLandMediaController extends MediaController {
             int y = (int) e2.getRawY();
             int x = (int) e2.getRawX();
             Display disp = activity.getWindowManager().getDefaultDisplay();
-            int windowWidth = disp.getWidth();
-            int windowHeight = disp.getHeight();
+            Point point = new Point();
+            disp.getSize(point);
+            int windowWidth = point.x;
+            int windowHeight = point.y;
             if (mOldX > windowWidth * 3.0 / 4.0) {// 右边滑动 屏幕 3/4
                 onVolumeSlide((mOldY - y) / windowHeight);
             } else if (mOldX < windowWidth * 1.0 / 4.0) {// 左边滑动 屏幕 1/4

@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,15 +17,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.MonitorConfigBean;
-import com.haishanda.android.videoapp.Bean.TimeBean;
-import com.haishanda.android.videoapp.Config.SmartResult;
-import com.haishanda.android.videoapp.Fragement.MonitorTimeFragment;
-import com.haishanda.android.videoapp.Fragement.MonitorVoiceFragment;
-import com.haishanda.android.videoapp.Fragement.MonitorWarningFragment;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.bean.MonitorConfigBean;
+import com.haishanda.android.videoapp.bean.TimeBean;
+import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.fragment.MonitorTimeFragment;
+import com.haishanda.android.videoapp.fragment.MonitorVoiceFragment;
+import com.haishanda.android.videoapp.fragment.MonitorWarningFragment;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
 import com.kyleduo.switchbutton.SwitchButton;
@@ -56,7 +56,7 @@ public class MonitorConfigActivity extends FragmentActivity {
     private String[] boatNames;
     private int[] isSwitchOns;
 
-    private String[] times = new String[4];
+    private final String[] times = new String[4];
 
     MonitorConfigBeanDao monitorConfigBeanDao;
 
@@ -146,10 +146,10 @@ public class MonitorConfigActivity extends FragmentActivity {
     }
 
     public class MonitorConfigAdapter extends ArrayAdapter {
-        private LayoutInflater inflater;
-        private String[] boatNames;
-        private long[] machineIds;
-        private int[] isSwitchOpens;
+        private final LayoutInflater inflater;
+        private final String[] boatNames;
+        private final long[] machineIds;
+        private final int[] isSwitchOpens;
 
         MonitorConfigAdapter(Context context, String[] boatNames, long[] machineIds, int isSwitchOpens[]) {
             super(context, R.layout.adapter_monitor_config, boatNames);

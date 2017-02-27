@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     android:orientation="vertical"
-    tools:context=".Activity.MonitorConfigActivity">
+    tools:context=".activity.MonitorConfigActivity">
 
     <FrameLayout
         android:id="@+id/monitor_config_layout"

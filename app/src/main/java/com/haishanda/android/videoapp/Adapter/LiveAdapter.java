@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Adapter;
+package com.haishanda.android.videoapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.haishanda.android.videoapp.Activity.PlayLiveActivity;
+import com.haishanda.android.videoapp.activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.util.List;
@@ -24,12 +24,12 @@ import java.util.List;
 @SuppressWarnings("ResourceType")
 public class LiveAdapter extends ArrayAdapter {
 
-    private Context context;
-    private LayoutInflater inflater;
+    private final Context context;
+    private final LayoutInflater inflater;
 
-    private String[] imagePath;
-    private List<Long> cameraId;
-    private String boatName;
+    private final String[] imagePath;
+    private final List<Long> cameraId;
+    private final String boatName;
 
     public LiveAdapter(Context context, String[] imagePath, List<Long> cameraId, String boatName) {
         super(context, R.layout.adapter_live, imagePath);

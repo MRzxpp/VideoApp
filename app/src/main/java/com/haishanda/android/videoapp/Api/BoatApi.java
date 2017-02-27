@@ -1,8 +1,8 @@
-package com.haishanda.android.videoapp.Api;
+package com.haishanda.android.videoapp.api;
 
-import com.haishanda.android.videoapp.Bean.QueryCameras;
-import com.haishanda.android.videoapp.Bean.QueryMachines;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.bean.QueryCameras;
+import com.haishanda.android.videoapp.bean.QueryMachines;
+import com.haishanda.android.videoapp.config.SmartResult;
 
 import java.util.List;
 

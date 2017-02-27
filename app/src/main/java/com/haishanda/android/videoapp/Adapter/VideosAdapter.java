@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Adapter;
+package com.haishanda.android.videoapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
+import com.haishanda.android.videoapp.activity.PlayRecordActivity;
 import com.haishanda.android.videoapp.R;
 
 import java.io.File;
@@ -23,13 +23,13 @@ import java.util.List;
  */
 
 class VideosAdapter extends ArrayAdapter {
-    private Context context;
-    private LayoutInflater inflater;
+    private final Context context;
+    private final LayoutInflater inflater;
 
-    private String[] videoPath;
-    private String boatName;
-    private String[] iconPath;
-    private List<String> shortPaths;
+    private final String[] videoPath;
+    private final String boatName;
+    private final String[] iconPath;
+    private final List<String> shortPaths;
 
     VideosAdapter(Context context, String[] videoPath, String boatName, String[] iconPath, List<String> shortPaths) {
         super(context, R.layout.adapter_videos, videoPath);

@@ -1,12 +1,13 @@
-package com.haishanda.android.videoapp.Utils.MediaController;
+package com.haishanda.android.videoapp.utils.mediacontroller;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.haishanda.android.videoapp.Activity.PlayRecordActivity;
+import com.haishanda.android.videoapp.activity.PlayRecordActivity;
 import com.haishanda.android.videoapp.R;
+
+import java.lang.ref.WeakReference;
 
 import io.vov.vitamio.utils.StringUtils;
 import io.vov.vitamio.widget.MediaController;
@@ -51,13 +54,13 @@ public class RecordMediaController extends MediaController {
     private long mDuration;
     private boolean mShowing;
     private boolean mDragging;
-    private boolean mInstantSeeking = false;
+    private final boolean mInstantSeeking = false;
 
     public RecordMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    private View.OnClickListener fullScreenListener = new OnClickListener() {
+    private final View.OnClickListener fullScreenListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
@@ -66,12 +69,12 @@ public class RecordMediaController extends MediaController {
         }
     };
 
-    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private final SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onStartTrackingTouch(SeekBar bar) {
             mDragging = true;
             show(3600000);
-            myHandler.removeMessages(SHOW_PROGRESS);
+            recordHandler.removeMessages(SHOW_PROGRESS);
             if (mInstantSeeking)
                 mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
         }
@@ -94,43 +97,53 @@ public class RecordMediaController extends MediaController {
             if (!mInstantSeeking)
                 videoView.seekTo((mDuration * bar.getProgress()) / 1000);
             show(3000);
-            myHandler.removeMessages(SHOW_PROGRESS);
+            recordHandler.removeMessages(SHOW_PROGRESS);
             mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
             mDragging = false;
-            myHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
+            recordHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
         }
     };
 
-    private View.OnClickListener pauseListener = new OnClickListener() {
+    private final View.OnClickListener pauseListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             playOrPause();
         }
     };
 
-    @SuppressLint("HandlerLeak")
-    private Handler myHandler = new Handler() {
+    private static class RecordHandler extends Handler {
+        private final WeakReference<RecordMediaController> controllerWeakReference;
+
+        RecordHandler(RecordMediaController controller) {
+            controllerWeakReference = new WeakReference<>(controller);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            long pos;
-            switch (msg.what) {
-                case HIDEFRAM://隐藏提示窗口
-                    mVolumeBrightnessLayout.setVisibility(View.GONE);
-                    mOperationTv.setVisibility(View.GONE);
-                    break;
-                case FADE_OUT:
-                    hide();
-                    break;
-                case SHOW_PROGRESS:
-                    pos = setProgress();
-                    if (!mDragging && mShowing) {
-                        msg = obtainMessage(SHOW_PROGRESS);
-                        sendMessageDelayed(msg, 1000 - (pos % 1000));
-                    }
-                    break;
+            RecordMediaController recordLandMediaController = controllerWeakReference.get();
+            if (recordLandMediaController != null) {
+                long pos;
+                switch (msg.what) {
+                    case HIDEFRAM://隐藏提示窗口
+                        recordLandMediaController.mVolumeBrightnessLayout.setVisibility(View.GONE);
+                        recordLandMediaController.mOperationTv.setVisibility(View.GONE);
+                        break;
+                    case FADE_OUT:
+                        recordLandMediaController.hide();
+                        break;
+                    case SHOW_PROGRESS:
+                        pos = recordLandMediaController.setProgress();
+                        if (!recordLandMediaController.mDragging && recordLandMediaController.mShowing) {
+                            msg = obtainMessage(SHOW_PROGRESS);
+                            sendMessageDelayed(msg, 1000 - (pos % 1000));
+                        }
+                        break;
+                }
             }
         }
-    };
+    }
+
+    private final RecordHandler recordHandler = new RecordHandler(this);
 
     private long setProgress() {
         if (videoView == null || mDragging)
@@ -163,7 +176,10 @@ public class RecordMediaController extends MediaController {
         this.videoView = videoView;
         this.activity = activity;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        controllerWidth = wm.getDefaultDisplay().getWidth();
+        Display display = wm.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        controllerWidth = point.x;
         mGestureDetector = new GestureDetector(context, new MyGestureListener());
     }
 
@@ -188,7 +204,7 @@ public class RecordMediaController extends MediaController {
         fullscreenToggle.setOnClickListener(fullScreenListener);
         videoSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         videoSeekBar.setMax(1000);
-        myHandler.sendEmptyMessage(SHOW_PROGRESS);
+        recordHandler.sendEmptyMessage(SHOW_PROGRESS);
         return v;
     }
 
@@ -214,8 +230,8 @@ public class RecordMediaController extends MediaController {
      */
     private void endGesture() {
         // 隐藏
-        myHandler.removeMessages(HIDEFRAM);
-        myHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
+        recordHandler.removeMessages(HIDEFRAM);
+        recordHandler.sendEmptyMessageDelayed(HIDEFRAM, 1);
     }
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {

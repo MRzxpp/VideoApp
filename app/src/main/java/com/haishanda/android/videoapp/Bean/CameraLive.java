@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Bean;
+package com.haishanda.android.videoapp.bean;
 
 /**
  * 每个摄像头所对应的播放地址

@@ -1,4 +1,4 @@
-package com.haishanda.android.videoapp.Activity;
+package com.haishanda.android.videoapp.activity;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -7,13 +7,12 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.haishanda.android.videoapp.Adapter.AccountBalanceAdapter;
-import com.haishanda.android.videoapp.Api.ApiManage;
-import com.haishanda.android.videoapp.Bean.PackageVo;
-import com.haishanda.android.videoapp.Config.Constant;
-import com.haishanda.android.videoapp.Config.SmartResult;
+import com.haishanda.android.videoapp.adapter.AccountBalanceAdapter;
+import com.haishanda.android.videoapp.api.ApiManage;
+import com.haishanda.android.videoapp.bean.PackageVo;
+import com.haishanda.android.videoapp.config.Constant;
+import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
-import com.haishanda.android.videoapp.VideoApplication;
 
 import java.io.IOException;
 import java.util.ArrayList;
