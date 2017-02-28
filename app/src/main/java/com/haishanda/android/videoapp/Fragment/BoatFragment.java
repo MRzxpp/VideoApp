@@ -35,6 +35,7 @@ import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,9 +73,9 @@ public class BoatFragment extends Fragment {
     private static final String Tag = "船舶首页";
     private final String ADD_BOAT = "添加船舶";
     private int machineId;
-    private String globalId;
+    private String netModuleSerialNumber;
     private Map<String, Integer> boatInfos;
-    private Map<String, String> boatGlobalIds;
+    private Map<String, String> boatNetModuleSerialNumbers;
     private SparseArray<String> supportArray;
     private List<String> boatLists;
     LiveAdapter adapter;
@@ -148,7 +149,7 @@ public class BoatFragment extends Fragment {
         }
         try {
             machineId = boatInfos.get(boatSpinner.getText().toString());
-            globalId = boatGlobalIds.get(boatSpinner.getText().toString());
+            netModuleSerialNumber = boatNetModuleSerialNumbers.get(boatSpinner.getText().toString());
         } catch (NullPointerException e) {
             Log.d(Tag, e.toString());
         }
@@ -166,7 +167,7 @@ public class BoatFragment extends Fragment {
                 if (position >= 1) {
                     if (!parent.getItemAtPosition(position - 1).toString().equals(ADD_BOAT)) {
                         machineId = boatInfos.get(parent.getItemAtPosition(position - 1).toString());
-                        globalId = boatGlobalIds.get(parent.getItemAtPosition(position - 1).toString());
+                        netModuleSerialNumber = boatNetModuleSerialNumbers.get(parent.getItemAtPosition(position - 1).toString());
                         VideoApplication.getApplication().setCurrentBoatName(boatLists.get(position));
                         VideoApplication.getApplication().setCurrentMachineId(machineId);
                         VideoApplication.getApplication().setSelectedId(position);
@@ -178,7 +179,7 @@ public class BoatFragment extends Fragment {
                 } else {
                     if (!parent.getItemAtPosition(position).toString().equals(ADD_BOAT)) {
                         machineId = boatInfos.get(parent.getItemAtPosition(position).toString());
-                        globalId = boatGlobalIds.get(parent.getItemAtPosition(position).toString());
+                        netModuleSerialNumber = boatNetModuleSerialNumbers.get(parent.getItemAtPosition(position).toString());
                         VideoApplication.getApplication().setCurrentBoatName(boatLists.get(position));
                         VideoApplication.getApplication().setCurrentMachineId(machineId);
                         VideoApplication.getApplication().setSelectedId(position);
@@ -210,7 +211,7 @@ public class BoatFragment extends Fragment {
             Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
             intent.putExtra("machineId", machineId);
             intent.putExtra("boatName", VideoApplication.getApplication().getCurrentBoatName());
-            intent.putExtra("globalId", globalId);
+            intent.putExtra("netModuleSerialNumber", netModuleSerialNumber);
             startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
         }
@@ -218,7 +219,7 @@ public class BoatFragment extends Fragment {
 
     private Map<String, Integer> getBoatInfos() {
         Map<String, Integer> boatInfos = new HashMap<>();
-        Map<String, String> boatGlobalIds = new HashMap<>();
+        Map<String, String> boatNetModuleSerialNumber = new HashMap<>();
         SparseArray<String> array = new SparseArray<>();
         Call<SmartResult<List<QueryMachines>>> call = ApiManage.getInstence().getBoatApiService().queryMachinesCopy();
         try {
@@ -240,10 +241,10 @@ public class BoatFragment extends Fragment {
                     int span = (Integer.valueOf(queryMachines.getSpan()));
                     setMonitorTime(begin, span, queryMachines);
                     boatInfos.put(queryMachines.getName(), queryMachines.getId());
-                    boatGlobalIds.put(queryMachines.getName(), queryMachines.getGlobalId());
+                    boatNetModuleSerialNumber.put(queryMachines.getName(), queryMachines.getSerialNo() != null ? queryMachines.getSerialNo() : "获取失败");
                     array.put(queryMachines.getId(), queryMachines.getName());
                 }
-                this.boatGlobalIds = boatGlobalIds;
+                this.boatNetModuleSerialNumbers = boatNetModuleSerialNumber;
                 this.supportArray = array;
             }
         } catch (IOException e) {
@@ -287,6 +288,9 @@ public class BoatFragment extends Fragment {
                 }
             }
         } catch (IOException e) {
+            if (e.getCause() instanceof SocketTimeoutException) {
+                Log.d(Tag, "网络连接中断");
+            }
             e.printStackTrace();
         }
 

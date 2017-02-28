@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -25,11 +24,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 船舶序列号二维码
  * Created by Zhongsz on 2016/10/26.
  */
 
 public class QRCodeFragment extends Fragment {
-    private String globalId;
     @BindView(R.id.qrcode_img)
     ImageView qrCodeImage;
 
@@ -39,8 +38,8 @@ public class QRCodeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_qrcode, container, false);
         ButterKnife.bind(this, view);
         Bundle qrCodeData = this.getArguments();
-        globalId = qrCodeData.getString("globalId");
-        qrCodeImage.setImageBitmap(createQRCode(globalId));
+        String netModuleSerialNumber = qrCodeData.getString("netModuleSerialNumber");
+        qrCodeImage.setImageBitmap(createQRCode(netModuleSerialNumber));
         return view;
     }
 

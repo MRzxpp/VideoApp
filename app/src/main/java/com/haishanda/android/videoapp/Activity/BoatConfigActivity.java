@@ -20,16 +20,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 船舶配置界面
  * Created by Zhongsz on 2016/10/25.
  */
 
 public class BoatConfigActivity extends FragmentActivity {
     private String boatName;
     private int machineId;
-    private String globalId;
+    private String netModuleSerialNumber;
 
     @BindView(R.id.current_boatname)
-    TextView currentBoatname;
+    TextView currentBoatName;
 
     public BoatConfigActivity instance;
 
@@ -43,14 +44,14 @@ public class BoatConfigActivity extends FragmentActivity {
         Bundle extra = getIntent().getExtras();
         boatName = extra.getString("boatName");
         machineId = extra.getInt("machineId");
-        globalId = extra.getString("globalId");
+        netModuleSerialNumber = extra.getString("netModuleSerialNumber");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         boatName = VideoApplication.getApplication().getCurrentBoatName();
-        currentBoatname.setText(boatName);
+        currentBoatName.setText(boatName);
     }
 
     public void refresh() {
@@ -67,7 +68,7 @@ public class BoatConfigActivity extends FragmentActivity {
     public void skipToAboutBoatFragment() {
         Bundle data = new Bundle();
         data.putString("boatName", boatName);
-        data.putString("globalId", globalId);
+        data.putString("netModuleSerialNumber", netModuleSerialNumber);
         AboutBoatFragment aboutBoatFragment = new AboutBoatFragment();
         aboutBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();

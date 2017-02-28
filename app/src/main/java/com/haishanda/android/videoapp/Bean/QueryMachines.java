@@ -29,6 +29,17 @@ public class QueryMachines {
     private String updateTime;
     private boolean switchOn;
 
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    private String serialNo;
+
+
     public int getId() {
         return id;
     }

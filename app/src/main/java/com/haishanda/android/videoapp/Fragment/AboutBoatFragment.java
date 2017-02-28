@@ -17,12 +17,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 关于本船
  * Created by Zhongsz on 2016/10/26.
  */
 
 public class AboutBoatFragment extends Fragment {
     private String boatName;
-    private String globalId;
+    private String netModuleSerialNumber;
     @BindView(R.id.about_boat_boatname)
     TextView aboutBoatName;
     @BindView(R.id.about_boat_serial_num)
@@ -35,9 +36,9 @@ public class AboutBoatFragment extends Fragment {
         ButterKnife.bind(this, view);
         Bundle data = this.getArguments();
         boatName = data.getString("boatName");
-        globalId = data.getString("globalId");
+        netModuleSerialNumber = data.getString("netModuleSerialNumber");
         aboutBoatName.setText(boatName);
-        aboutBoatSerialNum.setText(globalId);
+        aboutBoatSerialNum.setText(netModuleSerialNumber);
         return view;
     }
 
@@ -50,10 +51,10 @@ public class AboutBoatFragment extends Fragment {
 
     @OnClick(R.id.gateway_qrcode_layout)
     public void skipToGatewayQRCodeFragment() {
-        Bundle dataQRcode = new Bundle();
-        dataQRcode.putString("globalId", globalId);
+        Bundle dataQRCode = new Bundle();
+        dataQRCode.putString("netModuleSerialNumber", netModuleSerialNumber);
         QRCodeFragment qrCodeFragment = new QRCodeFragment();
-        qrCodeFragment.setArguments(dataQRcode);
+        qrCodeFragment.setArguments(dataQRCode);
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out);
