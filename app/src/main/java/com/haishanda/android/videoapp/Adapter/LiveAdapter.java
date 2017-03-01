@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.haishanda.android.videoapp.activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.bean.QueryCameras;
 
 import java.util.List;
 
@@ -28,14 +29,14 @@ public class LiveAdapter extends ArrayAdapter {
     private final LayoutInflater inflater;
 
     private final String[] imagePath;
-    private final List<Long> cameraId;
+    private final List<QueryCameras> listCamera;
     private final String boatName;
 
-    public LiveAdapter(Context context, String[] imagePath, List<Long> cameraId, String boatName) {
+    public LiveAdapter(Context context, String[] imagePath, List<QueryCameras> listCamera, String boatName) {
         super(context, R.layout.adapter_live, imagePath);
         this.imagePath = imagePath;
         this.context = context;
-        this.cameraId = cameraId;
+        this.listCamera = listCamera;
         this.boatName = boatName;
         inflater = LayoutInflater.from(context);
     }
@@ -58,7 +59,7 @@ public class LiveAdapter extends ArrayAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra("cameraId", cameraId.get(position));
+                intent.putExtra("cameraId", listCamera.get(position).getId());
                 intent.putExtra("boatName", boatName);
                 intent.setClass(context, PlayLiveActivity.class);
                 context.startActivity(intent);
@@ -66,7 +67,7 @@ public class LiveAdapter extends ArrayAdapter {
         });
 
         TextView boatName = (TextView) convertView.findViewById(R.id.live_adapter_text);
-        boatName.setText("摄像头" + cameraId.get(position));
+        boatName.setText("摄像头" + listCamera.get(position).getOwner());
         boatName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         return convertView;

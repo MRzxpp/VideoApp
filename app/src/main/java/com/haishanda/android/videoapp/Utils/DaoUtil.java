@@ -38,22 +38,28 @@ public class DaoUtil {
         List<BoatMessage> boatMessages = boatQuery.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
         List<ImageMessage> imageMessageList = queryBuilder.where(ImageMessageDao.Properties.BoatName.eq(originalBoatName)).list();
         List<VideoMessage> videoMessageList = videoMessageQueryBuilder.where(VideoMessageDao.Properties.ParentDir.eq(originalBoatName)).list();
-        for (BoatMessage boatMessage : boatMessages
-                ) {
-            String oldIconPath = boatMessage.getCameraImagePath();
-            String newIconPath = oldIconPath.replace(originalBoatName, boatNewName);
-            boatMessage.setCameraImagePath(newIconPath);
-            boatMessageDao.update(boatMessage);
+        if (boatMessages.size() > 0) {
+            for (BoatMessage boatMessage : boatMessages
+                    ) {
+                String oldIconPath = boatMessage.getCameraImagePath();
+                String newIconPath = oldIconPath.replace(originalBoatName, boatNewName);
+                boatMessage.setCameraImagePath(newIconPath);
+                boatMessageDao.update(boatMessage);
+            }
         }
-        for (ImageMessage imageMessage : imageMessageList
-                ) {
-            imageMessage.setBoatName(boatNewName);
-            imageMessageDao.update(imageMessage);
+        if (imageMessageList.size() > 0) {
+            for (ImageMessage imageMessage : imageMessageList
+                    ) {
+                imageMessage.setBoatName(boatNewName);
+                imageMessageDao.update(imageMessage);
+            }
         }
-        for (VideoMessage videoMessage : videoMessageList
-                ) {
-            videoMessage.setParentDir(boatNewName);
-            videoMessageDao.update(videoMessage);
+        if (videoMessageList.size() > 0) {
+            for (VideoMessage videoMessage : videoMessageList
+                    ) {
+                videoMessage.setParentDir(boatNewName);
+                videoMessageDao.update(videoMessage);
+            }
         }
         File originalDir = new File(Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + originalBoatName);
         File newDir = new File(Environment.getExternalStorageDirectory().getPath() + "/VideoApp/" + boatNewName);

@@ -25,10 +25,10 @@ import com.haishanda.android.videoapp.bean.QueryMachines;
 import com.haishanda.android.videoapp.bean.TimeBean;
 import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.utils.DaoUtil;
 import com.haishanda.android.videoapp.views.spinner.NiceSpinner;
 import com.haishanda.android.videoapp.VideoApplication;
-import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.greendao.gen.MonitorConfigBeanDao;
 import com.haishanda.android.videoapp.greendao.gen.TimeBeanDao;
 
@@ -80,7 +80,7 @@ public class BoatFragment extends Fragment {
     private List<String> boatLists;
     LiveAdapter adapter;
     private BoatMessageDao boatMessageDao;
-    private List<Long> cameraList;
+    private List<QueryCameras> cameraList;
     private String[] cameraIconsPaths;
 
 
@@ -229,12 +229,7 @@ public class BoatFragment extends Fragment {
                         ) {
                     //配置监控设置页面的数据
                     MonitorConfigBeanDao monitorConfigBeanDao = VideoApplication.getApplication().getDaoSession().getMonitorConfigBeanDao();
-                    MonitorConfigBean monitorConfigBean;
-                    if (queryMachines.isSwitchOn()) {
-                        monitorConfigBean = new MonitorConfigBean(queryMachines.getId(), queryMachines.getName(), 1);
-                    } else {
-                        monitorConfigBean = new MonitorConfigBean(queryMachines.getId(), queryMachines.getName(), 0);
-                    }
+                    MonitorConfigBean monitorConfigBean = new MonitorConfigBean(queryMachines.getId(), queryMachines.getName(), queryMachines.isSwitchOn() ? 1 : 0);
                     monitorConfigBeanDao.insertOrReplace(monitorConfigBean);
                     //计算监控时间段
                     int begin = (Integer.valueOf(queryMachines.getBegin()));
@@ -248,14 +243,15 @@ public class BoatFragment extends Fragment {
                 this.supportArray = array;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e.getCause() instanceof SocketTimeoutException) {
+                Log.d(Tag, "网络连接超时");
+            }
         }
         return boatInfos;
     }
 
     private void setMonitorTime(int begin, int span, QueryMachines queryMachines) {
         TimeBeanDao timeBeanDao = VideoApplication.getApplication().getDaoSession().getTimeBeanDao();
-        TimeBean timeBean;
         int beginHour;
         int beginMinute;
         int endHour;
@@ -269,12 +265,12 @@ public class BoatFragment extends Fragment {
             endHour = (begin + span - 1440) / 60;
             endMinute = (begin + span - 1440) - (60 * endHour);
         }
-        timeBean = new TimeBean(beginHour, beginMinute, endHour, endMinute, queryMachines.getId());
+        TimeBean timeBean = new TimeBean(beginHour, beginMinute, endHour, endMinute, queryMachines.getId());
         timeBeanDao.insertOrReplace(timeBean);
     }
 
-    private List<Long> getCameraList() {
-        List<Long> cameraIds = new ArrayList<>();
+    private List<QueryCameras> getCameraList() {
+        List<QueryCameras> listCamera = new ArrayList<>();
         int machineId = this.machineId;
         Call<SmartResult<List<QueryCameras>>> call = ApiManage.getInstence().getBoatApiService().queryCamerasCopy(machineId);
         try {
@@ -283,15 +279,14 @@ public class BoatFragment extends Fragment {
                 for (QueryCameras queryCamera : response.body().getData()
                         ) {
                     if (queryCamera != null) {
-                        cameraIds.add(queryCamera.getId());
+                        listCamera.add(queryCamera);
                     }
                 }
             }
         } catch (IOException e) {
             if (e.getCause() instanceof SocketTimeoutException) {
-                Log.d(Tag, "网络连接中断");
+                Log.d(Tag, "网络连接超时");
             }
-            e.printStackTrace();
         }
 
         BoatMessage boatMessage;
@@ -301,19 +296,19 @@ public class BoatFragment extends Fragment {
         QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();
         List<BoatMessage> boats = builder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
         if (boats.size() == 0) {
-            for (int i = 0; i < cameraIds.size(); i++) {
-                boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), cameraIds.get(i), "default", str, null);
+            for (int i = 0; i < listCamera.size(); i++) {
+                boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), listCamera.get(i).getId(), "default", str, null);
                 boatMessageDao.insertOrReplace(boatMessage);
             }
         }
-        if (boats.size() < cameraIds.size()) {
-            for (int i = boats.size(); i < cameraIds.size(); i++) {
-                boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), cameraIds.get(i), "default", str, null);
+        if (boats.size() != 0 && (boats.size() < listCamera.size())) {
+            for (int i = boats.size(); i < listCamera.size(); i++) {
+                boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), listCamera.get(i).getId(), "default", str, null);
                 boatMessageDao.insertOrReplace(boatMessage);
             }
         }
 
-        return cameraIds;
+        return listCamera;
     }
 
     private void handleLiveAdapter() {

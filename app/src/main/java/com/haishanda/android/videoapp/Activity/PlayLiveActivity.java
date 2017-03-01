@@ -188,7 +188,7 @@ public class PlayLiveActivity extends Activity {
         Thread getUrlThread = new Thread(new NetThread());
         getUrlThread.start();
         try {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
             getUrlThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
