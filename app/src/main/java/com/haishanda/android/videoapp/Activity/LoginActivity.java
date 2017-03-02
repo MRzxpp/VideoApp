@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.haishanda.android.videoapp.config.Constant;
+import com.haishanda.android.videoapp.config.StringConstant;
 import com.haishanda.android.videoapp.utils.textwatcher.ClearBtnWatcher;
 import com.haishanda.android.videoapp.utils.textwatcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
@@ -53,6 +54,7 @@ public class LoginActivity extends Activity {
     Drawable greyBtn;
 
     public static final String TAG = "LoginActivity";
+    public static final String LOGINING = "登录中";
     private LoginMessageReceiver receiver;
     private MaterialDialog dialog;
     private boolean isRegistered;
@@ -63,7 +65,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         dialog = new MaterialDialog(this);
-        dialog.setMessage("登录中…");
+        dialog.setMessage(LOGINING);
         clear3.setVisibility(View.INVISIBLE);
         loginBtn.setEnabled(false);
         password.addTextChangedListener(new ClearBtnWatcher(clear3, password));
@@ -108,9 +110,9 @@ public class LoginActivity extends Activity {
                     .show();
         } else {
             Intent msgIntent = new Intent(LoginActivity.this, LoginService.class);
-            msgIntent.putExtra("username", username.getText().toString());
-            msgIntent.putExtra("password", password.getText().toString());
-            msgIntent.putExtra("validateTokenState", false);
+            msgIntent.putExtra(StringConstant.INTENT_USERNAME, username.getText().toString());
+            msgIntent.putExtra(StringConstant.INTENT_PASSWORD, password.getText().toString());
+            msgIntent.putExtra(StringConstant.INTENT_VOLIDATE_TOKEN_STATE, false);
             startService(msgIntent);
             dialog.show();
         }
@@ -144,9 +146,9 @@ public class LoginActivity extends Activity {
     public class LoginMessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean loginStatus = intent.getBooleanExtra("loginStatus", false);
-            String loginMessage = intent.getStringExtra("loginMessage");
-            boolean loginFromToken = intent.getBooleanExtra("loginFromToken", false);
+            boolean loginStatus = intent.getBooleanExtra(StringConstant.INTENT_LOGIN_STATUS, false);
+            String loginMessage = intent.getStringExtra(StringConstant.INTENT_LOGIN_MESSAGE);
+            boolean loginFromToken = intent.getBooleanExtra(StringConstant.INTENT_LOGIN_FROM_TOKEN, false);
             // 如果登录成功
             if (loginStatus && !loginFromToken) {
                 // 启动Main activity

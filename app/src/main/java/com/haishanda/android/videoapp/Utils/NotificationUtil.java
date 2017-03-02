@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.config.StringConstant;
 
 /**
  * 通知栏辅助类
@@ -23,7 +24,7 @@ public class NotificationUtil {
 
     public NotificationCompat.Builder initNotify(String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setContentTitle("视频监控App")
+        builder.setContentTitle(StringConstant.NOTIFICATION_TITLE)
                 .setContentText(message)
                 .setContentIntent(getDefalutIntent(Notification.FLAG_AUTO_CANCEL))
                 .setWhen(System.currentTimeMillis())

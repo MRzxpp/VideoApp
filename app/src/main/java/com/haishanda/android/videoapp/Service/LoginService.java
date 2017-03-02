@@ -25,6 +25,7 @@ import com.haishanda.android.videoapp.bean.UserMessageBean;
 import com.haishanda.android.videoapp.config.Constant;
 import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.config.StringConstant;
 import com.haishanda.android.videoapp.utils.NotificationUtil;
 import com.haishanda.android.videoapp.VideoApplication;
 import com.haishanda.android.videoapp.greendao.gen.UserMessageBeanDao;
@@ -58,6 +59,13 @@ public class LoginService extends Service {
     public static final String ACTION_RECEIVE_TIMER = "com.haishanda.android.videoapp.service.LoginService.RECEIVE_TIMER";
 
     private final static String TAG = "LoginService";
+    private final static String LOGIN_FAIL = "登录失败";
+    private final static String LOGIN_SUCCESS = "登录成功";
+    private final static String LOGIN_COMPLETED = "登录完成";
+    private final static String WAKE_UP_SCREEN = "唤醒屏幕";
+    private final static String VIBRATE = "发生振动";
+    private final static String VOICE = "开始响铃";
+    private final static String HYPHENATE_LOGIN_FORENAME = "appmonitor_";
     TimerTaskReceiver receiver;
     EMMessageListener emMessageListener;
     MyConnectionListener connectionListener;
@@ -147,12 +155,12 @@ public class LoginService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         final Notification noti = new Notification.Builder(this)
-                .setContentTitle("渔船监控")
-                .setContentText("正在保护您的渔船")
+                .setContentTitle(StringConstant.NOTIFICATION_TITLE)
+                .setContentText(StringConstant.NOTIFICATION_TEXT)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .build();
-        boolean validateTokenState = intent.getBooleanExtra("validateTokenState", false);
+        boolean validateTokenState = intent.getBooleanExtra(StringConstant.INTENT_VOLIDATE_TOKEN_STATE, false);
         //验证token的方式登录
         if (validateTokenState) {
             startForeground(12346, noti);
@@ -160,49 +168,51 @@ public class LoginService extends Service {
             SharedPreferences sharedPreferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
             int userId = sharedPreferences.getInt(Constant.USER_PREFERENCE_ID, -1);
             String savedUsername = sharedPreferences.getString(Constant.USER_PREFERENCE_USERNAME, "");
-            EMClient.getInstance().login("appmonitor_" + String.valueOf(userId), savedUsername, new EMCallBack() {//回调
-                @Override
-                public void onSuccess() {
-                    EMClient.getInstance().groupManager().loadAllGroups();
-                    EMClient.getInstance().chatManager().loadAllConversations();
-                    Log.d(TAG, "登录聊天服务器成功！");
-                    sendLoginedMsg(true, Constant.SUCCESS, true);
-                    if (emMessageListener != null) {
-                        EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+            if (EMClient.getInstance() != null) {
+                EMClient.getInstance().login(HYPHENATE_LOGIN_FORENAME + String.valueOf(userId), savedUsername, new EMCallBack() {//回调
+                    @Override
+                    public void onSuccess() {
+                        EMClient.getInstance().groupManager().loadAllGroups();
+                        EMClient.getInstance().chatManager().loadAllConversations();
+                        Log.d(TAG, "登录聊天服务器成功！");
+                        sendLoginedMsg(true, Constant.SUCCESS, true);
+                        if (emMessageListener != null) {
+                            EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+                        }
+                        if (connectionListener != null) {
+                            EMClient.getInstance().addConnectionListener(connectionListener);
+                        }
                     }
-                    if (connectionListener != null) {
-                        EMClient.getInstance().addConnectionListener(connectionListener);
+
+                    @Override
+                    public void onProgress(int progress, String status) {
+
                     }
-                }
 
-                @Override
-                public void onProgress(int progress, String status) {
-
-                }
-
-                @Override
-                public void onError(int code, String message) {
-                    Log.d(TAG, "登录聊天服务器失败！" + message);
-                    sendLoginedMsg(false, Constant.EMERROR_CHAT_FAILED, true);
-                }
-            });
+                    @Override
+                    public void onError(int code, String message) {
+                        Log.d(TAG, "登录聊天服务器失败！" + message);
+                        sendLoginedMsg(false, Constant.EMERROR_CHAT_FAILED, true);
+                    }
+                });
+            }
         } else {
             connectionListener = new MyConnectionListener(false);
             //点击登录页面的按钮登录
-            final String username = intent.getStringExtra("username");
-            final String password = intent.getStringExtra("password");
+            final String username = intent.getStringExtra(StringConstant.INTENT_USERNAME);
+            final String password = intent.getStringExtra(StringConstant.INTENT_PASSWORD);
             ApiManage.getInstence().getUserApiService().loginAction(username, password)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<SmartResult<UserBean>>() {
                         @Override
                         public void onCompleted() {
-                            Log.d(TAG, "登录结束   ");
+                            Log.d(TAG, LOGIN_COMPLETED);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.d(TAG, "登录失败   " + e.toString());
+                            Log.d(TAG, LOGIN_FAIL + e.toString());
                             if (e instanceof SocketTimeoutException) {
                                 sendLoginedMsg(false, Constant.HSDERROR_TIMEOUT, false);
                                 return;
@@ -218,8 +228,9 @@ public class LoginService extends Service {
 
                         @Override
                         public void onNext(SmartResult<UserBean> userBeanSmartResult) {
-                            Log.d(TAG, "正在登录   ");
+
                             if (userBeanSmartResult.getCode() == 1) {
+                                Log.d(TAG, LOGIN_SUCCESS);
                                 startForeground(12346, noti);
                                 UserMessageBeanDao userMessageBeanDao = VideoApplication.getApplication().getDaoSession().getUserMessageBeanDao();
                                 UserMessageBean userMessageBean = new UserMessageBean(userBeanSmartResult.getData().getName(), userBeanSmartResult.getData().getPortrait(), userBeanSmartResult.getData().getId());
@@ -232,32 +243,34 @@ public class LoginService extends Service {
                                 editor.putInt(Constant.USER_PREFERENCE_ID, userBeanSmartResult.getData().getId());
                                 editor.apply();
                                 //EMClient login
-                                EMClient.getInstance().login("appmonitor_" + String.valueOf(userBeanSmartResult.getData().getId()), username, new EMCallBack() {//回调
-                                    @Override
-                                    public void onSuccess() {
-                                        EMClient.getInstance().groupManager().loadAllGroups();
-                                        EMClient.getInstance().chatManager().loadAllConversations();
-                                        Log.d(TAG, "登录聊天服务器成功！");
-                                        sendLoginedMsg(true, Constant.SUCCESS, false);
-                                        if (emMessageListener != null) {
-                                            EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+                                if (EMClient.getInstance() != null) {
+                                    EMClient.getInstance().login(HYPHENATE_LOGIN_FORENAME + String.valueOf(userBeanSmartResult.getData().getId()), username, new EMCallBack() {//回调
+                                        @Override
+                                        public void onSuccess() {
+                                            EMClient.getInstance().groupManager().loadAllGroups();
+                                            EMClient.getInstance().chatManager().loadAllConversations();
+                                            Log.d(TAG, "登录聊天服务器成功！");
+                                            sendLoginedMsg(true, Constant.SUCCESS, false);
+                                            if (emMessageListener != null) {
+                                                EMClient.getInstance().chatManager().addMessageListener(emMessageListener);
+                                            }
+                                            if (connectionListener != null) {
+                                                EMClient.getInstance().addConnectionListener(connectionListener);
+                                            }
                                         }
-                                        if (connectionListener != null) {
-                                            EMClient.getInstance().addConnectionListener(connectionListener);
+
+                                        @Override
+                                        public void onProgress(int progress, String status) {
+
                                         }
-                                    }
 
-                                    @Override
-                                    public void onProgress(int progress, String status) {
-
-                                    }
-
-                                    @Override
-                                    public void onError(int code, String message) {
-                                        Log.d(TAG, "登录聊天服务器失败！" + message);
-                                        sendLoginedMsg(false, Constant.EMERROR_CHAT_FAILED, false);
-                                    }
-                                });
+                                        @Override
+                                        public void onError(int code, String message) {
+                                            Log.d(TAG, "登录聊天服务器失败！" + message);
+                                            sendLoginedMsg(false, Constant.EMERROR_CHAT_FAILED, false);
+                                        }
+                                    });
+                                }
                             } else {
                                 sendLoginedMsg(false, userBeanSmartResult.getMsg(), false);
                                 Log.i(TAG, String.valueOf(userBeanSmartResult.getCode()));
@@ -309,13 +322,13 @@ public class LoginService extends Service {
                         @Override
                         public void run() {
                             //唤醒屏幕
-                            Log.d(TAG, "唤醒屏幕");
+                            Log.d(TAG, WAKE_UP_SCREEN);
                             PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
                             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, "monitorWake");
                             wakeLock.acquire();
                             wakeLock.release();
                             if (finalIsVibratorOn) {
-                                Log.d(TAG, "振动提醒");
+                                Log.d(TAG, VIBRATE);
                                 //振动器实例化
                                 Vibrator mVibrator;
                                 mVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
@@ -326,7 +339,7 @@ public class LoginService extends Service {
                             }
                             if (finalIsVoiceOn) {
                                 //声音提醒
-                                Log.d(TAG, "声音提醒");
+                                Log.d(TAG, VOICE);
                                 MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.ding);
                                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -360,9 +373,9 @@ public class LoginService extends Service {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(Constant.ACTION_RECEIVE_MSG);
         broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        broadcastIntent.putExtra("loginStatus", loginStatus);
-        broadcastIntent.putExtra("loginMessage", loginMessage);
-        broadcastIntent.putExtra("loginFromToken", loginFromToken);
+        broadcastIntent.putExtra(StringConstant.INTENT_LOGIN_STATUS, loginStatus);
+        broadcastIntent.putExtra(StringConstant.INTENT_LOGIN_MESSAGE, loginMessage);
+        broadcastIntent.putExtra(StringConstant.INTENT_LOGIN_FROM_TOKEN, loginFromToken);
         sendBroadcast(broadcastIntent);
     }
 

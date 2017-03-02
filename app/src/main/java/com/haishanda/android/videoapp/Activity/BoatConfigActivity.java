@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.VideoApplication;
+import com.haishanda.android.videoapp.config.StringConstant;
 import com.haishanda.android.videoapp.fragment.AboutBoatFragment;
 import com.haishanda.android.videoapp.fragment.DeleteBoatFragment;
 import com.haishanda.android.videoapp.fragment.RenameBoatFragment;
@@ -42,9 +43,9 @@ public class BoatConfigActivity extends FragmentActivity {
         ButterKnife.bind(this);
         instance = this;
         Bundle extra = getIntent().getExtras();
-        boatName = extra.getString("boatName");
-        machineId = extra.getInt("machineId");
-        netModuleSerialNumber = extra.getString("netModuleSerialNumber");
+        boatName = extra.getString(StringConstant.INTENT_BOAT_NAME);
+        machineId = extra.getInt(StringConstant.INTENT_MACHINE_ID);
+        netModuleSerialNumber = extra.getString(StringConstant.INTENT_NET_MODULE_SERIAL_NUMBER);
     }
 
     @Override
@@ -67,8 +68,8 @@ public class BoatConfigActivity extends FragmentActivity {
     @OnClick(R.id.about_boat_layout)
     public void skipToAboutBoatFragment() {
         Bundle data = new Bundle();
-        data.putString("boatName", boatName);
-        data.putString("netModuleSerialNumber", netModuleSerialNumber);
+        data.putString(StringConstant.INTENT_BOAT_NAME, boatName);
+        data.putString(StringConstant.INTENT_NET_MODULE_SERIAL_NUMBER, netModuleSerialNumber);
         AboutBoatFragment aboutBoatFragment = new AboutBoatFragment();
         aboutBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -81,8 +82,8 @@ public class BoatConfigActivity extends FragmentActivity {
     @OnClick(R.id.rename_boat_layout)
     public void skipToRenameBoatFragment() {
         Bundle data = new Bundle();
-        data.putInt("machineId", machineId);
-        data.putString("boatName", boatName);
+        data.putInt(StringConstant.INTENT_MACHINE_ID, machineId);
+        data.putString(StringConstant.INTENT_BOAT_NAME, boatName);
         RenameBoatFragment renameBoatFragment = new RenameBoatFragment();
         renameBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -95,7 +96,7 @@ public class BoatConfigActivity extends FragmentActivity {
     @OnClick(R.id.reset_boat_pwd_layout)
     public void skipToResetPwdBoatFragment() {
         Bundle data = new Bundle();
-        data.putInt("machineId", machineId);
+        data.putInt(StringConstant.INTENT_MACHINE_ID, machineId);
         ResetBoatBindingPasswordFragment resetBoatBindingPasswordFragment = new ResetBoatBindingPasswordFragment();
         resetBoatBindingPasswordFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -109,8 +110,8 @@ public class BoatConfigActivity extends FragmentActivity {
     @OnClick(R.id.delete_boat_btn)
     public void deleteBoat() {
         Bundle data = new Bundle();
-        data.putString("boatName", boatName);
-        data.putInt("machineId", machineId);
+        data.putString(StringConstant.INTENT_BOAT_NAME, boatName);
+        data.putInt(StringConstant.INTENT_MACHINE_ID, machineId);
         DeleteBoatFragment deleteBoatFragment = new DeleteBoatFragment();
         deleteBoatFragment.setArguments(data);
         FragmentManager fragmentManager = getSupportFragmentManager();

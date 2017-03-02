@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.haishanda.android.videoapp.activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.bean.QueryCameras;
+import com.haishanda.android.videoapp.config.StringConstant;
 
 
 /**
@@ -59,15 +60,15 @@ public class LiveAdapter extends ArrayAdapter {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent();
-                    intent.putExtra("cameraId", listCamera[position].getId());
-                    intent.putExtra("boatName", boatName);
+                    intent.putExtra(StringConstant.INTENT_CAMERA_ID, listCamera[position].getId());
+                    intent.putExtra(StringConstant.INTENT_BOAT_NAME, boatName);
                     intent.setClass(context, PlayLiveActivity.class);
                     context.startActivity(intent);
                 }
             });
 
             TextView boatName = (TextView) convertView.findViewById(R.id.live_adapter_text);
-            boatName.setText("摄像头" + listCamera[position].getOwner());
+            boatName.setText(StringConstant.CAMERA + listCamera[position].getOwner());
             boatName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         }
 

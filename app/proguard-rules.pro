@@ -114,3 +114,12 @@ public static java.lang.String TABLENAME;
 #-libraryjars libs/pgyer_sdk_x.x.jar
 -dontwarn com.pgyersdk.**
 -keep class com.pgyersdk.** { *; }
+
+#gms
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+
+#org.http
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+-dontwarn android.net.**

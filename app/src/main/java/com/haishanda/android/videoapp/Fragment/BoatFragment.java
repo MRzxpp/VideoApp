@@ -26,6 +26,7 @@ import com.haishanda.android.videoapp.bean.QueryMachines;
 import com.haishanda.android.videoapp.bean.TimeBean;
 import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.config.StringConstant;
 import com.haishanda.android.videoapp.greendao.gen.BoatMessageDao;
 import com.haishanda.android.videoapp.utils.DaoUtil;
 import com.haishanda.android.videoapp.views.spinner.NiceSpinner;
@@ -78,7 +79,14 @@ public class BoatFragment extends Fragment {
     ImageView loadingGif;
 
     private static final String TAG = "船舶首页";
-    private final String ADD_BOAT = "添加船舶";
+    private static final String ADD_BOAT = "添加船舶";
+    private static final String EMPTY_ICON_PATH = "DEFAULT";
+    private static final String GET_BOAT_INFO_FAIL = "获取船舶信息失败";
+    private static final String GET_BOAT_INFO_COMPLETED = "获取船舶信息结束";
+    private static final String GET_BOAT_INFO_SUCCESS = "获取船舶信息成功";
+    private static final String GET_CAMERA_LIST_FAIL = "获取摄像头列表失败";
+    private static final String GET_CAMERA_LIST_COMPLETED = "获取摄像头列表完成";
+    private static final String GET_CAMERA_LIST_SUCCESS = "获取摄像头列表成功";
     private int machineId;
     private String netModuleSerialNumber;
     private Map<String, Integer> boatInfos;
@@ -190,9 +198,9 @@ public class BoatFragment extends Fragment {
         if (boatLists != null) {
             if (boatLists.length > 1) {
                 Intent intent = new Intent(getActivity(), BoatConfigActivity.class);
-                intent.putExtra("machineId", machineId);
-                intent.putExtra("boatName", VideoApplication.getApplication().getCurrentBoatName());
-                intent.putExtra("netModuleSerialNumber", netModuleSerialNumber);
+                intent.putExtra(StringConstant.INTENT_MACHINE_ID, machineId);
+                intent.putExtra(StringConstant.INTENT_BOAT_NAME, VideoApplication.getApplication().getCurrentBoatName());
+                intent.putExtra(StringConstant.INTENT_NET_MODULE_SERIAL_NUMBER, netModuleSerialNumber);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_right_in, R.anim.slide_left_out);
             }
@@ -209,24 +217,24 @@ public class BoatFragment extends Fragment {
                 .subscribe(new Observer<SmartResult<List<QueryMachines>>>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "获取船舶信息结束   ");
+                        Log.d(TAG, GET_BOAT_INFO_COMPLETED);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "获取船舶信息失败   " + e.toString());
+                        Log.d(TAG, GET_BOAT_INFO_FAIL + e.toString());
                         if (e instanceof SocketTimeoutException) {
-                            Toast.makeText(instance.getActivity(), "连接服务器超时，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), StringConstant.MESSAGE_CONNECT_SERVER_TIMEOUT, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                             return;
                         }
                         if (e instanceof ConnectException) {
-                            Toast.makeText(instance.getActivity(), "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), StringConstant.MESSAGE_CONNECT_SERVER_FAIL, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                             return;
                         }
                         if (e instanceof IOException) {
-                            Toast.makeText(instance.getActivity(), "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), StringConstant.MESSAGE_CONNECT_SERVER_FAIL, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -234,6 +242,7 @@ public class BoatFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult<List<QueryMachines>> listSmartResult) {
                         if (listSmartResult.getData() != null && listSmartResult.getCode() == 1) {
+                            Log.d(TAG, GET_BOAT_INFO_SUCCESS);
                             boatSpinner.setVisibility(View.VISIBLE);
                             boatSpinner.setEnabled(true);
                             for (QueryMachines queryMachines : listSmartResult.getData()
@@ -247,7 +256,7 @@ public class BoatFragment extends Fragment {
                                 int span = (Integer.valueOf(queryMachines.getSpan()));
                                 setMonitorTime(begin, span, queryMachines);
                                 boatInfos.put(queryMachines.getName(), queryMachines.getId());
-                                boatNetModuleSerialNumber.put(queryMachines.getName(), queryMachines.getSerialNo() != null ? queryMachines.getSerialNo() : "获取失败");
+                                boatNetModuleSerialNumber.put(queryMachines.getName(), queryMachines.getSerialNo() != null ? queryMachines.getSerialNo() : StringConstant.MESSAGE_QUERY_SERIAL_NUMBER_FAIL);
                                 array.put(queryMachines.getId(), queryMachines.getName());
                             }
                             instance.boatNetModuleSerialNumbers = boatNetModuleSerialNumber;
@@ -296,7 +305,7 @@ public class BoatFragment extends Fragment {
                                 if (!localBoatName.equals(remoteBoatName) && remoteBoatName != null) {
                                     if (!localBoatName.equals(ADD_BOAT)) {
                                         DaoUtil.renameBoat(remoteBoatName, localBoatName, VideoApplication.getApplication().getCurrentMachineId());
-                                        Toast.makeText(getContext(), "服务器数据发生变化，数据已更新", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), StringConstant.MESSAGE_SERVER_DATA_CHANGE, Toast.LENGTH_LONG).show();
                                         VideoApplication.getApplication().setCurrentBoatName(remoteBoatName);
                                     }
                                 }
@@ -309,7 +318,7 @@ public class BoatFragment extends Fragment {
                             }
                             handleLiveAdapter();
                         } else {
-                            Toast.makeText(instance.getActivity(), listSmartResult.getMsg() != null ? listSmartResult.getMsg() : "连接错误", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), listSmartResult.getMsg() != null ? listSmartResult.getMsg() : StringConstant.MESSAGE_SERVER_RETURN_FALSE, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -343,24 +352,24 @@ public class BoatFragment extends Fragment {
                 .subscribe(new Observer<SmartResult<List<QueryCameras>>>() {
                     @Override
                     public void onCompleted() {
-
+                        Log.d(TAG, GET_CAMERA_LIST_COMPLETED);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "获取摄像头失败   " + e.toString());
+                        Log.d(TAG, GET_CAMERA_LIST_FAIL + e.toString());
                         if (e instanceof SocketTimeoutException) {
-                            Toast.makeText(instance.getActivity(), "连接服务器超时，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), StringConstant.MESSAGE_CONNECT_SERVER_TIMEOUT, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                             return;
                         }
                         if (e instanceof ConnectException) {
-                            Toast.makeText(instance.getActivity(), "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), StringConstant.MESSAGE_CONNECT_SERVER_FAIL, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                             return;
                         }
                         if (e instanceof IOException) {
-                            Toast.makeText(instance.getActivity(), "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), StringConstant.MESSAGE_CONNECT_SERVER_FAIL, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -368,6 +377,7 @@ public class BoatFragment extends Fragment {
                     @Override
                     public void onNext(SmartResult<List<QueryCameras>> listSmartResult) {
                         if (listSmartResult.getData() != null && listSmartResult.getCode() == 1) {
+                            Log.d(TAG, GET_CAMERA_LIST_SUCCESS);
                             loadingGif.setVisibility(View.GONE);
                             cameraList = new QueryCameras[listSmartResult.getData().size()];
                             for (int i = 0; i < listSmartResult.getData().size(); i++
@@ -378,25 +388,25 @@ public class BoatFragment extends Fragment {
                             }
 
                             BoatMessage boatMessage;
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日HH:mm:ss", Locale.CHINA);
+                            SimpleDateFormat formatter = new SimpleDateFormat(StringConstant.TYPE_NORMAL_TIME, Locale.CHINA);
                             Date curDate = new Date(System.currentTimeMillis());//获取当前时间
                             String str = formatter.format(curDate);
                             QueryBuilder<BoatMessage> builder = boatMessageDao.queryBuilder();
                             List<BoatMessage> boats = builder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
                             if (boats.size() == 0) {
                                 for (int i = 0; i < instance.cameraList.length; i++) {
-                                    boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), instance.cameraList[i].getId(), "default", str, null);
+                                    boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), instance.cameraList[i].getId(), EMPTY_ICON_PATH, str, null);
                                     boatMessageDao.insertOrReplace(boatMessage);
                                 }
                             }
                             if (boats.size() != 0 && (boats.size() < instance.cameraList.length)) {
                                 for (int i = boats.size(); i < instance.cameraList.length; i++) {
-                                    boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), instance.cameraList[i].getId(), "default", str, null);
+                                    boatMessage = new BoatMessage(machineId, boatSpinner.getText().toString(), instance.cameraList[i].getId(), EMPTY_ICON_PATH, str, null);
                                     boatMessageDao.insertOrReplace(boatMessage);
                                 }
                             }
                         } else {
-                            Toast.makeText(instance.getActivity(), listSmartResult.getMsg() != null ? listSmartResult.getMsg() : "连接错误", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance.getActivity(), listSmartResult.getMsg() != null ? listSmartResult.getMsg() : StringConstant.MESSAGE_SERVER_RETURN_FALSE, Toast.LENGTH_LONG).show();
                             loadingGif.setVisibility(View.INVISIBLE);
                         }
 
@@ -421,7 +431,7 @@ public class BoatFragment extends Fragment {
         List<BoatMessage> cameraDetails = queryBuilder.where(BoatMessageDao.Properties.MachineId.eq(machineId)).list();
         List<String> cameraImagePathsCopy = new ArrayList<>();
         for (int i = 0; i < cameraDetails.size(); i++) {
-            cameraImagePathsCopy.add(cameraDetails.get(i).getCameraImagePath() != null ? cameraDetails.get(i).getCameraImagePath() : "default");
+            cameraImagePathsCopy.add(cameraDetails.get(i).getCameraImagePath() != null ? cameraDetails.get(i).getCameraImagePath() : EMPTY_ICON_PATH);
         }
         cameraIconsPaths = cameraImagePathsCopy.toArray(new String[cameraImagePathsCopy.size()]);
     }

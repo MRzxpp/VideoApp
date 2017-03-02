@@ -13,6 +13,7 @@ import com.haishanda.android.videoapp.bean.PackageVo;
 import com.haishanda.android.videoapp.config.Constant;
 import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
+import com.haishanda.android.videoapp.config.StringConstant;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -36,7 +37,10 @@ public class AccountBalanceActivity extends Activity {
     @BindView(R.id.account_balance_main)
     ListView accountBalanceMain;
 
-    private final String TAG = "获取套餐";
+    private static final String TAG = "获取套餐";
+    private static final String GET_PACKAGE_SUCCESS = "获取套餐成功";
+    private static final String GET_PACKAGE_FAIL = "获取套餐失败";
+    private static final String GET_PACKAGE_COMPLETED = "获取套餐完成";
     List<PackageVo> packageVoList;
     private AccountBalanceActivity instance;
 
@@ -80,22 +84,22 @@ public class AccountBalanceActivity extends Activity {
                 .subscribe(new Observer<SmartResult<List<PackageVo>>>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "获取套餐信息结束   ");
+                        Log.d(TAG, GET_PACKAGE_COMPLETED);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "获取套餐信息失败   " + e.toString());
+                        Log.d(TAG, GET_PACKAGE_FAIL + e.toString());
                         if (e instanceof SocketTimeoutException) {
-                            Toast.makeText(instance, "连接服务器超时，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance, StringConstant.MESSAGE_CONNECT_SERVER_TIMEOUT, Toast.LENGTH_LONG).show();
                             return;
                         }
                         if (e instanceof ConnectException) {
-                            Toast.makeText(instance, "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance, StringConstant.MESSAGE_CONNECT_SERVER_FAIL, Toast.LENGTH_LONG).show();
                             return;
                         }
                         if (e instanceof IOException) {
-                            Toast.makeText(instance, "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance, StringConstant.MESSAGE_CONNECT_SERVER_FAIL, Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -103,17 +107,17 @@ public class AccountBalanceActivity extends Activity {
                     public void onNext(SmartResult<List<PackageVo>> listSmartResult) {
                         if (listSmartResult != null) {
                             if (listSmartResult.getCode() == 1) {
-                                Log.d(TAG, "success");
+                                Log.d(TAG, GET_PACKAGE_SUCCESS);
                                 instance.packageVoList = listSmartResult.getData();
                                 if (instance.packageVoList != null) {
                                     accountBalanceMain.setAdapter(new AccountBalanceAdapter(instance, instance.packageVoList));
                                 }
                             } else {
                                 Log.d(TAG, listSmartResult.getMsg());
-                                Toast.makeText(instance, listSmartResult.getMsg() != null ? listSmartResult.getMsg() : "与服务器连接失败", Toast.LENGTH_LONG).show();
+                                Toast.makeText(instance, listSmartResult.getMsg() != null ? listSmartResult.getMsg() : StringConstant.MESSAGE_SERVER_RETURN_FALSE, Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(instance, "未获取到当前套餐信息", Toast.LENGTH_LONG).show();
+                            Toast.makeText(instance, StringConstant.MESSAGE_SERVER_RETURN_FALSE, Toast.LENGTH_LONG).show();
                         }
                     }
                 });

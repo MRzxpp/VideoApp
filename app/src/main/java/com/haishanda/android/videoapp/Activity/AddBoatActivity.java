@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.haishanda.android.videoapp.api.ApiManage;
 import com.haishanda.android.videoapp.config.SmartResult;
+import com.haishanda.android.videoapp.config.StringConstant;
 import com.haishanda.android.videoapp.utils.textwatcher.LoginWatcher;
 import com.haishanda.android.videoapp.R;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
@@ -45,7 +46,13 @@ public class AddBoatActivity extends Activity {
     @BindDrawable(R.drawable.corners_grey_btn)
     Drawable greyBtn;
 
-    private final String Tag = "添加船舶";
+    private static final String Tag = "添加船舶";
+    private static final String ADD_BOAT_COMPLETED = "添加船舶结束";
+    private static final String ADD_BOAT_SUCCESS = "添加船舶成功";
+    private static final String ADD_BOAT_FAIL = "添加船舶失败";
+    private static final String SCAN_QR_CODE_FAIL = "扫描二维码失败";
+    private static final String PLEASE_INPUT_BOAT_SERIAL_NUMBER = "请输入船舶序列号";
+    private static final String PLEASE_INPUT_BOAT_PASSWORD = "请输入船舶密码";
     private AddBoatActivity instance;
     private static final int REQUEST_CODE = 0;
 
@@ -83,11 +90,10 @@ public class AddBoatActivity extends Activity {
                 }
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
-                    Log.i(Tag, "二维码结果" + result);
                     boatNumber.setText(result);
 
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
-                    Toast.makeText(AddBoatActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), SCAN_QR_CODE_FAIL, Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -96,36 +102,35 @@ public class AddBoatActivity extends Activity {
     @OnClick(R.id.confirm_add_boat_btn)
     public void addBoat(View view) {
         String boatNum = boatNumber.getText().toString();
-        String boatPwd = boatPassword.getText().toString();
-        if (boatNum == "") {
-            Toast.makeText(this, "请输入船舶序列号", Toast.LENGTH_LONG).show();
-        } else if (boatPwd == "") {
-            Toast.makeText(this, "请输入船舶绑定密码", Toast.LENGTH_LONG).show();
+        String boatPassword = this.boatPassword.getText().toString();
+        if (boatNum.equals("")) {
+            Toast.makeText(this, PLEASE_INPUT_BOAT_SERIAL_NUMBER, Toast.LENGTH_LONG).show();
+        } else if (boatPassword.equals("")) {
+            Toast.makeText(this, PLEASE_INPUT_BOAT_PASSWORD, Toast.LENGTH_LONG).show();
         } else {
-            ApiManage.getInstence().getBoatApiService().addBoat(boatNum, boatPwd)
+            ApiManage.getInstence().getBoatApiService().addBoat(boatNum, boatPassword)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<SmartResult>() {
                         @Override
                         public void onCompleted() {
-                            Log.i(Tag, "add completed");
+                            Log.i(Tag, ADD_BOAT_COMPLETED);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.i(Tag, "add failed");
+                            Log.i(Tag, ADD_BOAT_FAIL);
                             e.printStackTrace();
                         }
 
                         @Override
                         public void onNext(SmartResult smartResult) {
                             if (smartResult.getCode() == 1) {
-                                Log.i(Tag, "add successfully");
-                                Toast.makeText(getApplicationContext(), "添加船舶成功", Toast.LENGTH_LONG).show();
+                                Log.i(Tag, ADD_BOAT_SUCCESS);
                                 instance.finish();
                             } else {
-                                Log.i(Tag, "add failed!");
-                                Toast.makeText(getApplicationContext(), smartResult.getMsg(), Toast.LENGTH_LONG).show();
+                                Log.i(Tag, ADD_BOAT_FAIL);
+                                Toast.makeText(getApplicationContext(), smartResult.getMsg() != null ? smartResult.getMsg() : StringConstant.MESSAGE_SERVER_RETURN_FALSE, Toast.LENGTH_LONG).show();
                             }
                         }
                     });
