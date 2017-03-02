@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="1dp">
 
     <ImageView
         android:id="@+id/photo_adapter"
@@ -19,5 +20,5 @@
         android:layout_centerHorizontal="true"
         android:background="#80333333"
         android:gravity="center"
-        android:textSize="9sp" />
+        android:textSize="12sp" />
 </RelativeLayout>

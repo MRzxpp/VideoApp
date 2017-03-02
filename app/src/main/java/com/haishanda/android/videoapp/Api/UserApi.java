@@ -52,11 +52,6 @@ public interface UserApi {
     Observable<SmartResult<UserBean>> loginAction(@Field("name") String username,
                                                   @Field("password") String password);
 
-    @FormUrlEncoded
-    @POST("/monitor-platform-web/rest/userLogin")
-    Call<SmartResult<UserBean>> loginActionCopy(@Field("name") String username,
-                                                @Field("password") String password);
-
     @POST("/monitor-platform-web/rest/user/fetchCode")
     Observable<SmartResult> getFetchCodeWithToken(@Header("token") String token);
 
@@ -81,7 +76,7 @@ public interface UserApi {
     Observable<SmartResult> editPortrait(@Header("token") String token, @Field("portrait") String portrait);
 
     @GET("/monitor-platform-web/rest/user/queryPackages")
-    Call<SmartResult<List<PackageVo>>> queryPackages(@Header("token") String token);
+    Observable<SmartResult<List<PackageVo>>> queryPackages(@Header("token") String token);
 
     @GET("/monitor-platform-web/rest/user/validateToken")
     Call<SmartResult<UserBean>> validateToken(@Header("token") String token);

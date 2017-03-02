@@ -40,14 +40,8 @@ public interface BoatApi {
     @GET("monitor-platform-web/rest/user/queryMachines")
     Observable<SmartResult<List<QueryMachines>>> queryMachines();
 
-    @GET("monitor-platform-web/rest/user/queryMachines")
-    Call<SmartResult<List<QueryMachines>>> queryMachinesCopy();
-
     @GET("monitor-platform-web/rest/user/queryCameras")
     Observable<SmartResult<List<QueryCameras>>> queryCameras(@Query("machineId") int machineId);
-
-    @GET("monitor-platform-web/rest/user/queryCameras")
-    Call<SmartResult<List<QueryCameras>>> queryCamerasCopy(@Query("machineId") int machineId);
 
     @FormUrlEncoded
     @POST("/monitor-platform-web/rest/user/editMachineName")

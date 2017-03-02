@@ -16,7 +16,6 @@ import com.haishanda.android.videoapp.activity.PlayLiveActivity;
 import com.haishanda.android.videoapp.R;
 import com.haishanda.android.videoapp.bean.QueryCameras;
 
-import java.util.List;
 
 /**
  * set live
@@ -29,10 +28,10 @@ public class LiveAdapter extends ArrayAdapter {
     private final LayoutInflater inflater;
 
     private final String[] imagePath;
-    private final List<QueryCameras> listCamera;
+    private final QueryCameras[] listCamera;
     private final String boatName;
 
-    public LiveAdapter(Context context, String[] imagePath, List<QueryCameras> listCamera, String boatName) {
+    public LiveAdapter(Context context, String[] imagePath, QueryCameras[] listCamera, String boatName) {
         super(context, R.layout.adapter_live, imagePath);
         this.imagePath = imagePath;
         this.context = context;
@@ -47,28 +46,30 @@ public class LiveAdapter extends ArrayAdapter {
         if (null == convertView) {
             convertView = inflater.inflate(R.layout.adapter_live, parent, false);
         }
-        Glide
-                .with(context)
-                .load(imagePath[position])
-                .error(R.drawable.boat_background)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into((ImageView) convertView.findViewById(R.id.live_adapter_photo));
+        if (listCamera.length > 0) {
+            Glide
+                    .with(context)
+                    .load(imagePath[position])
+                    .error(R.drawable.boat_background)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into((ImageView) convertView.findViewById(R.id.live_adapter_photo));
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("cameraId", listCamera.get(position).getId());
-                intent.putExtra("boatName", boatName);
-                intent.setClass(context, PlayLiveActivity.class);
-                context.startActivity(intent);
-            }
-        });
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.putExtra("cameraId", listCamera[position].getId());
+                    intent.putExtra("boatName", boatName);
+                    intent.setClass(context, PlayLiveActivity.class);
+                    context.startActivity(intent);
+                }
+            });
 
-        TextView boatName = (TextView) convertView.findViewById(R.id.live_adapter_text);
-        boatName.setText("摄像头" + listCamera.get(position).getOwner());
-        boatName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            TextView boatName = (TextView) convertView.findViewById(R.id.live_adapter_text);
+            boatName.setText("摄像头" + listCamera[position].getOwner());
+            boatName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        }
 
         return convertView;
     }

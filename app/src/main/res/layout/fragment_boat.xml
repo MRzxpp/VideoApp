@@ -86,6 +86,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:numColumns="2" />
+
+        <ImageView
+            android:id="@+id/loading_boat_gif"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -162,7 +162,7 @@ public class WelcomeActivity extends Activity {
                 if (response.body().getCode() == 1) {
                     return true;
                 } else {
-                    Toast.makeText(this, response.body().getMsg(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(instance, response.body().getMsg(), Toast.LENGTH_LONG).show();
                     return false;
                 }
             } catch (IOException e) {

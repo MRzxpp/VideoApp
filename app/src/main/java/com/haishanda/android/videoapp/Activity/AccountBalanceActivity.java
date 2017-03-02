@@ -15,14 +15,17 @@ import com.haishanda.android.videoapp.config.SmartResult;
 import com.haishanda.android.videoapp.R;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Response;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * 获取套餐
@@ -35,12 +38,20 @@ public class AccountBalanceActivity extends Activity {
 
     private final String TAG = "获取套餐";
     List<PackageVo> packageVoList;
+    private AccountBalanceActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_balance);
         ButterKnife.bind(this);
+        if (instance == null) {
+            synchronized (AccountBalanceActivity.class) {
+                if (instance == null) {
+                    instance = this;
+                }
+            }
+        }
     }
 
     @OnClick(R.id.back_to_my_btn)
@@ -52,52 +63,59 @@ public class AccountBalanceActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        initViews();
+        queryPackages();
     }
 
-    public void initViews() {
-        Thread netThread = new Thread(new NetThread());
-        netThread.start();
-        try {
-            netThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (packageVoList != null) {
-            accountBalanceMain.setAdapter(new AccountBalanceAdapter(this, packageVoList));
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        instance = null;
     }
 
-    class NetThread implements Runnable {
-        @Override
-        public void run() {
-            packageVoList = queryPackages();
-        }
-    }
-
-    private List<PackageVo> queryPackages() {
+    private void queryPackages() {
         SharedPreferences preferences = getSharedPreferences(Constant.USER_PREFERENCE, MODE_PRIVATE);
-        List<PackageVo> packageVoList = new ArrayList<>();
-        Call<SmartResult<List<PackageVo>>> call = ApiManage.getInstence().getUserApiService().queryPackages(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""));
-        try {
-            Response<SmartResult<List<PackageVo>>> response = call.execute();
-            if (response.body() != null) {
-                if (response.body().getCode() == 1) {
-                    Log.d(TAG, "success");
-                    packageVoList = response.body().getData();
-                    return packageVoList;
-                } else {
-                    Log.d(TAG, response.body().getMsg());
-                    Toast.makeText(this, "获取套餐信息失败", Toast.LENGTH_LONG).show();
-                    return null;
-                }
-            } else {
-                Toast.makeText(this, "未获取到当前套餐信息", Toast.LENGTH_LONG).show();
-                return null;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return packageVoList;
+        ApiManage.getInstence().getUserApiService().queryPackages(preferences.getString(Constant.USER_PREFERENCE_TOKEN, ""))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<SmartResult<List<PackageVo>>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG, "获取套餐信息结束   ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "获取套餐信息失败   " + e.toString());
+                        if (e instanceof SocketTimeoutException) {
+                            Toast.makeText(instance, "连接服务器超时，请重试！", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if (e instanceof ConnectException) {
+                            Toast.makeText(instance, "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if (e instanceof IOException) {
+                            Toast.makeText(instance, "连接服务器失败，请重试！", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(SmartResult<List<PackageVo>> listSmartResult) {
+                        if (listSmartResult != null) {
+                            if (listSmartResult.getCode() == 1) {
+                                Log.d(TAG, "success");
+                                instance.packageVoList = listSmartResult.getData();
+                                if (instance.packageVoList != null) {
+                                    accountBalanceMain.setAdapter(new AccountBalanceAdapter(instance, instance.packageVoList));
+                                }
+                            } else {
+                                Log.d(TAG, listSmartResult.getMsg());
+                                Toast.makeText(instance, listSmartResult.getMsg() != null ? listSmartResult.getMsg() : "与服务器连接失败", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(instance, "未获取到当前套餐信息", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 }
